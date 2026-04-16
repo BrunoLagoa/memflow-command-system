@@ -1,6 +1,6 @@
 param(
   [Parameter(Position = 0)]
-  [ValidateSet("install", "update", "uninstall")]
+  [ValidateSet("install", "update", "uninstall", "check")]
   [string]$Action = "install",
   [ValidateSet("global", "local")]
   [string]$Scope,
@@ -16,6 +16,8 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$script:VersionCheckTtlSeconds = 86400
+$script:ProjectDirProvided = $PSBoundParameters.ContainsKey("ProjectDir")
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $CommonScript = Join-Path $ScriptDir "lib/common.ps1"
@@ -83,6 +85,140 @@ function Get-LatestReleaseTag {
     Stop-WithError "Não foi possível descobrir a release mais recente."
   }
   return [string]$response.tag_name
+}
+
+function Try-GetLatestReleaseTag {
+  param([string]$RepoName)
+  try {
+    $apiUrl = "https://api.github.com/repos/$RepoName/releases/latest"
+    $response = Invoke-RestMethod -Uri $apiUrl -Method Get
+    if (-not $response.tag_name) {
+      return $null
+    }
+    return [string]$response.tag_name
+  } catch {
+    return $null
+  }
+}
+
+function Get-VersionCachePath {
+  param([string]$ResolvedOs)
+  if ($ResolvedOs -eq "windows") {
+    $base = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
+    return (Join-Path $base "memflow\version-check.json")
+  }
+  return (Join-Path $HOME ".cache/memflow/version-check.json")
+}
+
+function Get-VersionCacheData {
+  param([string]$CachePath)
+  if (-not (Test-Path $CachePath)) {
+    return $null
+  }
+  try {
+    return (Get-Content $CachePath -Raw | ConvertFrom-Json)
+  } catch {
+    return $null
+  }
+}
+
+function Save-VersionCacheData {
+  param(
+    [string]$CachePath,
+    [string]$RepoName,
+    [string]$LatestVersion,
+    [long]$NowEpoch
+  )
+  $cacheDir = Split-Path -Parent $CachePath
+  New-Item -Path $cacheDir -ItemType Directory -Force | Out-Null
+  $payload = [ordered]@{
+    repo = $RepoName
+    latestVersion = $LatestVersion
+    lastCheckedEpoch = "$NowEpoch"
+  }
+  $payload | ConvertTo-Json | Set-Content -Path $CachePath -Encoding UTF8
+}
+
+function Get-LatestVersionWithCache {
+  param(
+    [string]$RepoName,
+    [string]$ResolvedOs
+  )
+  $cachePath = Get-VersionCachePath -ResolvedOs $ResolvedOs
+  $cache = Get-VersionCacheData -CachePath $cachePath
+  $nowEpoch = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+  if ($cache -and $cache.repo -eq $RepoName -and $cache.lastCheckedEpoch -and $cache.latestVersion) {
+    $lastChecked = 0L
+    if ([long]::TryParse([string]$cache.lastCheckedEpoch, [ref]$lastChecked)) {
+      $delta = $nowEpoch - $lastChecked
+      if ($delta -ge 0 -and $delta -le $script:VersionCheckTtlSeconds) {
+        return [string]$cache.latestVersion
+      }
+    }
+  }
+
+  $latest = Try-GetLatestReleaseTag -RepoName $RepoName
+  if (-not $latest) {
+    return $null
+  }
+  Save-VersionCacheData -CachePath $cachePath -RepoName $RepoName -LatestVersion $latest -NowEpoch $nowEpoch
+  return $latest
+}
+
+function Normalize-VersionTag {
+  param([string]$Value)
+  if (-not $Value) { return "" }
+  return ($Value -replace '^[vV]', '')
+}
+
+function Test-IsVersionNewer {
+  param(
+    [string]$LatestVersion,
+    [string]$InstalledVersion
+  )
+  $latest = Normalize-VersionTag -Value $LatestVersion
+  $installed = Normalize-VersionTag -Value $InstalledVersion
+  if (-not $latest -or -not $installed -or $latest -eq $installed) {
+    return $false
+  }
+  try {
+    $latestBase = $latest.Split('-')[0]
+    $installedBase = $installed.Split('-')[0]
+    return ([version]$latestBase -gt [version]$installedBase)
+  } catch {
+    return $latest -ne $installed
+  }
+}
+
+function Find-ExistingManifest {
+  param(
+    [string]$ResolvedOs,
+    [string]$ResolvedProjectDir
+  )
+  $globalRoot = Resolve-CommandsRoot -ResolvedScope "global" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+  $localRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+  $globalManifest = Join-Path $globalRoot ".memflow-install.json"
+  $localManifest = Join-Path $localRoot ".memflow-install.json"
+  if (Test-Path $globalManifest) { return $globalManifest }
+  if (Test-Path $localManifest) { return $localManifest }
+  return $null
+}
+
+function Show-VersionUpdateNotice {
+  param(
+    [string]$InstalledVersion,
+    [string]$LatestVersion,
+    [string]$ResolvedScope,
+    [string]$ResolvedOs
+  )
+  $updateCommand = "memflowctl update --scope $ResolvedScope --non-interactive"
+  if ($ResolvedOs -eq "windows") {
+    $updateCommand = "memflowctl.ps1 update -Scope $ResolvedScope -NonInteractive"
+  }
+  Write-Info "Nova versão do MEMFLOW disponível."
+  Write-Host "  Versão atual: $InstalledVersion"
+  Write-Host "  Última versão: $LatestVersion"
+  Write-Host "  Próximo passo: $updateCommand"
 }
 
 function Resolve-SourceDir {
@@ -209,6 +345,10 @@ function Invoke-Update {
 
   $nextVersion = if ($Version) { $Version } else { Get-LatestReleaseTag -RepoName $Repo }
 
+  if (-not (Test-Path $manifestPath) -and $ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
+    Stop-WithError "Para atualizar instalação local fora do projeto atual, informe -ProjectDir <dir>."
+  }
+
   if ($installedVersion -and ($installedVersion -eq $nextVersion)) {
     Write-Info "MEMFLOW já está na versão mais recente ($installedVersion). Nenhuma atualização é necessária agora."
     return
@@ -228,6 +368,9 @@ function Invoke-Uninstall {
   $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
 
   if (-not (Test-Path $installDir) -and -not (Test-Path $manifestPath)) {
+    if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
+      Stop-WithError "Para remover instalação local fora do projeto atual, informe -ProjectDir <dir>."
+    }
     Write-WarnLog "Nenhuma instalação MEMFLOW encontrada em $commandsRoot."
     return
   }
@@ -250,12 +393,56 @@ function Invoke-Uninstall {
   Write-Info "MEMFLOW removido com sucesso."
 }
 
+function Invoke-Check {
+  param(
+    [string]$ResolvedScope,
+    [string]$ResolvedOs
+  )
+  $manifestPath = $null
+  if ($Scope) {
+    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+    $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
+  } else {
+    $manifestPath = Find-ExistingManifest -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+  }
+
+  if (-not $manifestPath -or -not (Test-Path $manifestPath)) {
+    return
+  }
+
+  $manifest = $null
+  try {
+    $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+  } catch {
+    return
+  }
+  if (-not $manifest -or -not $manifest.version) {
+    return
+  }
+
+  $effectiveScope = if ($manifest.scope) { [string]$manifest.scope } elseif ($ResolvedScope) { $ResolvedScope } else { "global" }
+  $effectiveOs = if ($manifest.os) { [string]$manifest.os } else { $ResolvedOs }
+  $repoName = if ($manifest.repo) { [string]$manifest.repo } else { $Repo }
+
+  $latestVersion = Get-LatestVersionWithCache -RepoName $repoName -ResolvedOs $effectiveOs
+  if (-not $latestVersion) {
+    return
+  }
+  if (Test-IsVersionNewer -LatestVersion $latestVersion -InstalledVersion ([string]$manifest.version)) {
+    Show-VersionUpdateNotice -InstalledVersion ([string]$manifest.version) -LatestVersion $latestVersion -ResolvedScope $effectiveScope -ResolvedOs $effectiveOs
+  }
+}
+
 function Resolve-WizardValues {
   $resolvedOs = $Os
   $resolvedScope = $Scope
   $resolvedTarget = $Target
 
-  if (-not $NonInteractive) {
+  if ($Action -eq "check") {
+    if (-not $resolvedOs) { $resolvedOs = if ($IsWindows) { "windows" } elseif ($IsMacOS) { "macos" } else { "linux" } }
+    if (-not $resolvedScope) { $resolvedScope = "global" }
+    if (-not $resolvedTarget) { $resolvedTarget = "opencode" }
+  } elseif (-not $NonInteractive) {
     Show-MemflowBanner
     Write-Host ""
     Write-Host "MEMFLOW - sistema open source de engenharia com IA para SDLC (Software Development Life Cycle) completo e automação de comandos em múltiplas plataformas."
@@ -319,5 +506,8 @@ switch ($Action) {
   }
   "uninstall" {
     Invoke-Uninstall -ResolvedScope $resolvedScope -ResolvedOs $resolvedOs
+  }
+  "check" {
+    Invoke-Check -ResolvedScope $resolvedScope -ResolvedOs $resolvedOs
   }
 }

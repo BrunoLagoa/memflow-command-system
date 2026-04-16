@@ -125,6 +125,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 
 ### Instalação não interativa
 
+#### Global
+
 ```bash
 ./scripts/install.sh install --non-interactive --scope global --target opencode
 ```
@@ -133,26 +135,128 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
 ```
 
+#### Local (projeto atual)
+
+```bash
+./scripts/install.sh install --non-interactive --scope local --project-dir . --target opencode
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target opencode
+```
+
+### Entrypoint recomendado (qualquer diretório)
+
+Para operações de manutenção sem depender do clone local do repositório, priorize `memflowctl`:
+
+#### Update (global)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- update --scope global --non-interactive
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 update -Scope global -NonInteractive"
+```
+
+#### Update (local)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- update --scope local --project-dir . --non-interactive
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive"
+```
+
+#### Check de versão (global)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- check --scope global --non-interactive
+```
+
+#### Check de versão (local)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- check --scope local --project-dir . --non-interactive
+```
+
 ### Atualizar para nova versão
+
+#### Recomendado (`memflowctl`)
+
+```bash
+memflowctl update --scope global --non-interactive
+```
+
+```bash
+memflowctl update --scope local --project-dir . --non-interactive
+```
+
+```powershell
+memflowctl.ps1 update -Scope global -NonInteractive
+```
+
+```powershell
+memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive
+```
+
+#### Alternativa (scripts locais)
 
 ```bash
 ./scripts/install.sh update --scope global
+```
+
+```bash
+./scripts/install.sh update --scope local --project-dir .
 ```
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope global
 ```
 
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope local -ProjectDir .
+```
+
 Por padrão, o update usa a release tagueada mais recente.
 
 ### Remover instalação
 
+#### Recomendado (`memflowctl`)
+
 ```bash
-# ./scripts/install.sh uninstall --scope global
+memflowctl uninstall --scope global --non-interactive
+```
+
+```bash
+memflowctl uninstall --scope local --project-dir . --non-interactive
 ```
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope global
+memflowctl.ps1 uninstall -Scope global -NonInteractive
+```
+
+```powershell
+memflowctl.ps1 uninstall -Scope local -ProjectDir . -NonInteractive
+```
+
+#### Alternativa (scripts locais)
+
+```bash
+./scripts/install.sh uninstall --scope global --non-interactive
+```
+
+```bash
+./scripts/install.sh uninstall --scope local --project-dir . --non-interactive
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope global -NonInteractive
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope local -ProjectDir . -NonInteractive
 ```
 
 ### Destinos de instalação

@@ -297,6 +297,7 @@ Se não houver:
 - `/review`
 - `/review-enforce-rules`
 - `/test-plan` (se aplicável)
+- Se `/review` não for executado: rodar check silencioso de versão do MEMFLOW ao final (exibir aviso somente quando houver atualização)
 
 ---
 

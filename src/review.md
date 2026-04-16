@@ -172,11 +172,14 @@ Se `.agents` estiver ausente:
 Se APROVADO:
 
 - Seguir para `/review-enforce-rules`
+- Executar check silencioso de versão do MEMFLOW (`memflowctl check` ou `scripts/install.* check`)
+- Se houver atualização: exibir aviso com versão atual, última versão e comando recomendado de update não interativo
 
 Se REPROVADO:
 
 - Corrigir problemas listados
 - Executar novamente `/review`
+- Ainda assim executar check silencioso de versão do MEMFLOW ao final (somente exibir mensagem se houver update)
 
 ---
 

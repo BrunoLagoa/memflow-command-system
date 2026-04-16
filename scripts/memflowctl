@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+MEMFLOW_REPO="${MEMFLOW_REPO:-BrunoLagoa/memflow-command-system}"
+MEMFLOW_REF="${MEMFLOW_REF:-main}"
+
+usage() {
+  cat <<'EOF'
+Uso:
+  memflowctl [install|update|uninstall|check] [opções]
+
+Exemplo:
+  memflowctl update --scope global --non-interactive
+EOF
+}
+
+if [[ $# -lt 1 ]]; then
+  usage
+  exit 1
+fi
+
+ACTION="$1"
+case "$ACTION" in
+  install|update|uninstall|check) ;;
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  *)
+    printf "[ERROR] Ação inválida: %s\n" "$ACTION" 1>&2
+    usage
+    exit 1
+    ;;
+esac
+
+if ! command -v curl >/dev/null 2>&1; then
+  printf "[ERROR] Pré-requisito ausente: curl\n" 1>&2
+  exit 1
+fi
+
+if ! command -v bash >/dev/null 2>&1; then
+  printf "[ERROR] Pré-requisito ausente: bash\n" 1>&2
+  exit 1
+fi
+
+tmp_script="$(mktemp)"
+cleanup() {
+  rm -f "$tmp_script"
+}
+trap cleanup EXIT
+
+script_url="https://raw.githubusercontent.com/${MEMFLOW_REPO}/${MEMFLOW_REF}/scripts/install.sh"
+curl -fsSL "$script_url" -o "$tmp_script"
+chmod +x "$tmp_script"
+bash "$tmp_script" "$@"

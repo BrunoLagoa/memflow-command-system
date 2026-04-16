@@ -107,16 +107,18 @@ TARGET="opencode"
 SELECTED_OS=""
 VERSION=""
 PROJECT_DIR="$(pwd)"
+PROJECT_DIR_EXPLICIT=0
 REPO="$MEMFLOW_REPO_DEFAULT"
 CHANNEL="release"
 BACKUP_ENABLED=1
+VERSION_CHECK_TTL_SECONDS=86400
 
 usage() {
   cat <<'EOF'
 MEMFLOW installer
 
 Uso:
-  install.sh [install|update|uninstall] [opções]
+  install.sh [install|update|uninstall|check] [opções]
 
 Opções:
   --non-interactive       Executa sem perguntas interativas
@@ -132,6 +134,7 @@ Exemplos:
   ./scripts/install.sh install
   ./scripts/install.sh update --scope global
   ./scripts/install.sh uninstall --scope local --project-dir .
+  ./scripts/install.sh check --scope global --non-interactive
 EOF
 }
 
@@ -165,6 +168,7 @@ parse_args() {
         ;;
       --project-dir)
         PROJECT_DIR="${2:-}"
+        PROJECT_DIR_EXPLICIT=1
         shift 2
         ;;
       --repo)
@@ -184,7 +188,7 @@ parse_args() {
 
 validate_inputs() {
   case "$ACTION" in
-    install|update|uninstall) ;;
+    install|update|uninstall|check) ;;
     *) die "Ação inválida: $ACTION" ;;
   esac
 
@@ -301,6 +305,131 @@ fetch_latest_release_tag() {
     die "Não foi possível descobrir a release mais recente em ${REPO}."
   fi
   printf "%s" "$tag"
+}
+
+fetch_latest_release_tag_safe() {
+  local repo_name="$1"
+  ensure_command curl
+  local api_url="https://api.github.com/repos/${repo_name}/releases/latest"
+  local tag=""
+  tag="$(curl -fsSL "$api_url" 2>/dev/null | sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1 || true)"
+  if [[ -z "$tag" ]]; then
+    return 1
+  fi
+  printf "%s" "$tag"
+}
+
+version_cache_file_for_os() {
+  local os_name="$1"
+  if [[ "$os_name" == "windows" && -n "${LOCALAPPDATA:-}" ]]; then
+    printf "%s/memflow/version-check.json" "${LOCALAPPDATA}"
+    return 0
+  fi
+  printf "%s/.cache/memflow/version-check.json" "${HOME}"
+}
+
+parse_json_value() {
+  local file="$1"
+  local key="$2"
+  sed -n "s/.*\"${key}\":[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$file" | head -n 1
+}
+
+write_version_cache() {
+  local cache_file="$1"
+  local repo_name="$2"
+  local latest_version="$3"
+  local now_epoch="$4"
+  local cache_dir
+  cache_dir="$(dirname "$cache_file")"
+  mkdir -p "$cache_dir"
+  cat > "$cache_file" <<EOF
+{
+  "repo": "${repo_name}",
+  "latestVersion": "${latest_version}",
+  "lastCheckedEpoch": "${now_epoch}"
+}
+EOF
+}
+
+is_cache_valid() {
+  local cache_file="$1"
+  local repo_name="$2"
+  if [[ ! -f "$cache_file" ]]; then
+    return 1
+  fi
+
+  local cached_repo cached_epoch now_epoch delta
+  cached_repo="$(parse_json_value "$cache_file" "repo")"
+  cached_epoch="$(parse_json_value "$cache_file" "lastCheckedEpoch")"
+  if [[ -z "$cached_repo" || "$cached_repo" != "$repo_name" ]]; then
+    return 1
+  fi
+  if [[ ! "$cached_epoch" =~ ^[0-9]+$ ]]; then
+    return 1
+  fi
+  now_epoch="$(date +%s)"
+  delta=$((now_epoch - cached_epoch))
+  (( delta >= 0 && delta <= VERSION_CHECK_TTL_SECONDS ))
+}
+
+resolve_latest_version_with_cache() {
+  local repo_name="$1"
+  local os_name="$2"
+  local cache_file cached_version fetched_version now_epoch
+  cache_file="$(version_cache_file_for_os "$os_name")"
+
+  if is_cache_valid "$cache_file" "$repo_name"; then
+    cached_version="$(parse_json_value "$cache_file" "latestVersion")"
+    if [[ -n "$cached_version" ]]; then
+      printf "%s" "$cached_version"
+      return 0
+    fi
+  fi
+
+  fetched_version="$(fetch_latest_release_tag_safe "$repo_name" || true)"
+  if [[ -z "$fetched_version" ]]; then
+    return 1
+  fi
+
+  now_epoch="$(date +%s)"
+  write_version_cache "$cache_file" "$repo_name" "$fetched_version" "$now_epoch"
+  printf "%s" "$fetched_version"
+}
+
+normalize_version() {
+  local value="$1"
+  value="${value#v}"
+  value="${value#V}"
+  printf "%s" "$value"
+}
+
+is_version_newer() {
+  local latest="$1"
+  local installed="$2"
+  local latest_norm installed_norm highest
+  latest_norm="$(normalize_version "$latest")"
+  installed_norm="$(normalize_version "$installed")"
+  if [[ -z "$latest_norm" || -z "$installed_norm" || "$latest_norm" == "$installed_norm" ]]; then
+    return 1
+  fi
+  highest="$(printf "%s\n%s\n" "$installed_norm" "$latest_norm" | sort -V | tail -n 1)"
+  [[ "$highest" == "$latest_norm" ]]
+}
+
+print_version_update_notice() {
+  local installed_version="$1"
+  local latest_version="$2"
+  local scope_value="$3"
+  local os_name="$4"
+  local update_command="memflowctl update --scope ${scope_value} --non-interactive"
+  if [[ "$os_name" == "windows" ]]; then
+    update_command="memflowctl.ps1 update -Scope ${scope_value} -NonInteractive"
+  fi
+
+  log_info "Nova versão do MEMFLOW disponível."
+  printf "  Versão atual: %s\n" "$installed_version"
+  printf "  Última versão: %s\n" "$latest_version"
+  printf "  Próximo passo: %s\n" "$update_command"
 }
 
 resolve_source_dir() {
@@ -448,6 +577,9 @@ run_update() {
       VERSION="$(fetch_latest_release_tag)"
     fi
   else
+    if [[ "$SCOPE" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
+      die "Para atualizar instalação local fora do projeto atual, informe --project-dir <dir>."
+    fi
     [[ -n "$SCOPE" ]] || SCOPE="global"
     [[ -n "$SELECTED_OS" ]] || SELECTED_OS="$(detect_os)"
     [[ -n "$VERSION" ]] || VERSION="$(fetch_latest_release_tag)"
@@ -485,6 +617,9 @@ run_uninstall() {
   fi
 
   if [[ ! -d "$install_dir" && ! -f "$manifest_file" ]]; then
+    if [[ "${SCOPE:-}" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
+      die "Para remover instalação local fora do projeto atual, informe --project-dir <dir>."
+    fi
     log_warn "Nenhuma instalação MEMFLOW encontrada em ${commands_root}."
     exit 0
   fi
@@ -500,6 +635,47 @@ run_uninstall() {
   log_info "MEMFLOW removido com sucesso."
 }
 
+run_check() {
+  local user_scope="${SCOPE:-}"
+  local os_name="${SELECTED_OS:-$(detect_os)}"
+  local manifest_file=""
+  if [[ -n "$user_scope" ]]; then
+    local commands_root
+    commands_root="$(commands_root_for_scope "$user_scope" "$os_name" "$PROJECT_DIR")"
+    manifest_file="${commands_root}/.memflow-install.json"
+  else
+    manifest_file="$(find_existing_manifest "$os_name" "$PROJECT_DIR" || true)"
+  fi
+
+  if [[ -z "$manifest_file" || ! -f "$manifest_file" ]]; then
+    return 0
+  fi
+
+  local installed_version installed_scope installed_os installed_repo
+  installed_version="$(parse_manifest_value "$manifest_file" "version")"
+  installed_scope="$(parse_manifest_value "$manifest_file" "scope")"
+  installed_os="$(parse_manifest_value "$manifest_file" "os")"
+  installed_repo="$(parse_manifest_value "$manifest_file" "repo")"
+
+  if [[ -z "$installed_version" ]]; then
+    return 0
+  fi
+
+  local effective_scope effective_os repo_name latest_version
+  effective_scope="${installed_scope:-${SCOPE:-global}}"
+  effective_os="${installed_os:-$os_name}"
+  repo_name="${installed_repo:-$REPO}"
+
+  latest_version="$(resolve_latest_version_with_cache "$repo_name" "$effective_os" || true)"
+  if [[ -z "$latest_version" ]]; then
+    return 0
+  fi
+
+  if is_version_newer "$latest_version" "$installed_version"; then
+    print_version_update_notice "$installed_version" "$latest_version" "$effective_scope" "$effective_os"
+  fi
+}
+
 main() {
   parse_args "$@"
   validate_inputs
@@ -508,6 +684,7 @@ main() {
     install) run_install ;;
     update) run_update ;;
     uninstall) run_uninstall ;;
+    check) run_check ;;
   esac
 }
 
