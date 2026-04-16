@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.6] - 2026-04-16
+
+### Alterado
+- `README.md`: seção **Instalação não interativa** em macOS/Linux atualizada para one-liners remotos com `curl -fsSL ... | bash -s -- install`, tanto no escopo `global` quanto `local`, mantendo `--target opencode`.
+
 ## [1.1.5] - 2026-04-16
 
 ### Alterado
@@ -84,6 +89,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.6]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.2...v1.1.3

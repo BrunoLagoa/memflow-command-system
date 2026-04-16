@@ -141,7 +141,7 @@ Os exemplos abaixo seguem a convenção da subseção [Escopo global vs local](#
 ##### macOS/Linux
 
 ```bash
-./scripts/install.sh install --non-interactive --scope global --target opencode
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target opencode
 ```
 
 ##### PowerShell
@@ -155,7 +155,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInter
 ##### macOS/Linux
 
 ```bash
-./scripts/install.sh install --non-interactive --scope local --project-dir . --target opencode
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target opencode
 ```
 
 ##### PowerShell
