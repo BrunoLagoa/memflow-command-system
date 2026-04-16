@@ -348,20 +348,20 @@ Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Esco
 
 Se não existir instalação no escopo informado, o `uninstall` retorna erro explícito com código de saída `2` para evitar falso positivo de sucesso.
 
-#### Recomendado (`memflowctl`)
+#### Recomendado — one-liner remoto (mesmo padrão da instalação)
 
 ##### Global
 
 ###### macOS/Linux
 
 ```bash
-memflowctl uninstall --scope global --non-interactive
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- uninstall --scope global --non-interactive
 ```
 
 ###### PowerShell
 
 ```powershell
-memflowctl.ps1 uninstall -Scope global -NonInteractive
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 uninstall -Scope global -NonInteractive"
 ```
 
 ##### Local (projeto atual)
@@ -369,43 +369,13 @@ memflowctl.ps1 uninstall -Scope global -NonInteractive
 ###### macOS/Linux
 
 ```bash
-memflowctl uninstall --scope local --project-dir . --non-interactive
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- uninstall --scope local --project-dir . --non-interactive
 ```
 
 ###### PowerShell
 
 ```powershell
-memflowctl.ps1 uninstall -Scope local -ProjectDir . -NonInteractive
-```
-
-#### Alternativa (scripts locais)
-
-##### Global
-
-###### macOS/Linux
-
-```bash
-./scripts/install.sh uninstall --scope global --non-interactive
-```
-
-###### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope global -NonInteractive
-```
-
-##### Local (projeto atual)
-
-###### macOS/Linux
-
-```bash
-./scripts/install.sh uninstall --scope local --project-dir . --non-interactive
-```
-
-###### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope local -ProjectDir . -NonInteractive
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 uninstall -Scope local -ProjectDir . -NonInteractive"
 ```
 
 ### Destinos de instalação

@@ -4,6 +4,14 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.5] - 2026-04-16
+
+### Alterado
+- `README.md`: seção **Remover instalação** refatorada para adotar o mesmo padrão operacional de instalação/update, com exemplos remotos (`curl -fsSL ...` e `powershell -ExecutionPolicy Bypass -Command ...`) para escopos global e local em macOS/Linux e PowerShell.
+
+### Removido
+- Exemplos locais legados de `uninstall` via `memflowctl` e execução direta de scripts no repositório, em favor de one-liners remotos padronizados.
+
 ## [1.1.4] - 2026-04-16
 
 ### Alterado
@@ -76,6 +84,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.5]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.1...v1.1.2
