@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Memflow Installer Manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "project",
+    "version",
+    "scope",
+    "target",
+    "channel",
+    "repo",
+    "installDir",
+    "commandsRoot",
+    "installedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "project": {
+      "type": "string",
+      "const": "memflow-command-system"
+    },
+    "version": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["global", "local"]
+    },
+    "target": {
+      "type": "string",
+      "enum": ["opencode"]
+    },
+    "channel": {
+      "type": "string",
+      "enum": ["release"]
+    },
+    "repo": {
+      "type": "string"
+    },
+    "os": {
+      "type": "string",
+      "enum": ["linux", "macos", "windows"]
+    },
+    "installDir": {
+      "type": "string"
+    },
+    "commandsRoot": {
+      "type": "string"
+    },
+    "installedAt": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

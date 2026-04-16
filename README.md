@@ -89,16 +89,76 @@ Arquivos em `src/_shared` centralizam normas transversais:
 ### Pré-requisitos
 
 - Ambiente com suporte a slash commands no padrão OpenCode
-- Este repositório disponível localmente
+- `bash` e `curl` para macOS/Linux
+- `PowerShell 7+` para Windows nativo
 
 ### Instalação
 
-Copie os comandos para o diretório operacional:
+#### Opção A — one-liner (macOS/Linux)
 
 ```bash
-mkdir -p ~/.config/opencode/commands
-cp -R ./src/* ~/.config/opencode/commands/
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install
 ```
+
+O wizard `MEMFLOW` guia as escolhas de:
+
+1. Sistema operacional
+2. Plataforma de instalação (`OpenCode`)
+3. Escopo (`local` ou `global`)
+
+#### Opção B — execução local do script (macOS/Linux)
+
+```bash
+git clone https://github.com/BrunoLagoa/memflow-command-system.git
+cd memflow-command-system
+chmod +x scripts/install.sh
+./scripts/install.sh install
+```
+
+#### Opção C — Windows nativo (PowerShell)
+
+```powershell
+git clone https://github.com/BrunoLagoa/memflow-command-system.git
+cd memflow-command-system
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
+```
+
+### Instalação não interativa
+
+```bash
+./scripts/install.sh install --non-interactive --scope global --target opencode
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
+```
+
+### Atualizar para nova versão
+
+```bash
+./scripts/install.sh update --scope global
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope global
+```
+
+Por padrão, o update usa a release tagueada mais recente.
+
+### Remover instalação
+
+```bash
+./scripts/install.sh uninstall --scope global
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope global
+```
+
+### Destinos de instalação
+
+- `global`: `~/.config/opencode/commands/memflow`
+- `local`: `<projeto>/.opencode/commands/memflow`
 
 ### Primeiro uso
 
@@ -154,6 +214,7 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 
 ## Documentação (links para docs)
 
+- Logo do projeto: [`docs/assets/logo.webp`](docs/assets/logo.webp)
 - Guia conceitual de SDLC: [`docs/SDLC.md`](docs/SDLC.md)
 - Política de modelos (operacional): [`src/model-policy.md`](src/model-policy.md)
 - Comando de contexto: [`src/context.md`](src/context.md)
@@ -185,7 +246,6 @@ Princípios operacionais:
 ## Roadmap
 
 - Ampliar `docs/` com guias complementares além do SDLC e dos assets de marca
-- Publicar script de instalação/sincronização automatizada
 - Adicionar suíte de validação automatizada para comandos
 - Disponibilizar templates por stack para onboarding mais rápido
 - Incluir métricas de efetividade (lead time, retrabalho, custo por tarefa)
