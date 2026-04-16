@@ -184,7 +184,7 @@ Princípios operacionais:
 
 ## Roadmap
 
-- Consolidar documentação em `docs/`
+- Ampliar `docs/` com guias complementares além do SDLC e dos assets de marca
 - Publicar script de instalação/sincronização automatizada
 - Adicionar suíte de validação automatizada para comandos
 - Disponibilizar templates por stack para onboarding mais rápido
