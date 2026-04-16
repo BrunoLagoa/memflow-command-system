@@ -319,6 +319,7 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 ## Documentação (links para docs)
 
 - Logo do projeto: [`docs/assets/logo.webp`](docs/assets/logo.webp)
+- Histórico de versões: [`CHANGELOG.md`](CHANGELOG.md)
 - Guia conceitual de SDLC: [`docs/SDLC.md`](docs/SDLC.md)
 - Política de modelos (operacional): [`src/model-policy.md`](src/model-policy.md)
 - Comando de contexto: [`src/context.md`](src/context.md)
