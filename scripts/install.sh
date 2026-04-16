@@ -344,6 +344,22 @@ find_existing_manifest() {
   return 1
 }
 
+collect_existing_manifests() {
+  local os_name="$1"
+  local project_dir="$2"
+  local global_root local_root
+  global_root="$(commands_root_for_scope "global" "$os_name" "$project_dir")"
+  local_root="$(commands_root_for_scope "local" "$os_name" "$project_dir")"
+
+  if [[ -f "${global_root}/.memflow-install.json" ]]; then
+    printf "%s\n" "${global_root}/.memflow-install.json"
+  fi
+
+  if [[ -f "${local_root}/.memflow-install.json" ]]; then
+    printf "%s\n" "${local_root}/.memflow-install.json"
+  fi
+}
+
 fetch_latest_release_tag() {
   ensure_command curl
   local api_url="https://api.github.com/repos/${REPO}/releases/latest"
@@ -603,32 +619,64 @@ run_update() {
   local commands_root manifest_file existing_manifest=""
   commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
   manifest_file="${commands_root}/.memflow-install.json"
+  local -a manifests_to_update=()
 
   local installed_version=""
-
-  if [[ -z "$user_scope" ]]; then
-    existing_manifest="$(find_existing_manifest "$SELECTED_OS" "$PROJECT_DIR" || true)"
-    if [[ -n "$existing_manifest" ]]; then
-      manifest_file="$existing_manifest"
-    fi
+  if [[ -z "$VERSION" ]]; then
+    VERSION="$(fetch_latest_release_tag)"
   fi
 
-  if [[ -f "$manifest_file" ]]; then
-    installed_version="$(parse_manifest_value "$manifest_file" "version")"
-    # Sem --scope no CLI, default_missing_values já definiu SCOPE=global; sobrescrever com o manifest.
-    if [[ -z "$user_scope" ]]; then
+  if [[ -z "$user_scope" ]]; then
+    while IFS= read -r existing_manifest; do
+      [[ -n "$existing_manifest" ]] && manifests_to_update+=("$existing_manifest")
+    done < <(collect_existing_manifests "$SELECTED_OS" "$PROJECT_DIR")
+
+    if [[ "${#manifests_to_update[@]}" -eq 0 ]]; then
+      if prompt_fresh_install_from_update "$user_scope"; then
+        return 0
+      fi
+      die_with_code "$EXIT_CODE_NOT_FOUND" "$(missing_installation_message "update" "$SCOPE" "$user_scope")"
+    fi
+
+    local updated_count=0
+    for manifest_file in "${manifests_to_update[@]}"; do
+      installed_version="$(parse_manifest_value "$manifest_file" "version")"
       manifest_scope="$(parse_manifest_value "$manifest_file" "scope")"
       if [[ -n "$manifest_scope" ]]; then
         SCOPE="$manifest_scope"
       fi
-    else
-      SCOPE="${SCOPE:-$(parse_manifest_value "$manifest_file" "scope")}"
+      TARGET="${TARGET:-$(parse_manifest_value "$manifest_file" "target")}"
+      SELECTED_OS="${SELECTED_OS:-$(parse_manifest_value "$manifest_file" "os")}"
+
+      local updated_root install_dir manifest_updated
+      updated_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+      install_dir="${updated_root}/memflow"
+      manifest_updated="${updated_root}/.memflow-install.json"
+
+      if [[ -n "$installed_version" && "$installed_version" == "$VERSION" ]]; then
+        log_info "[$SCOPE] MEMFLOW já está atualizado (${installed_version})"
+        continue
+      fi
+
+      if [[ -n "$installed_version" ]]; then
+        log_info "[$SCOPE] Nova versão do MEMFLOW encontrada. Atual: ${installed_version} | Disponível: ${VERSION}"
+      else
+        log_info "[$SCOPE] Atualização do MEMFLOW iniciada para versão ${VERSION}"
+      fi
+      perform_install "$updated_root" "$install_dir" "$manifest_updated" "$VERSION"
+      updated_count=$((updated_count + 1))
+    done
+    if [[ "$updated_count" -gt 0 ]]; then
+      log_info "Atualização concluída em ${updated_count} escopo(s)."
     fi
+    return 0
+  fi
+
+  if [[ -f "$manifest_file" ]]; then
+    installed_version="$(parse_manifest_value "$manifest_file" "version")"
+    SCOPE="${SCOPE:-$(parse_manifest_value "$manifest_file" "scope")}"
     TARGET="${TARGET:-$(parse_manifest_value "$manifest_file" "target")}"
     SELECTED_OS="${SELECTED_OS:-$(parse_manifest_value "$manifest_file" "os")}"
-    if [[ -z "$VERSION" ]]; then
-      VERSION="$(fetch_latest_release_tag)"
-    fi
   else
     if [[ "$SCOPE" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
       die "Para atualizar instalação local fora do projeto atual, informe --project-dir <dir>."
@@ -664,73 +712,117 @@ run_uninstall() {
   commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
   install_dir="${commands_root}/memflow"
   manifest_file="${commands_root}/.memflow-install.json"
+  local -a manifests_to_remove=()
 
   if [[ -z "$user_scope" ]]; then
-    existing_manifest="$(find_existing_manifest "$SELECTED_OS" "$PROJECT_DIR" || true)"
-    if [[ -n "$existing_manifest" ]]; then
-      manifest_file="$existing_manifest"
-      commands_root="$(dirname "$manifest_file")"
-      install_dir="${commands_root}/memflow"
-    fi
+    while IFS= read -r existing_manifest; do
+      [[ -n "$existing_manifest" ]] && manifests_to_remove+=("$existing_manifest")
+    done < <(collect_existing_manifests "$SELECTED_OS" "$PROJECT_DIR")
+  else
+    manifests_to_remove+=("$manifest_file")
   fi
 
-  if [[ ! -d "$install_dir" && ! -f "$manifest_file" ]]; then
+  if [[ "${#manifests_to_remove[@]}" -eq 0 ]]; then
     if [[ "${SCOPE:-}" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
       die "Para remover instalação local fora do projeto atual, informe --project-dir <dir>."
     fi
     die_with_code "$EXIT_CODE_NOT_FOUND" "$(missing_installation_message "uninstall" "$SCOPE" "$user_scope")"
   fi
 
-  printf "Destino de remoção: %s\n" "$install_dir"
+  local -a removable_manifests=()
+  for manifest_file in "${manifests_to_remove[@]}"; do
+    commands_root="$(dirname "$manifest_file")"
+    install_dir="${commands_root}/memflow"
+    if [[ -d "$install_dir" || -f "$manifest_file" ]]; then
+      removable_manifests+=("$manifest_file")
+    fi
+  done
+
+  if [[ "${#removable_manifests[@]}" -eq 0 ]]; then
+    if [[ "${SCOPE:-}" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
+      die "Para remover instalação local fora do projeto atual, informe --project-dir <dir>."
+    fi
+    die_with_code "$EXIT_CODE_NOT_FOUND" "$(missing_installation_message "uninstall" "$SCOPE" "$user_scope")"
+  fi
+
+  if [[ "${#removable_manifests[@]}" -gt 1 ]]; then
+    log_info "Removendo ${#removable_manifests[@]} instalações (global/local)."
+  fi
+
+  for manifest_file in "${removable_manifests[@]}"; do
+    commands_root="$(dirname "$manifest_file")"
+    install_dir="${commands_root}/memflow"
+    printf "Destino de remoção: %s\n" "$install_dir"
+  done
+
   if [[ "$NON_INTERACTIVE" -eq 0 ]] && ! confirm_tty "Confirmar remoção completa do MEMFLOW?" "n"; then
     log_warn "Remoção cancelada pelo usuário."
     exit 0
   fi
 
-  rm -rf "$install_dir"
-  rm -f "$manifest_file"
-  log_info "MEMFLOW removido com sucesso."
+  local removed_count=0
+  for manifest_file in "${removable_manifests[@]}"; do
+    commands_root="$(dirname "$manifest_file")"
+    install_dir="${commands_root}/memflow"
+    rm -rf "$install_dir"
+    rm -f "$manifest_file"
+    removed_count=$((removed_count + 1))
+  done
+
+  if [[ "$removed_count" -gt 1 ]]; then
+    log_info "MEMFLOW removido com sucesso em ${removed_count} escopo(s)."
+  else
+    log_info "MEMFLOW removido com sucesso."
+  fi
 }
 
 run_check() {
   local user_scope="${SCOPE:-}"
   local os_name="${SELECTED_OS:-$(detect_os)}"
   local manifest_file=""
+  local -a manifests_to_check=()
   if [[ -n "$user_scope" ]]; then
     local commands_root
     commands_root="$(commands_root_for_scope "$user_scope" "$os_name" "$PROJECT_DIR")"
     manifest_file="${commands_root}/.memflow-install.json"
+    if [[ -f "$manifest_file" ]]; then
+      manifests_to_check+=("$manifest_file")
+    fi
   else
-    manifest_file="$(find_existing_manifest "$os_name" "$PROJECT_DIR" || true)"
+    while IFS= read -r manifest_file; do
+      [[ -n "$manifest_file" ]] && manifests_to_check+=("$manifest_file")
+    done < <(collect_existing_manifests "$os_name" "$PROJECT_DIR")
   fi
 
-  if [[ -z "$manifest_file" || ! -f "$manifest_file" ]]; then
+  if [[ "${#manifests_to_check[@]}" -eq 0 ]]; then
     return 0
   fi
 
   local installed_version installed_scope installed_os installed_repo
-  installed_version="$(parse_manifest_value "$manifest_file" "version")"
-  installed_scope="$(parse_manifest_value "$manifest_file" "scope")"
-  installed_os="$(parse_manifest_value "$manifest_file" "os")"
-  installed_repo="$(parse_manifest_value "$manifest_file" "repo")"
-
-  if [[ -z "$installed_version" ]]; then
-    return 0
-  fi
-
   local effective_scope effective_os repo_name latest_version
-  effective_scope="${installed_scope:-${SCOPE:-global}}"
-  effective_os="${installed_os:-$os_name}"
-  repo_name="${installed_repo:-$REPO}"
+  for manifest_file in "${manifests_to_check[@]}"; do
+    installed_version="$(parse_manifest_value "$manifest_file" "version")"
+    installed_scope="$(parse_manifest_value "$manifest_file" "scope")"
+    installed_os="$(parse_manifest_value "$manifest_file" "os")"
+    installed_repo="$(parse_manifest_value "$manifest_file" "repo")"
 
-  latest_version="$(resolve_latest_version_with_cache "$repo_name" "$effective_os" || true)"
-  if [[ -z "$latest_version" ]]; then
-    return 0
-  fi
+    if [[ -z "$installed_version" ]]; then
+      continue
+    fi
 
-  if is_version_newer "$latest_version" "$installed_version"; then
-    print_version_update_notice "$installed_version" "$latest_version" "$effective_scope" "$effective_os"
-  fi
+    effective_scope="${installed_scope:-${SCOPE:-global}}"
+    effective_os="${installed_os:-$os_name}"
+    repo_name="${installed_repo:-$REPO}"
+
+    latest_version="$(resolve_latest_version_with_cache "$repo_name" "$effective_os" || true)"
+    if [[ -z "$latest_version" ]]; then
+      continue
+    fi
+
+    if is_version_newer "$latest_version" "$installed_version"; then
+      print_version_update_notice "$installed_version" "$latest_version" "$effective_scope" "$effective_os"
+    fi
+  done
 }
 
 main() {

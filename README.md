@@ -164,66 +164,6 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target opencode
 ```
 
-### Entrypoint recomendado (qualquer diretório)
-
-Para operações de manutenção sem depender do clone local do repositório, priorize `memflowctl`. Os comandos abaixo usam a mesma convenção de **`--scope` / `--project-dir`** da subseção [Escopo global vs local](#escopo-global-vs-local).
-
-#### Update (global)
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- update --scope global --non-interactive
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 update -Scope global -NonInteractive"
-```
-
-#### Update (local)
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- update --scope local --project-dir . --non-interactive
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive"
-```
-
-#### Check de versão (global)
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- check --scope global --non-interactive
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 check -Scope global -NonInteractive"
-```
-
-#### Check de versão (local)
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- check --scope local --project-dir . --non-interactive
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 check -Scope local -ProjectDir . -NonInteractive"
-```
-
 ### Atualizar para nova versão
 
 Por padrão, o update usa a release tagueada mais recente.
@@ -234,112 +174,44 @@ Se não existir instalação prévia no escopo solicitado:
 
 Se você **já instalou** o MEMFLOW antes, o instalador pode **descobrir automaticamente** se a instalação foi **global** ou **local** lendo o manifest (`.memflow-install.json`). Nesse caso **não é obrigatório** passar `--scope` / `-Scope` — use quando quiser forçar um escopo explícito.
 
-#### Recomendado — one-liner remoto (mesmo padrão da instalação)
+Sem `--scope`, o `update` só atua nos escopos onde houver instalação detectada por manifest: se existir apenas em um escopo, atualiza apenas esse; se existir em **global e local**, aplica nos dois na ordem `global` -> `local`.
+
+#### Comando geral
 
 Use o `install.sh` / `install.ps1` direto do repositório (não depende de `memflowctl` estar no PATH).
 
-##### Descoberta automática (sem global/local)
-
 Execute no **mesmo diretório** em que você costuma trabalhar (para instalação local, normalmente a raiz do projeto onde existe `.opencode/commands`).
 
-###### macOS/Linux
+##### macOS/Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- update --non-interactive
 ```
 
-###### PowerShell
+##### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -NonInteractive"
 ```
 
-##### Global
+### Check de versão
 
-###### macOS/Linux
+O `check` verifica se existe versão mais recente sem alterar a instalação.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- update --scope global --non-interactive
-```
+Sem `--scope`, o `check` avalia apenas os escopos com instalação detectada por manifest: se existir só um escopo, verifica só ele; se existir em **global e local**, verifica os dois na ordem `global` -> `local`.
 
-###### PowerShell
+#### Comando geral
 
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -Scope global -NonInteractive"
-```
-
-##### Local (projeto atual)
-
-###### macOS/Linux
+##### macOS/Linux
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- update --scope local --project-dir . --non-interactive
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive
 ```
 
-###### PowerShell
+##### PowerShell
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -Scope local -ProjectDir . -NonInteractive"
-```
-
-#### Alternativa — `memflowctl` (se já estiver no PATH)
-
-##### Global
-
-###### macOS/Linux
-
-```bash
-memflowctl update --scope global --non-interactive
-```
-
-###### PowerShell
-
-```powershell
-memflowctl.ps1 update -Scope global -NonInteractive
-```
-
-##### Local (projeto atual)
-
-###### macOS/Linux
-
-```bash
-memflowctl update --scope local --project-dir . --non-interactive
-```
-
-###### PowerShell
-
-```powershell
-memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive
-```
-
-#### Alternativa — scripts locais (repositório clonado)
-
-##### Global
-
-###### macOS/Linux
-
-```bash
-./scripts/install.sh update --scope global
-```
-
-###### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope global
-```
-
-##### Local (projeto atual)
-
-###### macOS/Linux
-
-```bash
-./scripts/install.sh update --scope local --project-dir .
-```
-
-###### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope local -ProjectDir .
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"
 ```
 
 ### Remover instalação
@@ -348,34 +220,20 @@ Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Esco
 
 Se não existir instalação no escopo informado, o `uninstall` retorna erro explícito com código de saída `2` para evitar falso positivo de sucesso.
 
-#### Recomendado — one-liner remoto (mesmo padrão da instalação)
+Sem `--scope`, o `uninstall` também usa descoberta automática por manifest e remove apenas os escopos que realmente tiverem instalação: se existir só em um escopo, remove só esse; se encontrar em **global e local**, remove os dois na ordem `global` -> `local`.
 
-##### Global
+#### Comando geral
 
-###### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- uninstall --scope global --non-interactive
-```
-
-###### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 uninstall -Scope global -NonInteractive"
-```
-
-##### Local (projeto atual)
-
-###### macOS/Linux
+##### macOS/Linux
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- uninstall --scope local --project-dir . --non-interactive
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- uninstall --non-interactive
 ```
 
-###### PowerShell
+##### PowerShell
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 uninstall -Scope local -ProjectDir . -NonInteractive"
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 uninstall -NonInteractive"
 ```
 
 ### Destinos de instalação

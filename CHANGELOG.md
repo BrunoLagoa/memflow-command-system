@@ -4,6 +4,18 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.8] - 2026-04-16
+
+### Adicionado
+- `README.md`: seção **Check de versão** documentada com comando geral (macOS/Linux e PowerShell) logo após **Atualizar para nova versão**.
+- `scripts/tests/test-install-regression.sh`: cobertura para `check` sem escopo nos cenários com instalações em `global`+`local` e `global-only`.
+
+### Alterado
+- `scripts/install.sh` e `scripts/install.ps1`: `update` sem `--scope` / `-Scope` agora processa automaticamente os dois escopos (`global` e `local`) quando ambos tiverem instalação detectada por manifest.
+- `scripts/install.sh` e `scripts/install.ps1`: `uninstall` sem `--scope` / `-Scope` agora remove automaticamente os dois escopos (`global` e `local`) quando ambos estiverem instalados.
+- `scripts/install.sh` e `scripts/install.ps1`: `check` sem `--scope` / `-Scope` agora avalia automaticamente os dois escopos (`global` e `local`) quando ambos tiverem instalação detectada por manifest.
+- `README.md`: documentação de descoberta automática em `update`/`check`/`uninstall` atualizada para refletir execução em múltiplos escopos com comando geral único.
+
 ## [1.1.7] - 2026-04-16
 
 ### Corrigido
@@ -94,6 +106,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.8]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.4...v1.1.5

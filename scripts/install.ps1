@@ -224,6 +224,21 @@ function Find-ExistingManifest {
   return $null
 }
 
+function Find-ExistingManifests {
+  param(
+    [string]$ResolvedOs,
+    [string]$ResolvedProjectDir
+  )
+  $manifests = @()
+  $globalRoot = Resolve-CommandsRoot -ResolvedScope "global" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+  $localRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+  $globalManifest = Join-Path $globalRoot ".memflow-install.json"
+  $localManifest = Join-Path $localRoot ".memflow-install.json"
+  if (Test-Path $globalManifest) { $manifests += $globalManifest }
+  if (Test-Path $localManifest) { $manifests += $localManifest }
+  return $manifests
+}
+
 function Show-VersionUpdateNotice {
   param(
     [string]$InstalledVersion,
@@ -347,20 +362,55 @@ function Invoke-Update {
     [string]$ResolvedOs
   )
 
-  $manifestPath = $null
-  if ([string]::IsNullOrEmpty($ResolvedScope)) {
-    $manifestPath = Find-ExistingManifest -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
-  } else {
-    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
-    $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
-  }
-
   $nextVersion = if ($Version) { $Version } else { Get-LatestReleaseTag -RepoName $Repo }
-
-  if (-not $manifestPath -or -not (Test-Path $manifestPath)) {
-    if ([string]::IsNullOrEmpty($ResolvedScope)) {
+  $manifestPath = $null
+  $manifestPaths = @()
+  if ([string]::IsNullOrEmpty($ResolvedScope)) {
+    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir)
+    if ($manifestPaths.Count -eq 0) {
       Stop-NotFound (Get-MissingInstallationMessage -ActionName "update" -ResolvedScope $ResolvedScope -HasExplicitScope $false)
     }
+
+    $updatedCount = 0
+    foreach ($currentManifestPath in $manifestPaths) {
+      $manifest = $null
+      $installedVersion = $null
+      try {
+        $manifest = Get-Content $currentManifestPath -Raw | ConvertFrom-Json
+        $installedVersion = $manifest.version
+      } catch {
+        # Se o manifest estiver corrompido/inválido, segue o update normalmente.
+      }
+
+      $effectiveScope = if ($manifest -and $manifest.scope) { [string]$manifest.scope } else { "global" }
+      $effectiveOs = if ($manifest -and $manifest.os) { [string]$manifest.os } else { $ResolvedOs }
+      $effectiveTarget = if ($manifest -and $manifest.target) { [string]$manifest.target } else { $ResolvedTarget }
+
+      if ($installedVersion -and ($installedVersion -eq $nextVersion)) {
+        Write-Info "[$effectiveScope] MEMFLOW já está atualizado ($installedVersion)"
+        continue
+      }
+
+      if ($installedVersion) {
+        Write-Info "[$effectiveScope] Nova versão do MEMFLOW encontrada. Atual: $installedVersion | Disponível: $nextVersion"
+      } else {
+        Write-Info "[$effectiveScope] Atualização do MEMFLOW iniciada para versão $nextVersion"
+      }
+
+      Invoke-Install -ResolvedScope $effectiveScope -ResolvedTarget $effectiveTarget -ResolvedOs $effectiveOs -ResolvedVersion $nextVersion
+      $updatedCount += 1
+    }
+
+    if ($updatedCount -gt 0) {
+      Write-Info "Atualização concluída em $updatedCount escopo(s)."
+    }
+    return
+  }
+
+  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+  $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
+
+  if (-not $manifestPath -or -not (Test-Path $manifestPath)) {
     if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
       Stop-WithError "Para atualizar instalação local fora do projeto atual, informe -ProjectDir <dir>."
     }
@@ -418,30 +468,46 @@ function Invoke-Uninstall {
     [string]$ResolvedOs
   )
 
-  $manifestPath = $null
-  $commandsRoot = $null
+  $manifestPaths = @()
   if ([string]::IsNullOrEmpty($ResolvedScope)) {
-    $manifestPath = Find-ExistingManifest -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
-    if ($null -ne $manifestPath -and (Test-Path $manifestPath)) {
-      $commandsRoot = Split-Path -Parent $manifestPath
-    }
+    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir)
   } else {
     $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
-    $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
+    $manifestPaths = @((Join-Path $commandsRoot ".memflow-install.json"))
   }
 
-  if ($null -eq $commandsRoot) {
-    Stop-NotFound "Não é possível executar uninstall: nenhuma instalação MEMFLOW encontrada."
+  if ($manifestPaths.Count -eq 0) {
+    if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
+      Stop-WithError "Para remover instalação local fora do projeto atual, informe -ProjectDir <dir>."
+    }
+    Stop-NotFound (Get-MissingInstallationMessage -ActionName "uninstall" -ResolvedScope $ResolvedScope -HasExplicitScope $false)
   }
 
-  $installDir = Join-Path $commandsRoot "memflow"
+  $targetsToRemove = @()
+  foreach ($currentManifestPath in $manifestPaths) {
+    $currentCommandsRoot = Split-Path -Parent $currentManifestPath
+    $currentInstallDir = Join-Path $currentCommandsRoot "memflow"
+    if ((Test-Path $currentInstallDir) -or (Test-Path $currentManifestPath)) {
+      $targetsToRemove += @{
+        ManifestPath = $currentManifestPath
+        InstallDir = $currentInstallDir
+      }
+    }
+  }
 
-  if (-not (Test-Path $installDir) -and -not (Test-Path $manifestPath)) {
+  if ($targetsToRemove.Count -eq 0) {
     if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
       Stop-WithError "Para remover instalação local fora do projeto atual, informe -ProjectDir <dir>."
     }
     $hasExplicitScope = -not [string]::IsNullOrEmpty($ResolvedScope)
     Stop-NotFound (Get-MissingInstallationMessage -ActionName "uninstall" -ResolvedScope $ResolvedScope -HasExplicitScope $hasExplicitScope)
+  }
+
+  if ($targetsToRemove.Count -gt 1) {
+    Write-Info "Removendo $($targetsToRemove.Count) instalações (global/local)."
+  }
+  foreach ($target in $targetsToRemove) {
+    Write-Host "Destino de remoção: $($target.InstallDir)"
   }
 
   if (-not $NonInteractive) {
@@ -452,14 +518,20 @@ function Invoke-Uninstall {
     }
   }
 
-  if (Test-Path $installDir) {
-    Remove-Item -Path $installDir -Recurse -Force
-  }
-  if (Test-Path $manifestPath) {
-    Remove-Item -Path $manifestPath -Force
+  foreach ($target in $targetsToRemove) {
+    if (Test-Path $target.InstallDir) {
+      Remove-Item -Path $target.InstallDir -Recurse -Force
+    }
+    if (Test-Path $target.ManifestPath) {
+      Remove-Item -Path $target.ManifestPath -Force
+    }
   }
 
-  Write-Info "MEMFLOW removido com sucesso."
+  if ($targetsToRemove.Count -gt 1) {
+    Write-Info "MEMFLOW removido com sucesso em $($targetsToRemove.Count) escopo(s)."
+  } else {
+    Write-Info "MEMFLOW removido com sucesso."
+  }
 }
 
 function Invoke-Check {
@@ -467,38 +539,43 @@ function Invoke-Check {
     [string]$ResolvedScope,
     [string]$ResolvedOs
   )
-  $manifestPath = $null
+  $manifestPaths = @()
   if ($Scope) {
     $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
-    $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
+    $candidateManifestPath = Join-Path $commandsRoot ".memflow-install.json"
+    if (Test-Path $candidateManifestPath) {
+      $manifestPaths += $candidateManifestPath
+    }
   } else {
-    $manifestPath = Find-ExistingManifest -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir)
   }
 
-  if (-not $manifestPath -or -not (Test-Path $manifestPath)) {
+  if ($manifestPaths.Count -eq 0) {
     return
   }
 
-  $manifest = $null
-  try {
-    $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
-  } catch {
-    return
-  }
-  if (-not $manifest -or -not $manifest.version) {
-    return
-  }
+  foreach ($manifestPath in $manifestPaths) {
+    $manifest = $null
+    try {
+      $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+    } catch {
+      continue
+    }
+    if (-not $manifest -or -not $manifest.version) {
+      continue
+    }
 
-  $effectiveScope = if ($manifest.scope) { [string]$manifest.scope } elseif ($ResolvedScope) { $ResolvedScope } else { "global" }
-  $effectiveOs = if ($manifest.os) { [string]$manifest.os } else { $ResolvedOs }
-  $repoName = if ($manifest.repo) { [string]$manifest.repo } else { $Repo }
+    $effectiveScope = if ($manifest.scope) { [string]$manifest.scope } elseif ($ResolvedScope) { $ResolvedScope } else { "global" }
+    $effectiveOs = if ($manifest.os) { [string]$manifest.os } else { $ResolvedOs }
+    $repoName = if ($manifest.repo) { [string]$manifest.repo } else { $Repo }
 
-  $latestVersion = Get-LatestVersionWithCache -RepoName $repoName -ResolvedOs $effectiveOs
-  if (-not $latestVersion) {
-    return
-  }
-  if (Test-IsVersionNewer -LatestVersion $latestVersion -InstalledVersion ([string]$manifest.version)) {
-    Show-VersionUpdateNotice -InstalledVersion ([string]$manifest.version) -LatestVersion $latestVersion -ResolvedScope $effectiveScope -ResolvedOs $effectiveOs
+    $latestVersion = Get-LatestVersionWithCache -RepoName $repoName -ResolvedOs $effectiveOs
+    if (-not $latestVersion) {
+      continue
+    }
+    if (Test-IsVersionNewer -LatestVersion $latestVersion -InstalledVersion ([string]$manifest.version)) {
+      Show-VersionUpdateNotice -InstalledVersion ([string]$manifest.version) -LatestVersion $latestVersion -ResolvedScope $effectiveScope -ResolvedOs $effectiveOs
+    }
   }
 }
 
