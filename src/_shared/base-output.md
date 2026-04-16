@@ -1,3 +1,12 @@
+---
+description: Base normativa de formato de saída das respostas (não é um comando executável diretamente).
+license: MIT
+hidden: true
+metadata:
+  author: BrunoCastro
+  version: "1.0.0"
+---
+
 # Base de saída (referência normativa)
 
 Aplicar obrigatoriamente este formato base de resposta em comandos do sistema:

@@ -1,3 +1,12 @@
+---
+description: Base normativa de pré-condições operacionais (não é um comando executável diretamente).
+license: MIT
+hidden: true
+metadata:
+  author: BrunoCastro
+  version: "1.0.0"
+---
+
 # Base comum de pré-condições (referência normativa)
 
 Aplicar este bloco de pré-condições em comandos operacionais.

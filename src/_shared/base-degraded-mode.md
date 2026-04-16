@@ -1,3 +1,12 @@
+---
+description: Base normativa compartilhada para modo degradado (não é um comando executável diretamente).
+license: MIT
+hidden: true
+metadata:
+  author: BrunoCastro
+  version: "1.0.0"
+---
+
 # Base comum de modo degradado (referência normativa)
 
 Aplicar este bloco quando `.agents` não estiver disponível, ausente ou incompleto.
