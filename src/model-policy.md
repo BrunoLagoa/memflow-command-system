@@ -32,7 +32,24 @@ Padronizar como os modelos são utilizados em cada etapa do workflow:
 
 ## Papéis dos modelos
 
-### Modelo econômico (ex: Codex)
+### Modelo free (ex: GPT-4.1, GPT-5 mini)
+
+Usar para:
+
+- exploração inicial de contexto
+- dúvidas rápidas
+- triagem de tarefas simples
+- validações preliminares
+
+Características:
+
+- custo mínimo
+- resposta rápida
+- menor robustez para implementação complexa
+
+---
+
+### Modelo econômico (ex: Haiku, GPT-5.4 mini, Gemini 3 Flash)
 
 Usar para:
 
@@ -50,7 +67,7 @@ Características:
 
 ---
 
-### Modelo intermediário (ex: GPT-5.4)
+### Modelo intermediário (ex: Gemini 3.1 Pro, GPT-5.3-Codex, GPT-5.4, Sonnet)
 
 Usar para:
 
@@ -67,7 +84,7 @@ Características:
 
 ---
 
-### Modelo avançado (ex: Opus)
+### Modelo avançado (ex: GPT-5.4, Opus)
 
 Usar apenas para:
 
@@ -89,6 +106,7 @@ Características:
 
 - Planejamento → modelo mais inteligente
 - Execução → modelo mais econômico
+- Triagem inicial opcional → modelo free
 
 ---
 
@@ -110,6 +128,7 @@ Características:
 
 | Complexidade | Modelo                    |
 | ------------ | ------------------------- |
+| Muito baixa  | Free                      |
 | Baixa        | Econômico                 |
 | Média        | Intermediário             |
 | Alta         | Intermediário ou Avançado |
@@ -123,12 +142,14 @@ Características:
 - "crie função"
 - "ajuste componente"
 - "corrija bug simples"
+- "implemente tarefa de baixo risco"
 
 #### Intermediário
 
 - "crie sistema"
 - "arquitetura"
 - "integração backend"
+- "defina abordagem técnica"
 
 #### Avançado
 
@@ -153,7 +174,7 @@ Se houver falha:
 ### Exemplo de escalada
 
 ```
-Codex → GPT-5.4 → Opus
+Free/Econômico → Intermediário → Avançado
 ```
 
 ---
@@ -162,6 +183,7 @@ Codex → GPT-5.4 → Opus
 
 - NÃO usar modelo avançado por padrão
 - NÃO usar modelo econômico para decisões complexas
+- NÃO usar modelo free para implementação crítica
 - NÃO pular planejamento em tarefas médias/altas
 - NÃO insistir em modelo que falhou repetidamente
 
@@ -213,12 +235,14 @@ Codex → GPT-5.4 → Opus
 - reduzir custo em 50%–80%
 - manter qualidade alta
 - evitar retrabalho
+- usar free/econômico sempre que o risco permitir
 
 ---
 
 ## Anti-patterns (evitar)
 
 - usar modelo avançado para tarefas simples
+- usar modelo free para tarefa de alto impacto
 - executar sem planejamento em tarefas complexas
 - ignorar falhas repetidas
 - misturar responsabilidades (planejar + executar no mesmo nível)
