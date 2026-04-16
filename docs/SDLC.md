@@ -103,7 +103,7 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ## 7. 🚫 Gate de Qualidade
 
-* Validação final antes de considerar pronto
+* Validação rígida adicional recomendada antes de considerar pronto
 
 👉 No sistema:
 
@@ -166,7 +166,7 @@ O sistema implementa um SDLC completo com comandos:
 
 * fluxo estruturado
 * decisões controladas
-* validação obrigatória
+* validação consistente (com gate rígido opcional)
 * qualidade consistente
 
 ---

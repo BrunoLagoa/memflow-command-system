@@ -1,6 +1,6 @@
 ---
 name: review
-description: Validação inteligente de qualidade antes do gate final — avalia aderência a .agents, segurança (client/server), arquitetura, produto (docs), fluxo do sistema e ~/.config/opencode/commands/model-policy.md. Saída: Aprovado ou Reprovado, com problemas por categoria (Regras, Segurança, Arquitetura, Fluxo, Modelo). Não corrige. Pré-requisito para /review-enforce-rules.
+description: Validação inteligente de qualidade antes da validação rígida opcional — avalia aderência a .agents, segurança (client/server), arquitetura, produto (docs), fluxo do sistema e ~/.config/opencode/commands/model-policy.md. Saída: Aprovado ou Reprovado, com problemas por categoria (Regras, Segurança, Arquitetura, Fluxo, Modelo). Não corrige. Pode ser complementado por /review-enforce-rules.
 license: MIT
 metadata:
   author: BrunoCastro
@@ -25,7 +25,7 @@ Avaliar se a solução:
 - segue corretamente o fluxo do sistema
 - está de acordo com `~/.config/opencode/commands/model-policy.md`
 
-Este comando atua como **validação inteligente antes do gate final (`/review-enforce-rules`)**.
+Este comando atua como **validação inteligente principal**, podendo ser complementado pela validação rígida (`/review-enforce-rules`) quando necessário.
 
 ---
 
@@ -171,7 +171,7 @@ Se `.agents` estiver ausente:
 
 Se APROVADO:
 
-- Seguir para `/review-enforce-rules`
+- Opcionalmente executar `/review-enforce-rules` para validação rígida adicional
 - Executar check silencioso de versão do MEMFLOW (`memflowctl check` ou `scripts/install.* check`)
 - Se houver atualização: exibir aviso com versão atual, última versão e comando recomendado de update não interativo
 
@@ -204,5 +204,5 @@ Observação:
 
 - Este comando NÃO implementa nada
 - Atua como QA do sistema
-- NÃO bloquear com dúvida leve (isso é papel do `/review-enforce-rules`)
+- Dúvidas leves podem ser registradas sem bloqueio automático
 - Deve garantir qualidade antes da validação final

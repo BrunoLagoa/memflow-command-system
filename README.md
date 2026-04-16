@@ -6,7 +6,7 @@
 
 
 <p align="center">
-  Sistema avançado de engenharia com IA para SDLC completo, com orquestração inteligente, execução disciplinada, validação rígida e memória evolutiva de decisões.
+  Sistema avançado de engenharia com IA para SDLC (Software Development Life Cycle) completo, com orquestração inteligente, execução disciplinada, validação rígida e memória evolutiva de decisões.
 </p>
 
 <p align="center">
@@ -50,13 +50,13 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
    ↓
 /workflow
    ↓
-/execute   (ou /plan, quando necessário)
+/execute (ou /plan, quando necessário)
    ↓
 (/memory-save, se recomendado)
    ↓
 /review
    ↓
-/review-enforce-rules
+/review-enforce-rules (Opcional)
 ```
 
 ## Arquitetura (orquestração vs capacidades)
@@ -67,7 +67,7 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 - `/workflow`: classifica tarefa, decide estratégia e modelo
 - `/execute`: aplica a decisão com fallback controlado
 - `/review`: valida aderência técnica e arquitetural
-- `/review-enforce-rules`: gate final obrigatório
+- `/review-enforce-rules`: validação rígida final (recomendada/opcional)
 - `model-policy.md`: estratégia de seleção e escalada de modelos
 
 ### 2) Capacidades (resolução especializada)
@@ -88,7 +88,7 @@ Arquivos em `src/_shared` centralizam normas transversais:
 
 ### Pré-requisitos
 
-- Ambiente com suporte a slash commands no padrão OpenCode
+- Ambiente com suporte a slash commands
 - `bash` e `curl` para macOS/Linux
 - `PowerShell 7+` para Windows nativo
 
@@ -127,9 +127,13 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 
 #### Global
 
+##### macOS/Linux
+
 ```bash
 ./scripts/install.sh install --non-interactive --scope global --target opencode
 ```
+
+##### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
@@ -137,9 +141,13 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInter
 
 #### Local (projeto atual)
 
+##### macOS/Linux
+
 ```bash
 ./scripts/install.sh install --non-interactive --scope local --project-dir . --target opencode
 ```
+
+##### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target opencode
@@ -151,9 +159,13 @@ Para operações de manutenção sem depender do clone local do repositório, pr
 
 #### Update (global)
 
+##### macOS/Linux
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- update --scope global --non-interactive
 ```
+
+##### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 update -Scope global -NonInteractive"
@@ -161,9 +173,13 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 #### Update (local)
 
+##### macOS/Linux
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- update --scope local --project-dir . --non-interactive
 ```
+
+##### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive"
@@ -171,31 +187,59 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 #### Check de versão (global)
 
+##### macOS/Linux
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- check --scope global --non-interactive
 ```
 
+##### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 check -Scope global -NonInteractive"
+```
+
 #### Check de versão (local)
+
+##### macOS/Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl | bash -s -- check --scope local --project-dir . --non-interactive
+```
+
+##### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/memflowctl.ps1 -OutFile $env:TEMP\memflowctl.ps1; & $env:TEMP\memflowctl.ps1 check -Scope local -ProjectDir . -NonInteractive"
 ```
 
 ### Atualizar para nova versão
 
 #### Recomendado (`memflowctl`)
 
+##### Global
+
+###### macOS/Linux
+
 ```bash
 memflowctl update --scope global --non-interactive
 ```
+
+###### PowerShell
+
+```powershell
+memflowctl.ps1 update -Scope global -NonInteractive
+```
+
+##### Local (projeto atual)
+
+###### macOS/Linux
 
 ```bash
 memflowctl update --scope local --project-dir . --non-interactive
 ```
 
-```powershell
-memflowctl.ps1 update -Scope global -NonInteractive
-```
+###### PowerShell
 
 ```powershell
 memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive
@@ -203,17 +247,29 @@ memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive
 
 #### Alternativa (scripts locais)
 
+##### Global
+
+###### macOS/Linux
+
 ```bash
 ./scripts/install.sh update --scope global
 ```
+
+###### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope global
+```
+
+##### Local (projeto atual)
+
+###### macOS/Linux
 
 ```bash
 ./scripts/install.sh update --scope local --project-dir .
 ```
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope global
-```
+###### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope local -ProjectDir .
@@ -225,17 +281,29 @@ Por padrão, o update usa a release tagueada mais recente.
 
 #### Recomendado (`memflowctl`)
 
+##### Global
+
+###### macOS/Linux
+
 ```bash
 memflowctl uninstall --scope global --non-interactive
 ```
+
+###### PowerShell
+
+```powershell
+memflowctl.ps1 uninstall -Scope global -NonInteractive
+```
+
+##### Local (projeto atual)
+
+###### macOS/Linux
 
 ```bash
 memflowctl uninstall --scope local --project-dir . --non-interactive
 ```
 
-```powershell
-memflowctl.ps1 uninstall -Scope global -NonInteractive
-```
+###### PowerShell
 
 ```powershell
 memflowctl.ps1 uninstall -Scope local -ProjectDir . -NonInteractive
@@ -243,17 +311,29 @@ memflowctl.ps1 uninstall -Scope local -ProjectDir . -NonInteractive
 
 #### Alternativa (scripts locais)
 
+##### Global
+
+###### macOS/Linux
+
 ```bash
 ./scripts/install.sh uninstall --scope global --non-interactive
 ```
+
+###### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope global -NonInteractive
+```
+
+##### Local (projeto atual)
+
+###### macOS/Linux
 
 ```bash
 ./scripts/install.sh uninstall --scope local --project-dir . --non-interactive
 ```
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope global -NonInteractive
-```
+###### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope local -ProjectDir . -NonInteractive
@@ -276,7 +356,7 @@ Se a tarefa for simples, o próximo passo normalmente é:
 ```bash
 /execute
 /review
-/review-enforce-rules
+/review-enforce-rules  # recomendado para validação rígida final
 ```
 
 ## Exemplo de fluxo real
@@ -304,8 +384,8 @@ Exemplo: implementar uma feature de média complexidade com memória ativa.
 6. /review
    - Verifica qualidade, segurança e arquitetura
 
-7. /review-enforce-rules
-   - Libera (OK) ou bloqueia (BLOQUEADO)
+7. /review-enforce-rules (opcional/recomendado)
+   - Aplica validação rígida adicional (OK ou BLOQUEADO)
 ```
 
 ## Suporte de ferramentas
@@ -318,14 +398,13 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 
 ## Documentação (links para docs)
 
-- Logo do projeto: [`docs/assets/logo.webp`](docs/assets/logo.webp)
 - Histórico de versões: [`CHANGELOG.md`](CHANGELOG.md)
 - Guia conceitual de SDLC: [`docs/SDLC.md`](docs/SDLC.md)
 - Política de modelos (operacional): [`src/model-policy.md`](src/model-policy.md)
 - Comando de contexto: [`src/context.md`](src/context.md)
 - Comando de decisão: [`src/workflow.md`](src/workflow.md)
 - Comando de execução: [`src/execute.md`](src/execute.md)
-- Gate final: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
+- Validação rígida opcional: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
 
 ## Filosofia do sistema
 

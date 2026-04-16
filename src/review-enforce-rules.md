@@ -1,6 +1,6 @@
 ---
 name: review-enforce-rules
-description: Gate final obrigatório antes de encerrar qualquer tarefa — valida conformidade total com .agents, segurança client/server, arquitetura, fluxo do sistema e ~/.config/opencode/commands/model-policy.md. Saída exclusiva: OK ou BLOQUEADO. Qualquer dúvida ou ambiguidade = BLOQUEADO. Não flexibiliza regras. Executar após /review.
+description: Validação rígida adicional (opcional/recomendada) para cenários críticos — valida conformidade total com .agents, segurança client/server, arquitetura, fluxo do sistema e ~/.config/opencode/commands/model-policy.md. Saída exclusiva: OK ou BLOQUEADO. Qualquer dúvida ou ambiguidade = BLOQUEADO. Não flexibiliza regras. Executar após /review quando necessário.
 license: MIT
 metadata:
   author: BrunoCastro
@@ -29,7 +29,7 @@ Garantir que:
 - o workflow do sistema foi seguido corretamente
 - o uso de modelos está alinhado com `~/.config/opencode/commands/model-policy.md`
 
-Este é o **último gate antes da conclusão da tarefa**.
+Este é um **gate rígido opcional**, recomendado antes da conclusão em tarefas de maior risco ou criticidade.
 
 ---
 
@@ -192,10 +192,10 @@ Se Status = OK:
 
 ## Importante
 
-- Este comando é o gate final
+- Este comando é uma validação rígida opcional
 - NÃO permitir continuidade com dúvidas
 - NÃO aprovar parcialmente
 - NÃO ignorar inconsistências
 - Deve garantir consistência total do sistema
 
-Este comando substitui qualquer validação superficial.
+Este comando complementa validações anteriores com um critério mais estrito.

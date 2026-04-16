@@ -19,7 +19,7 @@ Padronizar como os modelos são utilizados em cada etapa do workflow:
 - `/plan`
 - `/execute`
 - `/review`
-- `/review-enforce-rules`
+- `/review-enforce-rules` (opcional/recomendado)
 
 ---
 
@@ -218,7 +218,7 @@ Free/Econômico → Intermediário → Avançado
 
 ### `/review-enforce-rules`
 
-- bloquear uso incorreto de modelo
+- aplicar validação rígida opcional de uso de modelo em cenários críticos
 
 ---
 
