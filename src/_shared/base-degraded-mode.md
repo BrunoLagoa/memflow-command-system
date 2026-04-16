@@ -1,5 +1,5 @@
 ---
-description: Base normativa compartilhada para modo degradado (não é um comando executável diretamente).
+description: Não é um comando executável. Base compartilhada de modo degradado.
 license: MIT
 hidden: true
 metadata:

@@ -1,5 +1,5 @@
 ---
-description: Base normativa de formato de saída das respostas (não é um comando executável diretamente).
+description: Não é um comando executável. Base compartilhada de formato de saída.
 license: MIT
 hidden: true
 metadata:

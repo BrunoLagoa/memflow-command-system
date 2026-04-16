@@ -1,5 +1,5 @@
 ---
-description: Base normativa de pré-condições operacionais (não é um comando executável diretamente).
+description: Não é um comando executável. Base compartilhada de pré-condições.
 license: MIT
 hidden: true
 metadata:
