@@ -18,6 +18,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $script:VersionCheckTtlSeconds = 86400
 $script:ProjectDirProvided = $PSBoundParameters.ContainsKey("ProjectDir")
+$script:MemflowScopeProvided = $PSBoundParameters.ContainsKey("Scope")
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $CommonScript = Join-Path $ScriptDir "lib/common.ps1"
@@ -330,23 +331,46 @@ function Invoke-Update {
     [string]$ResolvedOs
   )
 
-  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
-  $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
-
-  $installedVersion = $null
-  if (Test-Path $manifestPath) {
-    try {
-      $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
-      $installedVersion = $manifest.version
-    } catch {
-      # Se o manifest estiver corrompido/inválido, segue o update normalmente.
-    }
+  $manifestPath = $null
+  if ([string]::IsNullOrEmpty($ResolvedScope)) {
+    $manifestPath = Find-ExistingManifest -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+  } else {
+    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+    $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
   }
 
   $nextVersion = if ($Version) { $Version } else { Get-LatestReleaseTag -RepoName $Repo }
 
-  if (-not (Test-Path $manifestPath) -and $ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
-    Stop-WithError "Para atualizar instalação local fora do projeto atual, informe -ProjectDir <dir>."
+  if (-not $manifestPath -or -not (Test-Path $manifestPath)) {
+    if ([string]::IsNullOrEmpty($ResolvedScope)) {
+      Stop-WithError "Nenhuma instalação MEMFLOW encontrada. Execute a instalação antes ou informe -Scope (e -ProjectDir para instalação local fora do diretório atual)."
+    }
+    if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
+      Stop-WithError "Para atualizar instalação local fora do projeto atual, informe -ProjectDir <dir>."
+    }
+    Stop-WithError "Nenhuma instalação MEMFLOW encontrada."
+  }
+
+  $manifest = $null
+  $installedVersion = $null
+  try {
+    $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+    $installedVersion = $manifest.version
+  } catch {
+    # Se o manifest estiver corrompido/inválido, segue o update normalmente.
+  }
+
+  $effectiveScope = $ResolvedScope
+  if ([string]::IsNullOrEmpty($effectiveScope) -and $manifest -and $manifest.scope) {
+    $effectiveScope = [string]$manifest.scope
+  }
+  if ([string]::IsNullOrEmpty($effectiveScope)) {
+    $effectiveScope = "global"
+  }
+
+  $effectiveOs = $ResolvedOs
+  if ($manifest -and $manifest.os) {
+    $effectiveOs = [string]$manifest.os
   }
 
   if ($installedVersion -and ($installedVersion -eq $nextVersion)) {
@@ -355,7 +379,7 @@ function Invoke-Update {
   }
 
   Write-Info "Recomendando atualização do MEMFLOW para versão $nextVersion"
-  Invoke-Install -ResolvedScope $ResolvedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedVersion $nextVersion
+  Invoke-Install -ResolvedScope $effectiveScope -ResolvedTarget $ResolvedTarget -ResolvedOs $effectiveOs -ResolvedVersion $nextVersion
 }
 
 function Invoke-Uninstall {
@@ -363,9 +387,25 @@ function Invoke-Uninstall {
     [string]$ResolvedScope,
     [string]$ResolvedOs
   )
-  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+
+  $manifestPath = $null
+  $commandsRoot = $null
+  if ([string]::IsNullOrEmpty($ResolvedScope)) {
+    $manifestPath = Find-ExistingManifest -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+    if ($null -ne $manifestPath -and (Test-Path $manifestPath)) {
+      $commandsRoot = Split-Path -Parent $manifestPath
+    }
+  } else {
+    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+    $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
+  }
+
+  if ($null -eq $commandsRoot) {
+    Write-WarnLog "Nenhuma instalação MEMFLOW encontrada."
+    return
+  }
+
   $installDir = Join-Path $commandsRoot "memflow"
-  $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
 
   if (-not (Test-Path $installDir) -and -not (Test-Path $manifestPath)) {
     if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
@@ -463,7 +503,13 @@ function Resolve-WizardValues {
     }
   } else {
     if (-not $resolvedOs) { $resolvedOs = "windows" }
-    if (-not $resolvedScope) { $resolvedScope = "global" }
+    if (-not $resolvedScope) {
+      if (($Action -eq "update" -or $Action -eq "uninstall") -and -not $script:MemflowScopeProvided) {
+        $resolvedScope = $null
+      } else {
+        $resolvedScope = "global"
+      }
+    }
     if (-not $resolvedTarget) { $resolvedTarget = "opencode" }
   }
 

@@ -570,7 +570,15 @@ run_update() {
 
   if [[ -f "$manifest_file" ]]; then
     installed_version="$(parse_manifest_value "$manifest_file" "version")"
-    SCOPE="${SCOPE:-$(parse_manifest_value "$manifest_file" "scope")}"
+    # Sem --scope no CLI, default_missing_values já definiu SCOPE=global; sobrescrever com o manifest.
+    if [[ -z "$user_scope" ]]; then
+      manifest_scope="$(parse_manifest_value "$manifest_file" "scope")"
+      if [[ -n "$manifest_scope" ]]; then
+        SCOPE="$manifest_scope"
+      fi
+    else
+      SCOPE="${SCOPE:-$(parse_manifest_value "$manifest_file" "scope")}"
+    fi
     TARGET="${TARGET:-$(parse_manifest_value "$manifest_file" "target")}"
     SELECTED_OS="${SELECTED_OS:-$(parse_manifest_value "$manifest_file" "os")}"
     if [[ -z "$VERSION" ]]; then

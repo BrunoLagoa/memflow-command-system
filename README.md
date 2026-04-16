@@ -123,7 +123,18 @@ cd memflow-command-system
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 ```
 
+#### Escopo global vs local
+
+- **`global`**: instalação no perfil do usuário (`~/.config/...`); disponível em qualquer diretório. Em comandos não interativos, use `--scope global` (ou `-Scope global` no PowerShell).
+- **`local`**: instalação dentro de um projeto; use `--scope local --project-dir <caminho>` (em geral `--project-dir .` na raiz do repositório).
+
+A mesma convenção vale para **`install`**, **`memflowctl`** (`update`, `check`, `uninstall`) e **`install.sh` / `install.ps1`** quando você passa escopo explicitamente.
+
+No **`update`**, se você já instalou antes, o instalador pode **inferir** global vs local pelo manifest (`.memflow-install.json`); nesse caso `--scope` / `-Scope` é opcional — veja a seção [Atualizar para nova versão](#atualizar-para-nova-versão).
+
 ### Instalação não interativa
+
+Os exemplos abaixo seguem a convenção da subseção [Escopo global vs local](#escopo-global-vs-local) acima.
 
 #### Global
 
@@ -155,7 +166,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInter
 
 ### Entrypoint recomendado (qualquer diretório)
 
-Para operações de manutenção sem depender do clone local do repositório, priorize `memflowctl`:
+Para operações de manutenção sem depender do clone local do repositório, priorize `memflowctl`. Os comandos abaixo usam a mesma convenção de **`--scope` / `--project-dir`** da subseção [Escopo global vs local](#escopo-global-vs-local).
 
 #### Update (global)
 
@@ -215,7 +226,59 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 ### Atualizar para nova versão
 
-#### Recomendado (`memflowctl`)
+Por padrão, o update usa a release tagueada mais recente.
+
+Se você **já instalou** o MEMFLOW antes, o instalador pode **descobrir automaticamente** se a instalação foi **global** ou **local** lendo o manifest (`.memflow-install.json`). Nesse caso **não é obrigatório** passar `--scope` / `-Scope` — use quando quiser forçar um escopo explícito.
+
+#### Recomendado — one-liner remoto (mesmo padrão da instalação)
+
+Use o `install.sh` / `install.ps1` direto do repositório (não depende de `memflowctl` estar no PATH).
+
+##### Descoberta automática (sem global/local)
+
+Execute no **mesmo diretório** em que você costuma trabalhar (para instalação local, normalmente a raiz do projeto onde existe `.opencode/commands`).
+
+###### macOS/Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- update --non-interactive
+```
+
+###### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -NonInteractive"
+```
+
+##### Global
+
+###### macOS/Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- update --scope global --non-interactive
+```
+
+###### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -Scope global -NonInteractive"
+```
+
+##### Local (projeto atual)
+
+###### macOS/Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- update --scope local --project-dir . --non-interactive
+```
+
+###### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -Scope local -ProjectDir . -NonInteractive"
+```
+
+#### Alternativa — `memflowctl` (se já estiver no PATH)
 
 ##### Global
 
@@ -245,7 +308,7 @@ memflowctl update --scope local --project-dir . --non-interactive
 memflowctl.ps1 update -Scope local -ProjectDir . -NonInteractive
 ```
 
-#### Alternativa (scripts locais)
+#### Alternativa — scripts locais (repositório clonado)
 
 ##### Global
 
@@ -275,9 +338,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope glo
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope local -ProjectDir .
 ```
 
-Por padrão, o update usa a release tagueada mais recente.
-
 ### Remover instalação
+
+Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Escopo global vs local](#escopo-global-vs-local).
 
 #### Recomendado (`memflowctl`)
 
@@ -340,6 +403,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 uninstall -Scope 
 ```
 
 ### Destinos de instalação
+
+Correspondem aos modos **global** e **local** descritos em [Escopo global vs local](#escopo-global-vs-local):
 
 - `global`: `~/.config/opencode/commands/memflow`
 - `local`: `<projeto>/.opencode/commands/memflow`
