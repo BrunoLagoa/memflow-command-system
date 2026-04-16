@@ -238,7 +238,8 @@ function Resolve-WizardValues {
   if (-not $NonInteractive) {
     Show-MemflowBanner
     Write-Host ""
-    Write-Host "MEMFLOW - instalador oficial de comandos para OpenCode."
+    Write-Host "MEMFLOW - sistema open source de engenharia com IA para SDLC (Software Development Life Cycle) completo e automação de comandos em múltiplas plataformas."
+    Write-Host "Um conjunto de ferramentas de código aberto para focar em cenários de produto e resultados previsíveis, em vez de desenvolver cada parte do zero com base em intuição."
     Write-Host ""
 
     if (-not $resolvedOs) {

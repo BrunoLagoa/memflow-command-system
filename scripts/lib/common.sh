@@ -80,7 +80,7 @@ confirm_tty() {
   read_tty "${prompt} ${suffix}: " answer
   answer="${answer:-$default_choice}"
   answer="$(printf "%s" "$answer" | tr '[:upper:]' '[:lower:]')"
-  [[ "$answer" == "y" || "$answer" == "yes" ]]
+  [[ "$answer" == "y" || "$answer" == "yes" || "$answer" == "s" || "$answer" == "sim" ]]
 }
 
 choose_option_tty() {
@@ -90,9 +90,18 @@ choose_option_tty() {
   local idx=1
   local answer=""
 
-  printf "%s\n" "$prompt"
+  if [[ -r /dev/tty ]]; then
+    printf "%s\n" "$prompt" > /dev/tty
+  else
+    printf "%s\n" "$prompt"
+  fi
+
   for option in "${options[@]}"; do
-    printf "  %s) %s\n" "$idx" "$option"
+    if [[ -r /dev/tty ]]; then
+      printf "  %s) %s\n" "$idx" "$option" > /dev/tty
+    else
+      printf "  %s) %s\n" "$idx" "$option"
+    fi
     idx=$((idx + 1))
   done
 

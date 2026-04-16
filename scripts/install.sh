@@ -51,7 +51,7 @@ EOF
     read_tty "${prompt} ${suffix}: " answer
     answer="${answer:-$default_choice}"
     answer="$(printf "%s" "$answer" | tr '[:upper:]' '[:lower:]')"
-    [[ "$answer" == "y" || "$answer" == "yes" ]]
+    [[ "$answer" == "y" || "$answer" == "yes" || "$answer" == "s" || "$answer" == "sim" ]]
   }
   choose_option_tty() {
     local prompt="$1"
@@ -59,9 +59,17 @@ EOF
     local options=("$@")
     local idx=1
     local answer=""
-    printf "%s\n" "$prompt"
+    if [[ -r /dev/tty ]]; then
+      printf "%s\n" "$prompt" > /dev/tty
+    else
+      printf "%s\n" "$prompt"
+    fi
     for option in "${options[@]}"; do
-      printf "  %s) %s\n" "$idx" "$option"
+      if [[ -r /dev/tty ]]; then
+        printf "  %s) %s\n" "$idx" "$option" > /dev/tty
+      else
+        printf "  %s) %s\n" "$idx" "$option"
+      fi
       idx=$((idx + 1))
     done
     while true; do
@@ -204,11 +212,15 @@ wizard_select() {
   detected_os="$(detect_os)"
 
   print_memflow_banner
-  printf "\nMEMFLOW - instalador oficial de comandos para OpenCode.\n\n"
+  printf "\nMEMFLOW - Sistema open source de engenharia com IA para SDLC (Software Development Life Cycle) completo e automação de comandos em múltiplas plataformas.\nUm conjunto de ferramentas de código aberto para focar em cenários de produto e resultados previsíveis, em vez de desenvolver cada parte do zero com base em intuição.\n\n"
 
   if [[ -z "$SELECTED_OS" ]]; then
     log_info "SO detectado automaticamente: $detected_os"
-    SELECTED_OS="$(choose_option_tty "1 - Escolha seu sistema operacional" "linux" "macos" "windows")"
+    if confirm_tty "1 - O sistema operacional detectado (${detected_os}) está correto?" "y"; then
+      SELECTED_OS="$detected_os"
+    else
+      SELECTED_OS="$(choose_option_tty "1 - Escolha seu sistema operacional" "linux" "macos" "windows")"
+    fi
   fi
 
   if [[ -z "$TARGET" ]]; then
