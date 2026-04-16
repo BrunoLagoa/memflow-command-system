@@ -1,3 +1,12 @@
+---
+description: Não é um comando executável. Base compartilhada de política de modelos.
+license: MIT
+hidden: true
+metadata:
+  author: BrunoCastro
+  version: "1.0.0"
+---
+
 # Model Policy — Orquestração de Modelos
 
 Este arquivo define as regras de uso, seleção e escalada de modelos de IA no projeto.
