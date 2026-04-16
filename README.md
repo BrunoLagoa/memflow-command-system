@@ -434,6 +434,18 @@ Princípios operacionais:
 - Disponibilizar templates por stack para onboarding mais rápido
 - Incluir métricas de efetividade (lead time, retrabalho, custo por tarefa)
 
+## Pessoas por trás do Memflow
+
+Este projeto evolui com contribuições de pessoas que acreditam em engenharia de software com IA de forma disciplinada, prática e auditável.
+
+<p align="left">
+  <a href="https://github.com/BrunoLagoa/memflow-command-system/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=BrunoLagoa/memflow-command-system&max=100" alt="Contribuidores do projeto" width="62" />
+  </a>
+</p>
+
+Quer aparecer aqui também? Abra uma issue, sugira melhorias ou envie um PR.
+
 ## Suporte
 
 Para obter suporte, abra uma issue no GitHub. Relatos de bugs, solicitações de recursos e dúvidas de uso são bem-vindos.
