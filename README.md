@@ -440,7 +440,7 @@ Este projeto evolui com contribuições de pessoas que acreditam em engenharia d
 
 <p align="left">
   <a href="https://github.com/BrunoLagoa/memflow-command-system/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=BrunoLagoa/memflow-command-system&max=100" alt="Contribuidores do projeto" width="62" />
+    <img src="https://contrib.rocks/image?repo=BrunoLagoa/memflow-command-system&max=100" alt="Contribuidores do projeto" width="45" />
   </a>
 </p>
 
