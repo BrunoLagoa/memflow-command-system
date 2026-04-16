@@ -19,6 +19,7 @@ $ErrorActionPreference = "Stop"
 $script:VersionCheckTtlSeconds = 86400
 $script:ProjectDirProvided = $PSBoundParameters.ContainsKey("ProjectDir")
 $script:MemflowScopeProvided = $PSBoundParameters.ContainsKey("Scope")
+$script:NotFoundExitCode = 2
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $CommonScript = Join-Path $ScriptDir "lib/common.ps1"
@@ -60,6 +61,24 @@ if (Test-Path $CommonScript) {
 
 if (-not (Get-Variable -Name MemflowSchemaVersion -Scope Script -ErrorAction SilentlyContinue)) {
   $script:MemflowSchemaVersion = "1"
+}
+
+function Stop-NotFound {
+  param([string]$Message)
+  Write-ErrorLog $Message
+  exit $script:NotFoundExitCode
+}
+
+function Get-MissingInstallationMessage {
+  param(
+    [string]$ActionName,
+    [string]$ResolvedScope,
+    [bool]$HasExplicitScope
+  )
+  if ($HasExplicitScope) {
+    return "Não é possível executar $ActionName`: nenhuma instalação MEMFLOW encontrada no escopo $ResolvedScope."
+  }
+  return "Não é possível executar $ActionName`: nenhuma instalação MEMFLOW encontrada."
 }
 
 function Resolve-CommandsRoot {
@@ -343,12 +362,22 @@ function Invoke-Update {
 
   if (-not $manifestPath -or -not (Test-Path $manifestPath)) {
     if ([string]::IsNullOrEmpty($ResolvedScope)) {
-      Stop-WithError "Nenhuma instalação MEMFLOW encontrada. Execute a instalação antes ou informe -Scope (e -ProjectDir para instalação local fora do diretório atual)."
+      Stop-NotFound (Get-MissingInstallationMessage -ActionName "update" -ResolvedScope $ResolvedScope -HasExplicitScope $false)
     }
     if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
       Stop-WithError "Para atualizar instalação local fora do projeto atual, informe -ProjectDir <dir>."
     }
-    Stop-WithError "Nenhuma instalação MEMFLOW encontrada."
+    $missingMessage = Get-MissingInstallationMessage -ActionName "update" -ResolvedScope $ResolvedScope -HasExplicitScope $true
+    if (-not $NonInteractive) {
+      Write-WarnLog $missingMessage
+      $confirmInstall = Read-Host "Deseja iniciar uma nova instalação agora? [y/N]"
+      if ($confirmInstall.ToLower() -eq "y" -or $confirmInstall.ToLower() -eq "yes") {
+        Write-Info "Iniciando nova instalação no escopo $ResolvedScope."
+        Invoke-Install -ResolvedScope $ResolvedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedVersion $nextVersion
+        return
+      }
+    }
+    Stop-NotFound $missingMessage
   }
 
   $manifest = $null
@@ -401,8 +430,7 @@ function Invoke-Uninstall {
   }
 
   if ($null -eq $commandsRoot) {
-    Write-WarnLog "Nenhuma instalação MEMFLOW encontrada."
-    return
+    Stop-NotFound "Não é possível executar uninstall: nenhuma instalação MEMFLOW encontrada."
   }
 
   $installDir = Join-Path $commandsRoot "memflow"
@@ -411,8 +439,8 @@ function Invoke-Uninstall {
     if ($ResolvedScope -eq "local" -and -not $script:ProjectDirProvided) {
       Stop-WithError "Para remover instalação local fora do projeto atual, informe -ProjectDir <dir>."
     }
-    Write-WarnLog "Nenhuma instalação MEMFLOW encontrada em $commandsRoot."
-    return
+    $hasExplicitScope = -not [string]::IsNullOrEmpty($ResolvedScope)
+    Stop-NotFound (Get-MissingInstallationMessage -ActionName "uninstall" -ResolvedScope $ResolvedScope -HasExplicitScope $hasExplicitScope)
   }
 
   if (-not $NonInteractive) {

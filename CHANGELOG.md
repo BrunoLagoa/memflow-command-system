@@ -4,6 +4,21 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.3] - 2026-04-16
+
+### Adicionado
+- Teste de regressão do instalador em `scripts/tests/test-install-regression.sh`, cobrindo cenários de `update`/`uninstall` sem instalação e validação de código de saída `2`.
+- Workflow de CI `.github/workflows/install-regression.yml` para executar automaticamente a regressão do instalador em `push`, `pull_request` e execução manual.
+
+### Alterado
+- Organização de testes em `scripts/tests/`, removendo o caminho legado `scripts/test/`.
+- `README.md`: documentação de comportamento para `update` sem instalação prévia (modo interativo vs não interativo) e semântica de erro no `uninstall`.
+
+### Corrigido
+- `scripts/install.sh`: `update` agora informa ausência de instalação e, em modo interativo, pergunta se deve iniciar uma nova instalação; em modo não interativo, retorna erro explícito com código `2`.
+- `scripts/install.sh`: `uninstall` agora retorna erro explícito com código `2` quando não houver instalação no escopo solicitado.
+- `scripts/install.ps1`: alinhamento de `update`/`uninstall` com comportamento consistente de ausência de instalação, incluindo erro explícito com código `2` e fallback interativo para nova instalação no `update`.
+
 ## [1.1.2] - 2026-04-16
 
 ### Adicionado
@@ -52,6 +67,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.3]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.0.0...v1.1.0

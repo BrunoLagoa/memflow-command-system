@@ -228,6 +228,10 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 Por padrão, o update usa a release tagueada mais recente.
 
+Se não existir instalação prévia no escopo solicitado:
+- no modo **interativo**, o comando informa o problema e pergunta se deve iniciar uma instalação nova;
+- no modo **não interativo**, falha com erro explícito e código de saída `2`.
+
 Se você **já instalou** o MEMFLOW antes, o instalador pode **descobrir automaticamente** se a instalação foi **global** ou **local** lendo o manifest (`.memflow-install.json`). Nesse caso **não é obrigatório** passar `--scope` / `-Scope` — use quando quiser forçar um escopo explícito.
 
 #### Recomendado — one-liner remoto (mesmo padrão da instalação)
@@ -341,6 +345,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 update -Scope loc
 ### Remover instalação
 
 Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Escopo global vs local](#escopo-global-vs-local).
+
+Se não existir instalação no escopo informado, o `uninstall` retorna erro explícito com código de saída `2` para evitar falso positivo de sucesso.
 
 #### Recomendado (`memflowctl`)
 

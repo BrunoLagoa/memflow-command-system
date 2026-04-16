@@ -112,6 +112,54 @@ REPO="$MEMFLOW_REPO_DEFAULT"
 CHANNEL="release"
 BACKUP_ENABLED=1
 VERSION_CHECK_TTL_SECONDS=86400
+EXIT_CODE_NOT_FOUND=2
+
+die_with_code() {
+  local exit_code="$1"
+  shift
+  log_error "$*"
+  exit "$exit_code"
+}
+
+missing_installation_message() {
+  local action_name="$1"
+  local resolved_scope="$2"
+  local explicit_scope="$3"
+  if [[ -n "$explicit_scope" ]]; then
+    printf "Não é possível executar %s: nenhuma instalação MEMFLOW encontrada no escopo %s." "$action_name" "$resolved_scope"
+    return 0
+  fi
+  printf "Não é possível executar %s: nenhuma instalação MEMFLOW encontrada." "$action_name"
+}
+
+prompt_fresh_install_from_update() {
+  local explicit_scope="$1"
+  local message=""
+  message="$(missing_installation_message "update" "$SCOPE" "$explicit_scope")"
+
+  if [[ "$NON_INTERACTIVE" -eq 1 ]]; then
+    return 1
+  fi
+
+  log_warn "$message"
+  if ! confirm_tty "Deseja iniciar uma nova instalação agora?" "n"; then
+    return 1
+  fi
+
+  local resolved_version="$VERSION"
+  if [[ -z "$resolved_version" ]]; then
+    resolved_version="$(fetch_latest_release_tag)"
+  fi
+
+  local commands_root install_dir manifest_file
+  commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+  install_dir="${commands_root}/memflow"
+  manifest_file="${commands_root}/.memflow-install.json"
+
+  log_info "Iniciando nova instalação no escopo ${SCOPE}."
+  perform_install "$commands_root" "$install_dir" "$manifest_file" "$resolved_version"
+  return 0
+}
 
 usage() {
   cat <<'EOF'
@@ -588,9 +636,10 @@ run_update() {
     if [[ "$SCOPE" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
       die "Para atualizar instalação local fora do projeto atual, informe --project-dir <dir>."
     fi
-    [[ -n "$SCOPE" ]] || SCOPE="global"
-    [[ -n "$SELECTED_OS" ]] || SELECTED_OS="$(detect_os)"
-    [[ -n "$VERSION" ]] || VERSION="$(fetch_latest_release_tag)"
+    if prompt_fresh_install_from_update "$user_scope"; then
+      return 0
+    fi
+    die_with_code "$EXIT_CODE_NOT_FOUND" "$(missing_installation_message "update" "$SCOPE" "$user_scope")"
   fi
 
   local updated_root
@@ -628,8 +677,7 @@ run_uninstall() {
     if [[ "${SCOPE:-}" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
       die "Para remover instalação local fora do projeto atual, informe --project-dir <dir>."
     fi
-    log_warn "Nenhuma instalação MEMFLOW encontrada em ${commands_root}."
-    exit 0
+    die_with_code "$EXIT_CODE_NOT_FOUND" "$(missing_installation_message "uninstall" "$SCOPE" "$user_scope")"
   fi
 
   printf "Destino de remoção: %s\n" "$install_dir"
