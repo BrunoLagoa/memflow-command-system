@@ -474,9 +474,7 @@ print_version_update_notice() {
     update_command="memflowctl.ps1 update -Scope ${scope_value} -NonInteractive"
   fi
 
-  log_info "Nova versão do MEMFLOW disponível."
-  printf "  Versão atual: %s\n" "$installed_version"
-  printf "  Última versão: %s\n" "$latest_version"
+  log_info "Nova versão do MEMFLOW encontrada. Atual: ${installed_version} | Disponível: ${latest_version}"
   printf "  Próximo passo: %s\n" "$update_command"
 }
 
@@ -563,7 +561,6 @@ perform_install() {
 
   log_info "Instalação concluída com sucesso."
   log_info "Destino: ${install_dir}"
-  log_info "Próximos passos: /context e /workflow"
 }
 
 run_install() {
@@ -648,11 +645,15 @@ run_update() {
   local manifest_updated="${updated_root}/.memflow-install.json"
 
   if [[ -n "$installed_version" && "$installed_version" == "$VERSION" ]]; then
-    log_info "MEMFLOW já está na versão mais recente (${installed_version}). Nenhuma atualização é necessária agora."
+    log_info "MEMFLOW já está atualizado (${installed_version})"
     return 0
   fi
 
-  log_info "Recomendando atualização do MEMFLOW para versão ${VERSION}"
+  if [[ -n "$installed_version" ]]; then
+    log_info "Nova versão do MEMFLOW encontrada. Atual: ${installed_version} | Disponível: ${VERSION}"
+  else
+    log_info "Atualização do MEMFLOW iniciada para versão ${VERSION}"
+  fi
   perform_install "$updated_root" "$install_dir" "$manifest_updated" "$VERSION"
 }
 

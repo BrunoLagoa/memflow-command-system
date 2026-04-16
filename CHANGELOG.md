@@ -4,6 +4,15 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.4] - 2026-04-16
+
+### Alterado
+- `scripts/install.sh` e `scripts/install.ps1`: mensagens de atualização passaram a exibir versão instalada e versão disponível no mesmo texto (`Atual: ... | Disponível: ...`) para melhorar clareza operacional.
+- `scripts/install.sh` e `scripts/install.ps1`: mensagem de estado atualizado simplificada para `MEMFLOW já está atualizado (...)`.
+
+### Removido
+- Linha de saída `Próximos passos: /context e /workflow` após instalação concluída, reduzindo ruído no output dos instaladores.
+
 ## [1.1.3] - 2026-04-16
 
 ### Adicionado
@@ -67,6 +76,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.4]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.0...v1.1.1

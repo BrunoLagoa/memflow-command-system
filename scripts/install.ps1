@@ -235,9 +235,7 @@ function Show-VersionUpdateNotice {
   if ($ResolvedOs -eq "windows") {
     $updateCommand = "memflowctl.ps1 update -Scope $ResolvedScope -NonInteractive"
   }
-  Write-Info "Nova versão do MEMFLOW disponível."
-  Write-Host "  Versão atual: $InstalledVersion"
-  Write-Host "  Última versão: $LatestVersion"
+  Write-Info "Nova versão do MEMFLOW encontrada. Atual: $InstalledVersion | Disponível: $LatestVersion"
   Write-Host "  Próximo passo: $updateCommand"
 }
 
@@ -340,7 +338,6 @@ function Invoke-Install {
 
   Write-Info "Instalação concluída com sucesso."
   Write-Info "Destino: $installDir"
-  Write-Info "Próximos passos: /context e /workflow"
 }
 
 function Invoke-Update {
@@ -403,11 +400,15 @@ function Invoke-Update {
   }
 
   if ($installedVersion -and ($installedVersion -eq $nextVersion)) {
-    Write-Info "MEMFLOW já está na versão mais recente ($installedVersion). Nenhuma atualização é necessária agora."
+    Write-Info "MEMFLOW já está atualizado ($installedVersion)"
     return
   }
 
-  Write-Info "Recomendando atualização do MEMFLOW para versão $nextVersion"
+  if ($installedVersion) {
+    Write-Info "Nova versão do MEMFLOW encontrada. Atual: $installedVersion | Disponível: $nextVersion"
+  } else {
+    Write-Info "Atualização do MEMFLOW iniciada para versão $nextVersion"
+  }
   Invoke-Install -ResolvedScope $effectiveScope -ResolvedTarget $ResolvedTarget -ResolvedOs $effectiveOs -ResolvedVersion $nextVersion
 }
 
