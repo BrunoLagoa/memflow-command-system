@@ -148,7 +148,7 @@ Por padrão, o update usa a release tagueada mais recente.
 ### Remover instalação
 
 ```bash
-./scripts/install.sh uninstall --scope global
+# ./scripts/install.sh uninstall --scope global
 ```
 
 ```powershell

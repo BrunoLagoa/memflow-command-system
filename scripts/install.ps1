@@ -193,8 +193,28 @@ function Invoke-Update {
     [string]$ResolvedTarget,
     [string]$ResolvedOs
   )
+
+  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+  $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
+
+  $installedVersion = $null
+  if (Test-Path $manifestPath) {
+    try {
+      $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+      $installedVersion = $manifest.version
+    } catch {
+      # Se o manifest estiver corrompido/inválido, segue o update normalmente.
+    }
+  }
+
   $nextVersion = if ($Version) { $Version } else { Get-LatestReleaseTag -RepoName $Repo }
-  Write-Info "Atualizando MEMFLOW para versão $nextVersion"
+
+  if ($installedVersion -and ($installedVersion -eq $nextVersion)) {
+    Write-Info "MEMFLOW já está na versão mais recente ($installedVersion). Nenhuma atualização é necessária agora."
+    return
+  }
+
+  Write-Info "Recomendando atualização do MEMFLOW para versão $nextVersion"
   Invoke-Install -ResolvedScope $ResolvedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedVersion $nextVersion
 }
 

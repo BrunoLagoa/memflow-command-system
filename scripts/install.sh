@@ -109,6 +109,7 @@ VERSION=""
 PROJECT_DIR="$(pwd)"
 REPO="$MEMFLOW_REPO_DEFAULT"
 CHANNEL="release"
+BACKUP_ENABLED=1
 
 usage() {
   cat <<'EOF'
@@ -371,7 +372,7 @@ perform_install() {
   mkdir -p "$commands_root"
 
   if [[ -d "$install_dir" ]]; then
-    if [[ "$NON_INTERACTIVE" -eq 0 ]] && confirm_tty "Instalação existente detectada em ${install_dir}. Deseja criar backup?" "y"; then
+    if [[ "$BACKUP_ENABLED" -eq 1 && "$NON_INTERACTIVE" -eq 0 ]] && confirm_tty "Instalação existente detectada em ${install_dir}. Deseja criar backup?" "y"; then
       local backup_dir="${install_dir}.bak.$(date +%Y%m%d%H%M%S)"
       cp -R "$install_dir" "$backup_dir"
       log_info "Backup criado em ${backup_dir}"
@@ -389,6 +390,7 @@ perform_install() {
 }
 
 run_install() {
+  BACKUP_ENABLED=1
   if [[ "$NON_INTERACTIVE" -eq 0 ]]; then
     wizard_select
   else
@@ -422,10 +424,13 @@ run_install() {
 
 run_update() {
   local user_scope="${SCOPE:-}"
+  BACKUP_ENABLED=0
   default_missing_values
   local commands_root manifest_file existing_manifest=""
   commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
   manifest_file="${commands_root}/.memflow-install.json"
+
+  local installed_version=""
 
   if [[ -z "$user_scope" ]]; then
     existing_manifest="$(find_existing_manifest "$SELECTED_OS" "$PROJECT_DIR" || true)"
@@ -435,6 +440,7 @@ run_update() {
   fi
 
   if [[ -f "$manifest_file" ]]; then
+    installed_version="$(parse_manifest_value "$manifest_file" "version")"
     SCOPE="${SCOPE:-$(parse_manifest_value "$manifest_file" "scope")}"
     TARGET="${TARGET:-$(parse_manifest_value "$manifest_file" "target")}"
     SELECTED_OS="${SELECTED_OS:-$(parse_manifest_value "$manifest_file" "os")}"
@@ -452,7 +458,12 @@ run_update() {
   local install_dir="${updated_root}/memflow"
   local manifest_updated="${updated_root}/.memflow-install.json"
 
-  log_info "Atualizando MEMFLOW para versão ${VERSION}"
+  if [[ -n "$installed_version" && "$installed_version" == "$VERSION" ]]; then
+    log_info "MEMFLOW já está na versão mais recente (${installed_version}). Nenhuma atualização é necessária agora."
+    return 0
+  fi
+
+  log_info "Recomendando atualização do MEMFLOW para versão ${VERSION}"
   perform_install "$updated_root" "$install_dir" "$manifest_updated" "$VERSION"
 }
 
