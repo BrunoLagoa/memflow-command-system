@@ -111,7 +111,7 @@ choose_option_tty() {
       printf "%s" "${options[$((answer - 1))]}"
       return 0
     fi
-    log_warn "Opção inválida. Tente novamente."
+    log_warn "Opção inválida. Tente novamente." >&2
   done
 }
 
