@@ -298,12 +298,9 @@ Se não houver:
 - `/review-enforce-rules` (opcional/recomendado em cenários críticos)
 - `/test-plan` (se aplicável)
 - Se `/review` não for executado: rodar check silencioso de versão do MEMFLOW ao final (exibir aviso somente quando houver atualização)
-- Priorizar check cross-OS sem depender de `memflowctl` no PATH:
-  - macOS/Linux (remoto): `curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive`
-  - Windows/PowerShell (remoto): `powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"`
-  - Repositório local (bash): `./scripts/install.sh check --non-interactive`
-  - Repositório local (PowerShell): `powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 check -NonInteractive`
-  - `memflowctl check` é opcional apenas quando o comando existir no ambiente
+- Executar check de versão usando comandos remotos (sem depender de binário local no PATH):
+  - macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive`
+  - Windows/PowerShell: `powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"`
 
 ---
 
