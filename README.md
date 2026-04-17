@@ -129,29 +129,24 @@ cd memflow-command-system
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 ```
 
-#### Global vs local scope
+#### Scope by target
 
-- **`global`**: installed in user profile (`~/.config/...`); available from any directory. In non-interactive commands, use `--scope global` (or `-Scope global` in PowerShell).
-- **`local`**: installed inside a project; use `--scope local --project-dir <path>` (usually `--project-dir .` at repository root).
+- **`opencode`**: keeps both `global` and `local` scopes.
+- **`vscode`**: uses a **single project installation** in `.github/prompts` (no global/local split).
+  - During installation, `.../_shared/...` references in commands are replaced by the actual shared-base content inside each generated prompt.
 
-The same convention applies to **`install`**, **`memflowctl`** (`update`, `check`, `uninstall`), and **`install.sh` / `install.ps1`** when you pass scope explicitly.
-
-For **`update`**, if MEMFLOW was installed previously, the installer can **infer** global vs local from the manifest (`.memflow-install.json`); in that case `--scope` / `-Scope` is optional - see [Update to a new version](#update-to-a-new-version).
+For **`update`**, if MEMFLOW was installed previously, the installer uses the manifest (`.memflow-install.json`) to locate existing installations.
 
 ### Non-interactive installation
 
-Examples below follow the convention from [Global vs local scope](#global-vs-local-scope).
+Examples below follow the convention from [Scope by target](#scope-by-target).
 
-#### Global
+#### OpenCode - Global
 
 ##### macOS/Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target opencode
-```
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target vscode
 ```
 
 ##### PowerShell
@@ -160,20 +155,12 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
 ```
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target vscode
-```
-
-#### Local (current project)
+#### OpenCode - Local (current project)
 
 ##### macOS/Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target opencode
-```
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target vscode
 ```
 
 ##### PowerShell
@@ -183,26 +170,40 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInter
 ```
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target vscode
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
+```
+
+#### VSCode - Single project installation
+
+##### macOS/Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --target vscode --project-dir .
+```
+
+##### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
 ```
 
 ### Update to a new version
 
 By default, update uses the latest tagged release.
 
-If there is no previous installation in the requested scope:
+If there is no previous installation in the requested target:
 - in **interactive** mode, the command explains the issue and asks whether to start a fresh install;
 - in **non-interactive** mode, it fails with an explicit error and exit code `2`.
 
-If you **already installed** MEMFLOW, the installer can **auto-detect** whether installation was **global** or **local** by reading the manifest (`.memflow-install.json`). In this case, passing `--scope` / `-Scope` is not mandatory - use it only when you want to force a scope explicitly.
-
-Without `--scope`, `update` only affects scopes where installation is detected by manifest: if only one scope exists, it updates only that one; if both **global and local** exist, it applies to both in order `global` -> `local`.
+Without `--scope`, `update` keeps manifest auto-discovery:
+- on `opencode`, it updates detected scopes (`global` and/or `local`);
+- on `vscode`, it updates the generated files in `<project>/.github/prompts`.
 
 #### General command
 
 Use `install.sh` / `install.ps1` directly from the repository (does not require `memflowctl` in PATH).
 
-Run from the **same directory** where you usually work (for local installation, typically the project root where `.<target>/commands` exists).
+Run from the **same directory** where you usually work. For `vscode`, pass `--target vscode --project-dir .` (or `-Target vscode -ProjectDir .` in PowerShell).
 
 ##### macOS/Linux
 
@@ -220,7 +221,9 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 `check` verifies whether a newer version is available without changing the installation.
 
-Without `--scope`, `check` evaluates only scopes with installation detected by manifest: if there is only one scope, it checks only that one; if both **global and local** exist, it checks both in order `global` -> `local`.
+Without `--scope`, `check` uses manifest auto-discovery:
+- on `opencode`, it checks installed scopes;
+- on `vscode`, it checks the single project installation from the manifest in `<project>/.github/.memflow-install.json`.
 
 #### General command
 
@@ -238,11 +241,13 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 ### Remove installation
 
-Use the same **`--scope`** and **`--project-dir`** values from [Global vs local scope](#global-vs-local-scope).
+Use the same **`--scope`** and **`--project-dir`** values from [Scope by target](#scope-by-target).
 
-If no installation exists in the informed scope, `uninstall` returns an explicit error with exit code `2` to avoid false-success scenarios.
+If no installation exists in the informed target, `uninstall` returns an explicit error with exit code `2` to avoid false-success scenarios.
 
-Without `--scope`, `uninstall` also uses manifest auto-discovery and removes only scopes that actually have an installation: if one scope exists, removes only that one; if both **global and local** are found, removes both in order `global` -> `local`.
+Without `--scope`, `uninstall` also uses manifest auto-discovery:
+- on `opencode`, it removes detected scopes;
+- on `vscode`, it removes generated `memflow.*` files from `.github/prompts`.
 
 #### General command
 
@@ -260,12 +265,11 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 ### Installation targets
 
-These match the **global** and **local** modes described in [Global vs local scope](#global-vs-local-scope):
+These match the modes described in [Scope by target](#scope-by-target):
 
 - `opencode` global: `~/.config/opencode/commands/memflow`
 - `opencode` local: `<project>/.opencode/commands/memflow`
-- `vscode` global: `~/.config/vscode/commands/memflow`
-- `vscode` local: `<project>/.vscode/commands/memflow`
+- `vscode` prompts: `<project>/.github/prompts/memflow.<command>.prompt.md`
 
 ### First use
 
@@ -318,7 +322,7 @@ This section is continuously updated as new environments are validated.
 | Tool | Support | Notes |
 | ---------- | ------- | ----------- |
 | `OpenCode` | ✅ | Main project platform, with full support for slash commands and SDLC flow. |
-| `VSCode` | ✅ | Supported by installer targets (`--target vscode`) for global and local scopes. |
+| `VSCode` | ✅ | Supported by installer target (`--target vscode`) generating prompt files in `.github/prompts`. |
 | `Antigravity` | ⏳ | Support pending validation; we still need to test this environment. |
 | `Cursor` | ⏳ | Support pending validation; we still need to test this environment. |
 

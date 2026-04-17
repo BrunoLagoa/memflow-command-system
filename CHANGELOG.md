@@ -7,11 +7,12 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 ## [1.1.13] - 2026-04-17
 
 ### Alterado
-- `scripts/install.sh` e `scripts/install.ps1`: suporte ao target `vscode` com resolução de caminho por target (`opencode` e `vscode`) para `install`, `update`, `check` e `uninstall`.
+- `scripts/install.sh` e `scripts/install.ps1`: target `vscode` agora usa instalação única por projeto gerando apenas prompt files em `.github/prompts` (sem geração de `.github/agents`), sem divisão entre escopos `global` e `local`.
+- `scripts/install.sh` e `scripts/install.ps1`: para `vscode`, referências de caminhos `.../_shared/...` nos comandos agora são substituídas pelo conteúdo real das bases compartilhadas durante a geração dos `.prompt.md`.
 - `scripts/install.sh` e `scripts/install.ps1`: descoberta sem escopo agora permite filtrar por target explícito (`--target` / `-Target`) e mantém comportamento padrão quando não informado.
 - `scripts/manifest.schema.json`: `target.enum` ampliado para aceitar `vscode`.
-- `scripts/tests/test-install-regression.sh`: cobertura adicionada para fluxo completo de `vscode` (install/update/check/uninstall e cenários de ausência de instalação).
-- `README.md` e `README.pt-BR.md`: documentação atualizada com exemplos de instalação para `--target vscode`, matriz de destinos por target e status de suporte do VSCode.
+- `scripts/tests/test-install-regression.sh`: cobertura atualizada para fluxo único de `vscode` (install/update/check/uninstall e ausência de instalação), garantindo que não exista instalação global para esse target.
+- `README.md` e `README.pt-BR.md`: documentação atualizada para refletir o modelo único de instalação no `vscode`.
 
 ## [1.1.12] - 2026-04-17
 

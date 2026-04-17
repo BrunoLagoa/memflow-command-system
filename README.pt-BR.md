@@ -129,29 +129,24 @@ cd memflow-command-system
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 ```
 
-#### Escopo global vs local
+#### Escopo por target
 
-- **`global`**: instalação no perfil do usuário (`~/.config/...`); disponível em qualquer diretório. Em comandos não interativos, use `--scope global` (ou `-Scope global` no PowerShell).
-- **`local`**: instalação dentro de um projeto; use `--scope local --project-dir <caminho>` (em geral `--project-dir .` na raiz do repositório).
+- **`opencode`**: mantém escopos `global` e `local`.
+- **`vscode`**: usa instalação **única por projeto** em `.github/prompts` (sem separação global/local).
+  - Durante a instalação, referências a `.../_shared/...` nos comandos são substituídas pelo conteúdo real das bases compartilhadas dentro de cada prompt gerado.
 
-A mesma convenção vale para **`install`**, **`memflowctl`** (`update`, `check`, `uninstall`) e **`install.sh` / `install.ps1`** quando você passa escopo explicitamente.
-
-No **`update`**, se você já instalou antes, o instalador pode **inferir** global vs local pelo manifest (`.memflow-install.json`); nesse caso `--scope` / `-Scope` é opcional — veja a seção [Atualizar para nova versão](#atualizar-para-nova-versao).
+No **`update`**, se você já instalou antes, o instalador usa o manifest (`.memflow-install.json`) para localizar a instalação existente.
 
 ### Instalação não interativa
 
-Os exemplos abaixo seguem a convenção da subseção [Escopo global vs local](#escopo-global-vs-local) acima.
+Os exemplos abaixo seguem a convenção da subseção [Escopo por target](#escopo-por-target) acima.
 
-#### Global
+#### OpenCode — Global
 
 ##### macOS/Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target opencode
-```
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target vscode
 ```
 
 ##### PowerShell
@@ -160,20 +155,12 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
 ```
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target vscode
-```
-
-#### Local (projeto atual)
+#### OpenCode — Local (projeto atual)
 
 ##### macOS/Linux
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target opencode
-```
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target vscode
 ```
 
 ##### PowerShell
@@ -183,26 +170,40 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInter
 ```
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target vscode
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
+```
+
+#### VSCode — Instalação única por projeto
+
+##### macOS/Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --target vscode --project-dir .
+```
+
+##### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
 ```
 
 ### Atualizar para nova versão
 
 Por padrão, o update usa a release tagueada mais recente.
 
-Se não existir instalação prévia no escopo solicitado:
+Se não existir instalação prévia no alvo solicitado:
 - no modo **interativo**, o comando informa o problema e pergunta se deve iniciar uma instalação nova;
 - no modo **não interativo**, falha com erro explícito e código de saída `2`.
 
-Se você **já instalou** o MEMFLOW antes, o instalador pode **descobrir automaticamente** se a instalação foi **global** ou **local** lendo o manifest (`.memflow-install.json`). Nesse caso **não é obrigatório** passar `--scope` / `-Scope` — use quando quiser forçar um escopo explícito.
-
-Sem `--scope`, o `update` só atua nos escopos onde houver instalação detectada por manifest: se existir apenas em um escopo, atualiza apenas esse; se existir em **global e local**, aplica nos dois na ordem `global` -> `local`.
+Sem `--scope`, o `update` mantém autodiscovery por manifest:
+- em `opencode`, atualiza os escopos detectados (`global` e/ou `local`);
+- em `vscode`, atualiza os arquivos gerados em `<projeto>/.github/prompts`.
 
 #### Comando geral
 
 Use o `install.sh` / `install.ps1` direto do repositório (não depende de `memflowctl` estar no PATH).
 
-Execute no **mesmo diretório** em que você costuma trabalhar (para instalação local, normalmente a raiz do projeto onde existe `.<target>/commands`).
+Execute no **mesmo diretório** em que você costuma trabalhar. Para `vscode`, informe `--target vscode --project-dir .` (ou `-Target vscode -ProjectDir .` no PowerShell).
 
 ##### macOS/Linux
 
@@ -220,7 +221,9 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 O `check` verifica se existe versão mais recente sem alterar a instalação.
 
-Sem `--scope`, o `check` avalia apenas os escopos com instalação detectada por manifest: se existir só um escopo, verifica só ele; se existir em **global e local**, verifica os dois na ordem `global` -> `local`.
+Sem `--scope`, o `check` usa autodiscovery por manifest:
+- em `opencode`, verifica os escopos instalados;
+- em `vscode`, verifica a instalação única do projeto via manifest em `<projeto>/.github/.memflow-install.json`.
 
 #### Comando geral
 
@@ -238,11 +241,13 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 ### Remover instalação
 
-Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Escopo global vs local](#escopo-global-vs-local).
+Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Escopo por target](#escopo-por-target).
 
-Se não existir instalação no escopo informado, o `uninstall` retorna erro explícito com código de saída `2` para evitar falso positivo de sucesso.
+Se não existir instalação no alvo informado, o `uninstall` retorna erro explícito com código de saída `2` para evitar falso positivo de sucesso.
 
-Sem `--scope`, o `uninstall` também usa descoberta automática por manifest e remove apenas os escopos que realmente tiverem instalação: se existir só em um escopo, remove só esse; se encontrar em **global e local**, remove os dois na ordem `global` -> `local`.
+Sem `--scope`, o `uninstall` também usa descoberta automática por manifest:
+- em `opencode`, remove os escopos detectados;
+- em `vscode`, remove arquivos `memflow.*` gerados em `.github/prompts`.
 
 #### Comando geral
 
@@ -260,12 +265,11 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 ### Destinos de instalação
 
-Correspondem aos modos **global** e **local** descritos em [Escopo global vs local](#escopo-global-vs-local):
+Correspondem aos modos descritos em [Escopo por target](#escopo-por-target):
 
 - `opencode` global: `~/.config/opencode/commands/memflow`
 - `opencode` local: `<projeto>/.opencode/commands/memflow`
-- `vscode` global: `~/.config/vscode/commands/memflow`
-- `vscode` local: `<projeto>/.vscode/commands/memflow`
+- `vscode` prompts: `<projeto>/.github/prompts/memflow.<comando>.prompt.md`
 
 ### Primeiro uso
 
@@ -318,7 +322,7 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 | Ferramenta | Suporte | Observações |
 | ---------- | ------- | ----------- |
 | `OpenCode` | ✅ | Plataforma principal do projeto, com suporte completo a comandos slash e fluxo SDLC. |
-| `VSCode` | ✅ | Suporte via targets do instalador (`--target vscode`) para escopos global e local. |
+| `VSCode` | ✅ | Suporte via target do instalador (`--target vscode`) gerando prompt files em `.github/prompts`. |
 | `Antigravity` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
 | `Cursor` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
 

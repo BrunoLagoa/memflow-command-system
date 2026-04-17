@@ -115,6 +115,27 @@ BACKUP_ENABLED=1
 VERSION_CHECK_TTL_SECONDS=86400
 EXIT_CODE_NOT_FOUND=2
 
+normalize_scope_for_target() {
+  local requested_scope="$1"
+  local target="$2"
+  if [[ "$target" == "vscode" ]]; then
+    # VS Code usa instalação única por projeto.
+    printf "local"
+    return 0
+  fi
+  printf "%s" "$requested_scope"
+}
+
+install_dir_for_target() {
+  local commands_root="$1"
+  local target="$2"
+  if [[ "$target" == "vscode" ]]; then
+    printf "%s" "${commands_root}/prompts"
+    return 0
+  fi
+  printf "%s" "${commands_root}/memflow"
+}
+
 die_with_code() {
   local exit_code="$1"
   shift
@@ -154,7 +175,7 @@ prompt_fresh_install_from_update() {
 
   local commands_root install_dir manifest_file
   commands_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
-  install_dir="${commands_root}/memflow"
+  install_dir="$(install_dir_for_target "$commands_root" "$TARGET")"
   manifest_file="${commands_root}/.memflow-install.json"
 
   log_info "Iniciando nova instalação no escopo ${SCOPE}."
@@ -296,8 +317,15 @@ wizard_select() {
   fi
 
   if [[ -z "$SCOPE" ]]; then
-    SCOPE="$(choose_option_tty "3 - Essa instalação vai ser local ou global?" "local" "global")"
+    if [[ "$TARGET" == "vscode" ]]; then
+      SCOPE="local"
+      printf "3 - Escopo\n  > local (único para vscode)\n"
+    else
+      SCOPE="$(choose_option_tty "3 - Essa instalação vai ser local ou global?" "local" "global")"
+    fi
   fi
+
+  SCOPE="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
 }
 
 default_missing_values() {
@@ -310,6 +338,7 @@ default_missing_values() {
   if [[ -z "$TARGET" ]]; then
     TARGET="opencode"
   fi
+  SCOPE="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
 }
 
 commands_root_for_scope() {
@@ -318,6 +347,11 @@ commands_root_for_scope() {
   local os_name="$3"
   local project_dir="$4"
   local root=""
+
+  if [[ "$target" == "vscode" ]]; then
+    printf "%s" "${project_dir}/.github"
+    return 0
+  fi
 
   if [[ "$scope" == "global" ]]; then
     if [[ "$os_name" == "windows" && -n "${USERPROFILE:-}" ]]; then
@@ -345,6 +379,14 @@ find_existing_manifest() {
   local target global_root local_root
   while IFS= read -r target; do
     [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
+    if [[ "$target" == "vscode" ]]; then
+      local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
+      if [[ -f "${local_root}/.memflow-install.json" ]]; then
+        printf "%s" "${local_root}/.memflow-install.json"
+        return 0
+      fi
+      continue
+    fi
     global_root="$(commands_root_for_scope "global" "$target" "$os_name" "$project_dir")"
     local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
 
@@ -373,6 +415,13 @@ collect_existing_manifests() {
   local target global_root local_root
   while IFS= read -r target; do
     [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
+    if [[ "$target" == "vscode" ]]; then
+      local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
+      if [[ -f "${local_root}/.memflow-install.json" ]]; then
+        printf "%s\n" "${local_root}/.memflow-install.json"
+      fi
+      continue
+    fi
     global_root="$(commands_root_for_scope "global" "$target" "$os_name" "$project_dir")"
     local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
 
@@ -511,8 +560,11 @@ print_version_update_notice() {
   local latest_version="$2"
   local scope_value="$3"
   local os_name="$4"
+  local target_value="$5"
   local update_command="memflowctl update --scope ${scope_value} --non-interactive"
-  if [[ "$os_name" == "windows" ]]; then
+  if [[ "$target_value" == "vscode" ]]; then
+    update_command="memflowctl update --target vscode --project-dir . --non-interactive"
+  elif [[ "$os_name" == "windows" ]]; then
     update_command="memflowctl.ps1 update -Scope ${scope_value} -NonInteractive"
   fi
 
@@ -551,6 +603,48 @@ resolve_source_dir() {
   printf "%s" "${extracted_root}/src"
 }
 
+render_vscode_prompt_with_shared() {
+  local src_file="$1"
+  local dest_file="$2"
+  local source_dir="$3"
+  local shared_dir="${source_dir}/_shared"
+  local shared_output="${shared_dir}/base-output.md"
+  local shared_preconditions="${shared_dir}/base-preconditions.md"
+  local shared_degraded="${shared_dir}/base-degraded-mode.md"
+
+  [[ -f "$shared_output" ]] || die "Arquivo compartilhado não encontrado: ${shared_output}"
+  [[ -f "$shared_preconditions" ]] || die "Arquivo compartilhado não encontrado: ${shared_preconditions}"
+  [[ -f "$shared_degraded" ]] || die "Arquivo compartilhado não encontrado: ${shared_degraded}"
+
+  awk \
+    -v shared_output_file="$shared_output" \
+    -v shared_preconditions_file="$shared_preconditions" \
+    -v shared_degraded_file="$shared_degraded" '
+      function inject_file(path, title,   line) {
+        print title
+        while ((getline line < path) > 0) {
+          print line
+        }
+        close(path)
+      }
+      {
+        if ($0 ~ /_shared\/base-output\.md/) {
+          inject_file(shared_output_file, "### Conteúdo injetado: _shared/base-output.md")
+          next
+        }
+        if ($0 ~ /_shared\/base-preconditions\.md/) {
+          inject_file(shared_preconditions_file, "### Conteúdo injetado: _shared/base-preconditions.md")
+          next
+        }
+        if ($0 ~ /_shared\/base-degraded-mode\.md/) {
+          inject_file(shared_degraded_file, "### Conteúdo injetado: _shared/base-degraded-mode.md")
+          next
+        }
+        print
+      }
+    ' "$src_file" > "$dest_file"
+}
+
 write_manifest() {
   local manifest_file="$1"
   local version="$2"
@@ -586,6 +680,48 @@ perform_install() {
   local source_dir
   source_dir="$(resolve_source_dir "$version")"
 
+  if [[ "$TARGET" == "vscode" ]]; then
+    local prompts_dir legacy_agents_dir src_file stem prompt_file
+    prompts_dir="${commands_root}/prompts"
+    legacy_agents_dir="${commands_root}/agents"
+    mkdir -p "$prompts_dir"
+
+    if [[ "$BACKUP_ENABLED" -eq 1 && "$NON_INTERACTIVE" -eq 0 ]] && { compgen -G "${prompts_dir}/memflow.*.prompt.md" >/dev/null || compgen -G "${legacy_agents_dir}/memflow.*.agent.md" >/dev/null; }; then
+      if confirm_tty "Comandos MEMFLOW existentes detectados para VSCode. Deseja criar backup?" "y"; then
+        local backup_dir="${commands_root}/memflow-vscode-backup.$(date +%Y%m%d%H%M%S)"
+        mkdir -p "$backup_dir"
+        cp -R "$prompts_dir" "$backup_dir/prompts" 2>/dev/null || true
+        cp -R "$legacy_agents_dir" "$backup_dir/agents" 2>/dev/null || true
+        log_info "Backup criado em ${backup_dir}"
+      fi
+    fi
+
+    rm -f "${prompts_dir}/memflow."*.prompt.md
+    rm -f "${legacy_agents_dir}/memflow."*.agent.md
+
+    local generated_count=0
+    shopt -s nullglob
+    for src_file in "${source_dir}"/*.md; do
+      stem="$(basename "$src_file" .md)"
+      prompt_file="${prompts_dir}/memflow.${stem}.prompt.md"
+      render_vscode_prompt_with_shared "$src_file" "$prompt_file" "$source_dir"
+      generated_count=$((generated_count + 1))
+    done
+    shopt -u nullglob
+
+    if [[ "$generated_count" -eq 0 ]]; then
+      die "Nenhum comando encontrado em ${source_dir} para instalação VSCode."
+    fi
+
+    local manifest_scope
+    manifest_scope="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
+    write_manifest "$manifest_file" "$version" "$manifest_scope" "$TARGET" "$SELECTED_OS" "$prompts_dir" "$commands_root"
+
+    log_info "Instalação concluída com sucesso."
+    log_info "Destino prompts: ${prompts_dir}"
+    return 0
+  fi
+
   mkdir -p "$commands_root"
 
   if [[ -d "$install_dir" ]]; then
@@ -599,7 +735,9 @@ perform_install() {
 
   mkdir -p "$install_dir"
   cp -R "${source_dir}/." "$install_dir/"
-  write_manifest "$manifest_file" "$version" "$SCOPE" "$TARGET" "$SELECTED_OS" "$install_dir" "$commands_root"
+  local manifest_scope
+  manifest_scope="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
+  write_manifest "$manifest_file" "$version" "$manifest_scope" "$TARGET" "$SELECTED_OS" "$install_dir" "$commands_root"
 
   log_info "Instalação concluída com sucesso."
   log_info "Destino: ${install_dir}"
@@ -613,9 +751,12 @@ run_install() {
     default_missing_values
   fi
 
+  SCOPE="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
+
   local commands_root
   commands_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
-  local install_dir="${commands_root}/memflow"
+  local install_dir
+  install_dir="$(install_dir_for_target "$commands_root" "$TARGET")"
   local manifest_file="${commands_root}/.memflow-install.json"
 
   local resolved_version="$VERSION"
@@ -681,13 +822,14 @@ run_update() {
       if [[ -n "$manifest_target" ]]; then
         TARGET="$manifest_target"
       fi
+      SCOPE="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
       if [[ -n "$manifest_os" ]]; then
         SELECTED_OS="$manifest_os"
       fi
 
       local updated_root install_dir manifest_updated
       updated_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
-      install_dir="${updated_root}/memflow"
+      install_dir="$(install_dir_for_target "$updated_root" "$TARGET")"
       manifest_updated="${updated_root}/.memflow-install.json"
 
       if [[ -n "$installed_version" && "$installed_version" == "$VERSION" ]]; then
@@ -721,6 +863,7 @@ run_update() {
     if [[ -n "$manifest_target" ]]; then
       TARGET="$manifest_target"
     fi
+    SCOPE="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
     if [[ -n "$manifest_os" ]]; then
       SELECTED_OS="$manifest_os"
     fi
@@ -736,7 +879,8 @@ run_update() {
 
   local updated_root
   updated_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
-  local install_dir="${updated_root}/memflow"
+  local install_dir
+  install_dir="$(install_dir_for_target "$updated_root" "$TARGET")"
   local manifest_updated="${updated_root}/.memflow-install.json"
 
   if [[ -n "$installed_version" && "$installed_version" == "$VERSION" ]]; then
@@ -761,7 +905,7 @@ run_uninstall() {
   default_missing_values
   local commands_root install_dir manifest_file existing_manifest=""
   commands_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
-  install_dir="${commands_root}/memflow"
+  install_dir="$(install_dir_for_target "$commands_root" "$TARGET")"
   manifest_file="${commands_root}/.memflow-install.json"
   local -a manifests_to_remove=()
 
@@ -802,8 +946,13 @@ run_uninstall() {
 
   for manifest_file in "${removable_manifests[@]}"; do
     commands_root="$(dirname "$manifest_file")"
-    install_dir="${commands_root}/memflow"
+    local target_in_manifest
+    target_in_manifest="$(parse_manifest_value "$manifest_file" "target")"
+    install_dir="$(install_dir_for_target "$commands_root" "$target_in_manifest")"
     printf "Destino de remoção: %s\n" "$install_dir"
+    if [[ "$target_in_manifest" == "vscode" ]]; then
+      printf "Destino de remoção: %s\n" "${commands_root}/prompts"
+    fi
   done
 
   if [[ "$NON_INTERACTIVE" -eq 0 ]] && ! confirm_tty "Confirmar remoção completa do MEMFLOW?" "n"; then
@@ -814,8 +963,15 @@ run_uninstall() {
   local removed_count=0
   for manifest_file in "${removable_manifests[@]}"; do
     commands_root="$(dirname "$manifest_file")"
-    install_dir="${commands_root}/memflow"
-    rm -rf "$install_dir"
+    local target_in_manifest
+    target_in_manifest="$(parse_manifest_value "$manifest_file" "target")"
+    install_dir="$(install_dir_for_target "$commands_root" "$target_in_manifest")"
+    if [[ "$target_in_manifest" == "vscode" ]]; then
+      rm -f "${commands_root}/prompts/memflow."*.prompt.md
+      rm -f "${commands_root}/agents/memflow."*.agent.md
+    else
+      rm -rf "$install_dir"
+    fi
     rm -f "$manifest_file"
     removed_count=$((removed_count + 1))
   done
@@ -830,19 +986,19 @@ run_uninstall() {
 run_check() {
   local user_scope="${SCOPE:-}"
   local os_name="${SELECTED_OS:-$(detect_os)}"
-  local effective_target="$TARGET"
-  if [[ -z "$effective_target" ]]; then
-    effective_target="opencode"
+  local default_target="$TARGET"
+  if [[ -z "$default_target" ]]; then
+    default_target="opencode"
   fi
   local target_filter=""
   if [[ "$TARGET_EXPLICIT" -eq 1 ]]; then
-    target_filter="$effective_target"
+    target_filter="$default_target"
   fi
   local manifest_file=""
   local -a manifests_to_check=()
   if [[ -n "$user_scope" ]]; then
     local commands_root
-    commands_root="$(commands_root_for_scope "$user_scope" "$effective_target" "$os_name" "$PROJECT_DIR")"
+    commands_root="$(commands_root_for_scope "$user_scope" "$default_target" "$os_name" "$PROJECT_DIR")"
     manifest_file="${commands_root}/.memflow-install.json"
     if [[ -f "$manifest_file" ]]; then
       manifests_to_check+=("$manifest_file")
@@ -857,13 +1013,14 @@ run_check() {
     return 0
   fi
 
-  local installed_version installed_scope installed_os installed_repo
-  local effective_scope effective_os repo_name latest_version
+  local installed_version installed_scope installed_os installed_repo installed_target
+  local effective_scope effective_os repo_name latest_version effective_target
   for manifest_file in "${manifests_to_check[@]}"; do
     installed_version="$(parse_manifest_value "$manifest_file" "version")"
     installed_scope="$(parse_manifest_value "$manifest_file" "scope")"
     installed_os="$(parse_manifest_value "$manifest_file" "os")"
     installed_repo="$(parse_manifest_value "$manifest_file" "repo")"
+    installed_target="$(parse_manifest_value "$manifest_file" "target")"
 
     if [[ -z "$installed_version" ]]; then
       continue
@@ -872,6 +1029,8 @@ run_check() {
     effective_scope="${installed_scope:-${SCOPE:-global}}"
     effective_os="${installed_os:-$os_name}"
     repo_name="${installed_repo:-$REPO}"
+    effective_target="${installed_target:-$default_target}"
+    effective_scope="$(normalize_scope_for_target "$effective_scope" "$effective_target")"
 
     latest_version="$(resolve_latest_version_with_cache "$repo_name" "$effective_os" || true)"
     if [[ -z "$latest_version" ]]; then
@@ -879,7 +1038,7 @@ run_check() {
     fi
 
     if is_version_newer "$latest_version" "$installed_version"; then
-      print_version_update_notice "$installed_version" "$latest_version" "$effective_scope" "$effective_os"
+      print_version_update_notice "$installed_version" "$latest_version" "$effective_scope" "$effective_os" "$effective_target"
     fi
   done
 }

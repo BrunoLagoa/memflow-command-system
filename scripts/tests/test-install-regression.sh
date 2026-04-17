@@ -150,29 +150,64 @@ home_vscode="${tmp_root}/home-vscode"
 mkdir -p "$home_vscode"
 
 run_expect_exit \
-  "update vscode local sem instalação deve falhar com código 2" \
+  "update vscode sem instalação deve falhar com código 2" \
   2 \
-  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" update --scope local --project-dir "$project_vscode" --target vscode --non-interactive --version local
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" update --project-dir "$project_vscode" --target vscode --non-interactive --version local
 
 run_expect_exit \
-  "uninstall vscode global sem instalação deve falhar com código 2" \
+  "uninstall vscode sem instalação deve falhar com código 2" \
   2 \
-  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" uninstall --scope global --target vscode --non-interactive
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" uninstall --target vscode --non-interactive --project-dir "$project_vscode"
 
 run_expect_success \
-  "install vscode local inicial deve funcionar" \
-  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" install --scope local --project-dir "$project_vscode" --target vscode --non-interactive --version local
+  "install vscode inicial deve funcionar com instalação única" \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" install --project-dir "$project_vscode" --target vscode --non-interactive --version local
+
+if compgen -G "${project_vscode}/.github/prompts/memflow.*.prompt.md" >/dev/null; then
+  printf "[PASS] install vscode cria prompts em .github/prompts\n"
+  pass_count=$((pass_count + 1))
+else
+  printf "[FAIL] install vscode não criou prompts em .github/prompts\n"
+  fail_count=$((fail_count + 1))
+fi
+
+if compgen -G "${project_vscode}/.github/agents/memflow.*.agent.md" >/dev/null; then
+  printf "[FAIL] install vscode não deve criar agentes em .github/agents\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] install vscode não cria agentes em .github/agents\n"
+  pass_count=$((pass_count + 1))
+fi
+
+workflow_prompt="${project_vscode}/.github/prompts/memflow.workflow.prompt.md"
+if [[ -f "$workflow_prompt" ]]; then
+  workflow_prompt_content="$(<"$workflow_prompt")"
+  if [[ "$workflow_prompt_content" == *"~/.config/opencode/commands/memflow/_shared/base-output.md"* ]] || [[ "$workflow_prompt_content" == *".opencode/commands/memflow/_shared/base-output.md"* ]]; then
+    printf "[FAIL] install vscode manteve referência de caminho _shared no prompt\n"
+    fail_count=$((fail_count + 1))
+  else
+    printf "[PASS] install vscode substitui referências _shared por conteúdo\n"
+    pass_count=$((pass_count + 1))
+  fi
+
+  if [[ "$workflow_prompt_content" == *"Conteúdo injetado: _shared/base-output.md"* ]]; then
+    printf "[PASS] install vscode injeta conteúdo de base-output no prompt\n"
+    pass_count=$((pass_count + 1))
+  else
+    printf "[FAIL] install vscode não injetou conteúdo de base-output no prompt\n"
+    fail_count=$((fail_count + 1))
+  fi
+else
+  printf "[FAIL] prompt workflow não encontrado para validar injeção _shared\n"
+  fail_count=$((fail_count + 1))
+fi
 
 run_expect_success \
-  "install vscode global inicial deve funcionar" \
-  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" install --scope global --target vscode --non-interactive --version local
-
-run_expect_success \
-  "update vscode sem escopo deve funcionar com global e local existentes" \
+  "update vscode sem escopo deve funcionar com instalação única" \
   env HOME="$home_vscode" bash "$INSTALL_SCRIPT" update --target vscode --non-interactive --project-dir "$project_vscode" --version local
 
 run_expect_success \
-  "check vscode sem escopo deve funcionar com global e local existentes" \
+  "check vscode sem escopo deve funcionar com instalação única" \
   env HOME="$home_vscode" bash "$INSTALL_SCRIPT" check --target vscode --non-interactive --project-dir "$project_vscode"
 
 run_expect_success \
@@ -180,18 +215,34 @@ run_expect_success \
   env HOME="$home_vscode" bash "$INSTALL_SCRIPT" uninstall --target vscode --non-interactive --project-dir "$project_vscode"
 
 if [[ -d "${project_vscode}/.vscode/commands/memflow" ]]; then
-  printf "[FAIL] uninstall vscode sem escopo manteve instalação local\n"
+  printf "[FAIL] uninstall vscode sem escopo manteve instalação legada em .vscode/commands\n"
   fail_count=$((fail_count + 1))
 else
-  printf "[PASS] uninstall vscode sem escopo remove instalação local\n"
+  printf "[PASS] uninstall vscode sem escopo remove instalação legada em .vscode/commands\n"
   pass_count=$((pass_count + 1))
 fi
 
 if [[ -d "${home_vscode}/.config/vscode/commands/memflow" ]]; then
-  printf "[FAIL] uninstall vscode sem escopo manteve instalação global\n"
+  printf "[FAIL] vscode criou instalação global indevida\n"
   fail_count=$((fail_count + 1))
 else
-  printf "[PASS] uninstall vscode sem escopo remove instalação global\n"
+  printf "[PASS] vscode não usa instalação global\n"
+  pass_count=$((pass_count + 1))
+fi
+
+if compgen -G "${project_vscode}/.github/agents/memflow.*.agent.md" >/dev/null; then
+  printf "[FAIL] uninstall vscode sem escopo manteve agentes legados memflow\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] uninstall vscode sem escopo remove agentes legados memflow\n"
+  pass_count=$((pass_count + 1))
+fi
+
+if compgen -G "${project_vscode}/.github/prompts/memflow.*.prompt.md" >/dev/null; then
+  printf "[FAIL] uninstall vscode sem escopo manteve prompts memflow\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] uninstall vscode sem escopo remove prompts memflow\n"
   pass_count=$((pass_count + 1))
 fi
 
