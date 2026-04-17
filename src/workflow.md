@@ -236,22 +236,6 @@ Se não houver:
 
 ---
 
-## Próximos passos
-
-Se conflito:
-
-- Revisar decisões no `.agents/memory/decisions.md`
-
-Se EXECUTAR DIRETO:
-
-- Executar `/execute`
-
-Se PLANEJAR PRIMEIRO:
-
-- Executar `/plan`
-
----
-
 ## Modelo recomendado
 
 - Nível:
@@ -275,6 +259,22 @@ Se PLANEJAR PRIMEIRO:
 - Direta / Planejada
 - Necessidade de escalada
 - Risco de falha
+
+---
+
+## Próximos passos
+
+Se conflito:
+
+- Revisar decisões no `.agents/memory/decisions.md`
+
+Se EXECUTAR DIRETO:
+
+- Executar `/execute`
+
+Se PLANEJAR PRIMEIRO:
+
+- Executar `/plan`
 
 ---
 
