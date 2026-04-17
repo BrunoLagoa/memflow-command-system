@@ -4,6 +4,13 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.11] - 2026-04-17
+
+### Alterado
+- `src/workflow.md`: saída obrigatória de recomendação de modelo passou a incluir nível, modelo principal, alternativas do mesmo nível e regra explícita de fallback por disponibilidade.
+- `src/model-policy.md`: política de seleção operacional atualizada para formalizar o padrão "1 modelo principal + alternativas do mesmo nível", com fallback intra-nível antes de escalada.
+- `README.md` e `README.pt-BR.md`: documentação de diferenciais e arquitetura ajustada para refletir seleção de modelo com principal e alternativas.
+
 ## [1.1.10] - 2026-04-16
 
 ### Corrigido
@@ -124,6 +131,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Seção de roadmap da documentação ampliada.
 
 [1.1.10]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.9...v1.1.10
+[1.1.11]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.10...v1.1.11
 [1.1.9]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.6...v1.1.7

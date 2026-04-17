@@ -43,7 +43,7 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 
 - Workflow stateful com reaproveitamento de decisões por score (`0-100`)
 - Gate final estrito com saída binária (`OK` ou `BLOQUEADO`)
-- Política de modelos orientada a custo/qualidade com escalada progressiva
+- Política de modelos orientada a custo/qualidade com modelo principal e fallbacks no mesmo nível
 - Modo degradado funcional quando `.agents` não existe
 - Persistência inteligente de memória com versionamento de decisões (`(update)`)
 - Estrutura modular por comando, com regras compartilhadas em `_shared`
@@ -70,7 +70,7 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 ### 1) Orquestração (decisão e controle)
 
 - `/context`: carrega contexto, memória e modo de operação
-- `/workflow`: classifica tarefa, decide estratégia e modelo
+- `/workflow`: classifica tarefa, decide estratégia, nível, modelo principal e opções de fallback
 - `/execute`: aplica a decisão com fallback controlado
 - `/review`: valida aderência técnica e arquitetural
 - `/review-enforce-rules`: validação rígida final (recomendada/opcional)

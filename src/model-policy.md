@@ -168,6 +168,37 @@ Características:
 
 ---
 
+## Seleção operacional por nível
+
+Para cada tarefa, definir:
+
+1. nível recomendado
+2. modelo principal
+3. modelos alternativos do mesmo nível
+
+Regra:
+
+- indicar exatamente 1 modelo principal por execução
+- listar 2-3 alternativas do mesmo nível para contingência de disponibilidade
+- manter fallback no mesmo nível antes de escalar
+
+---
+
+## Fallback por indisponibilidade de modelo
+
+Quando o modelo principal não estiver disponível:
+
+1. tentar alternativas do mesmo nível na ordem definida
+2. se nenhuma alternativa estiver disponível, reavaliar risco e complexidade
+3. escalar para nível superior apenas se necessário
+
+Não permitido:
+
+- reduzir nível em tarefas já classificadas como média/alta complexidade
+- pular alternativas do mesmo nível sem justificativa
+
+---
+
 ## Escalada automática
 
 ### Regra principal
@@ -202,7 +233,7 @@ Free/Econômico → Intermediário → Avançado
 
 ### `/workflow`
 
-- decide modelo inicial
+- decide nível recomendado, modelo principal e alternativas do mesmo nível
 
 ---
 
@@ -234,6 +265,7 @@ Free/Econômico → Intermediário → Avançado
 ## Regras de consistência
 
 - modelo deve ser coerente com complexidade
+- modelo principal deve ter alternativas viáveis do mesmo nível
 - decisões devem ser justificadas
 - escalada deve ser progressiva
 

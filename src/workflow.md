@@ -253,8 +253,19 @@ Se PLANEJAR PRIMEIRO:
 
 ## Modelo recomendado
 
-- Modelo:
+- Nível:
+- Modelo principal:
 - Justificativa
+
+### Modelos alternativos (mesmo nível)
+
+- ...
+
+### Regra de fallback
+
+- Se o modelo principal não estiver disponível, usar a primeira alternativa disponível do mesmo nível.
+- Se nenhuma alternativa do mesmo nível estiver disponível, escalar de nível apenas quando risco/complexidade justificarem.
+- Ordem de tentativa recomendada: principal → alternativa 1 → alternativa 2.
 
 ---
 

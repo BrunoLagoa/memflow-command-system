@@ -43,7 +43,7 @@ In practice, it acts as an SDLC control layer for teams that want speed with qua
 
 - Stateful workflow with decision reuse by score (`0-100`)
 - Strict final gate with binary output (`OK` or `BLOCKED`)
-- Cost/quality model policy with progressive escalation
+- Cost/quality model policy with primary model plus same-level fallbacks
 - Functional degraded mode when `.agents` does not exist
 - Smart memory persistence with decision versioning (`(update)`)
 - Modular command structure with shared rules in `_shared`
@@ -70,7 +70,7 @@ In practice, it acts as an SDLC control layer for teams that want speed with qua
 ### 1) Orchestration (decision and control)
 
 - `/context`: loads context, memory, and operating mode
-- `/workflow`: classifies task, decides strategy and model
+- `/workflow`: classifies task, decides strategy, level, primary model, and fallback options
 - `/execute`: applies the decision with controlled fallback
 - `/review`: validates technical and architectural adherence
 - `/review-enforce-rules`: strict final validation (recommended/optional)
