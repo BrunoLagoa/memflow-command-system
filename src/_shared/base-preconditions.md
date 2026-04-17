@@ -81,9 +81,9 @@ Se memória NÃO existir:
 
 ## Resolução de caminhos (obrigatória)
 
-- Para arquivos normativos do sistema, usar caminho absoluto:
+- Para arquivos normativos do sistema, usar os caminhos oficiais por escopo:
 
-  ~/.config/opencode/commands/...
+  ~/.config/opencode/commands/memflow/... (global) ou .opencode/commands/memflow/... (local)
 
 - Nunca resolver:
   - model-policy.md
@@ -91,7 +91,7 @@ Se memória NÃO existir:
 
   relativo ao projeto aberto
 
-- Se não encontrado no caminho absoluto:
+- Se não encontrado em nenhum caminho oficial:
   - reportar ausência
   - NÃO usar fallback
 

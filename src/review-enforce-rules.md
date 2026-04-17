@@ -1,6 +1,6 @@
 ---
 name: review-enforce-rules
-description: Validação rígida adicional (opcional/recomendada) para cenários críticos — valida conformidade total com .agents, segurança client/server, arquitetura, fluxo do sistema e ~/.config/opencode/commands/model-policy.md. Saída exclusiva: OK ou BLOQUEADO. Qualquer dúvida ou ambiguidade = BLOQUEADO. Não flexibiliza regras. Executar após /review quando necessário.
+description: Validação rígida adicional (opcional/recomendada) para cenários críticos — valida conformidade total com .agents, segurança client/server, arquitetura, fluxo do sistema e ~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local). Saída exclusiva: OK ou BLOQUEADO. Qualquer dúvida ou ambiguidade = BLOQUEADO. Não flexibiliza regras. Executar após /review quando necessário.
 license: MIT
 metadata:
   author: BrunoCastro
@@ -13,9 +13,9 @@ Valide rigorosamente qualquer código, plano, decisão ou execução contra as r
 
 ## Referência normativa comum
 
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-output.md`.
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-preconditions.md`.
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-degraded-mode.md`.
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-output.md` (global) ou `.opencode/commands/memflow/_shared/base-output.md` (local).
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-preconditions.md` (global) ou `.opencode/commands/memflow/_shared/base-preconditions.md` (local).
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md` (global) ou `.opencode/commands/memflow/_shared/base-degraded-mode.md` (local).
 
 ---
 
@@ -27,7 +27,7 @@ Garantir que:
 - a implementação é segura
 - a arquitetura foi respeitada
 - o workflow do sistema foi seguido corretamente
-- o uso de modelos está alinhado com `~/.config/opencode/commands/model-policy.md`
+- o uso de modelos está alinhado com `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
 
 Este é um **gate rígido opcional**, recomendado antes da conclusão em tarefas de maior risco ou criticidade.
 
@@ -57,7 +57,7 @@ Fonte de verdade absoluta:
 Complementar:
 
 - `docs/**/*`
-- `~/.config/opencode/commands/model-policy.md`
+- `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
 - decisões do `/workflow`
 - plano (`/plan`)
 - execução (`/execute`)
@@ -148,7 +148,7 @@ Status = **BLOQUEADO** se houver:
 - inconsistência arquitetural
 - quebra de fluxo do sistema
 - ausência de planejamento quando necessário
-- uso incorreto de modelo (contra `~/.config/opencode/commands/model-policy.md`)
+- uso incorreto de modelo (contra `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`)
 - ambiguidade não resolvida
 
 Observação:

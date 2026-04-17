@@ -1,6 +1,6 @@
 ---
 name: debug
-description: Diagnóstico estruturado de bugs — classifica o erro (Simples/Estrutural/Crítico), lista causas por probabilidade e elege uma única causa mais provável com evidências. Não corrige. Integrado ao workflow e ~/.config/opencode/commands/model-policy.md. Saída: Status, Análise, Problemas e Próximos passos. Próximo passo: /execute, /refactor ou /plan conforme classificação.
+description: Diagnóstico estruturado de bugs — classifica o erro (Simples/Estrutural/Crítico), lista causas por probabilidade e elege uma única causa mais provável com evidências. Não corrige. Integrado ao workflow e ~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local). Saída: Status, Análise, Problemas e Próximos passos. Próximo passo: /execute, /refactor ou /plan conforme classificação.
 license: MIT
 metadata:
   author: BrunoCastro
@@ -9,9 +9,9 @@ metadata:
 
 ## Referência normativa comum
 
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-output.md`.
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-preconditions.md`.
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-degraded-mode.md`.
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-output.md` (global) ou `.opencode/commands/memflow/_shared/base-output.md` (local).
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-preconditions.md` (global) ou `.opencode/commands/memflow/_shared/base-preconditions.md` (local).
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md` (global) ou `.opencode/commands/memflow/_shared/base-degraded-mode.md` (local).
 
 ---
 

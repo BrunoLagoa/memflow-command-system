@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.10] - 2026-04-16
+
+### Corrigido
+- `src/*.md`: atualização das referências normativas para o novo namespace `commands/memflow`, incluindo `_shared` e `model-policy.md`.
+- `src/*.md`: instruções de resolução de caminhos ajustadas para considerar explicitamente os dois escopos oficiais (`global` e `local`) sem fallback fora dos caminhos definidos.
+
 ## [1.1.8] - 2026-04-16
 
 ## [1.1.9] - 2026-04-16
@@ -117,6 +123,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.10]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.9...v1.1.10
 [1.1.9]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.6...v1.1.7

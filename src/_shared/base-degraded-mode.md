@@ -17,7 +17,7 @@ Aplicar este bloco quando `.agents` não estiver disponível, ausente ou incompl
 - Ativar modo degradado e avisar explicitamente na resposta.
 - Prosseguir com fontes disponíveis:
   - `docs`
-  - `~/.config/opencode/commands/model-policy.md`
+  - `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
   - código real do projeto
   - MCPs disponíveis
 - Reduzir confiança nas conclusões e registrar limitações.

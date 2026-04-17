@@ -9,10 +9,10 @@ metadata:
 
 ## Referência normativa comum
 
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-output.md`.
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-preconditions.md`.
-Aplicar obrigatoriamente `~/.config/opencode/commands/_shared/base-degraded-mode.md`.
-- Resolver essas referências somente pelos caminhos absolutos acima (sem fallback para o projeto aberto).
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-output.md` (global) ou `.opencode/commands/memflow/_shared/base-output.md` (local).
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-preconditions.md` (global) ou `.opencode/commands/memflow/_shared/base-preconditions.md` (local).
+Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md` (global) ou `.opencode/commands/memflow/_shared/base-degraded-mode.md` (local).
+- Resolver essas referências somente pelos caminhos oficiais acima (sem fallback para o projeto aberto).
 
 ---
 

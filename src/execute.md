@@ -1,6 +1,6 @@
 ---
 name: execute
-description: Implementa código com base na decisão do /workflow respeitando ~/.config/opencode/commands/model-policy.md — executa direto ou bloqueia e exige /plan. Inclui recomendação inteligente de persistência de memória ao final.
+description: Implementa código com base na decisão do /workflow respeitando ~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local) — executa direto ou bloqueia e exige /plan. Inclui recomendação inteligente de persistência de memória ao final.
 license: MIT
 metadata:
   author: BrunoCastro
@@ -11,9 +11,9 @@ metadata:
 
 Aplicar obrigatoriamente:
 
-- ~/.config/opencode/commands/_shared/base-output.md
-- ~/.config/opencode/commands/_shared/base-preconditions.md
-- ~/.config/opencode/commands/_shared/base-degraded-mode.md
+- ~/.config/opencode/commands/memflow/_shared/base-output.md (global) ou .opencode/commands/memflow/_shared/base-output.md (local)
+- ~/.config/opencode/commands/memflow/_shared/base-preconditions.md (global) ou .opencode/commands/memflow/_shared/base-preconditions.md (local)
+- ~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md (global) ou .opencode/commands/memflow/_shared/base-degraded-mode.md (local)
 
 ---
 
@@ -22,7 +22,7 @@ Aplicar obrigatoriamente:
 Executar a implementação:
 
 - respeitando a decisão do `/workflow`
-- seguindo `~/.config/opencode/commands/model-policy.md`
+- seguindo `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
 - mantendo consistência com `.agents` e `docs`
 
 Este comando NÃO decide estratégia, apenas executa.
