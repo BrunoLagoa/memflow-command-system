@@ -299,7 +299,7 @@ This section is continuously updated as new environments are validated.
 
 | Tool | Support | Notes |
 | ---------- | ------- | ----------- |
-| `opencode` | ✅ | Main project platform, with full support for slash commands and SDLC flow. |
+| `OpenCode` | ✅ | Main project platform, with full support for slash commands and SDLC flow. |
 | `VSCode` | ⏳ | Support pending validation; we still need to test this environment. |
 | `Antigravity` | ⏳ | Support pending validation; we still need to test this environment. |
 | `Cursor` | ⏳ | Support pending validation; we still need to test this environment. |

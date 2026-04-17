@@ -299,7 +299,7 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 
 | Ferramenta | Suporte | Observações |
 | ---------- | ------- | ----------- |
-| `opencode` | ✅ | Plataforma principal do projeto, com suporte completo a comandos slash e fluxo SDLC. |
+| `OpenCode` | ✅ | Plataforma principal do projeto, com suporte completo a comandos slash e fluxo SDLC. |
 | `VSCode` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
 | `Antigravity` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
 | `Cursor` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
