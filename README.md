@@ -6,11 +6,11 @@
 
 
 <p align="center">
-  Sistema avançado de engenharia com IA para SDLC (Software Development Life Cycle) completo, com orquestração inteligente, execução disciplinada, validação rígida e memória evolutiva de decisões.
+  Advanced AI engineering system for a full SDLC (Software Development Life Cycle), with intelligent orchestration, disciplined execution, strict validation, and evolving memory for decisions.
 </p>
 
 <p align="center">
-  Crie software de alta qualidade mais rapidamente. Um conjunto de ferramentas de código aberto para focar em cenários de produto e resultados previsíveis, em vez de desenvolver cada parte do zero com base em intuição.
+  Build high-quality software faster. An open-source toolkit focused on product scenarios and predictable outcomes, instead of rebuilding everything from scratch based on intuition.
 </p>
 
 <p align="center">
@@ -20,93 +20,99 @@
   <a href="https://github.com/BrunoLagoa/memflow-command-system"><img src="https://hits.sh/github.com/BrunoLagoa/memflow-command-system.svg?label=Project%20views&color=f1c40f" alt="Project views" /></a>
 </p>
 
-## Visão geral do sistema
+<!-- README-I18N:START -->
 
-O `memflow-command-system` é um conjunto de comandos operacionais que transforma uso ad-hoc de IA em um fluxo de engenharia previsível e auditável.
+**English** | [Português (Brasil)](./README.pt-BR.md)
 
-Em vez de "pedir código", você roda um sistema com etapas claras:
+<!-- README-I18N:END -->
 
-- **orquestração** para decidir estratégia e modelo
-- **execução** para implementar com segurança
-- **validação** para bloquear violações antes de concluir
-- **memória** para preservar decisões e reduzir retrabalho
+## System overview
 
-Na prática, ele funciona como uma camada de controle SDLC para times que querem velocidade com qualidade.
+`memflow-command-system` is an operational command suite that turns ad-hoc AI usage into a predictable, auditable engineering workflow.
 
-## Principais diferenciais
+Instead of simply "asking for code," you run a system with clear stages:
 
-- Workflow stateful com reaproveitamento de decisões por score (`0-100`)
-- Gate final estrito com saída binária (`OK` ou `BLOQUEADO`)
-- Política de modelos orientada a custo/qualidade com escalada progressiva
-- Modo degradado funcional quando `.agents` não existe
-- Persistência inteligente de memória com versionamento de decisões (`(update)`)
-- Estrutura modular por comando, com regras compartilhadas em `_shared`
-- Integração com MCPs para código, memória contextual e documentação externa
+- **orchestration** to choose strategy and model
+- **execution** to implement safely
+- **validation** to block violations before completion
+- **memory** to preserve decisions and reduce rework
 
-## Como funciona (visão simplificada do fluxo)
+In practice, it acts as an SDLC control layer for teams that want speed with quality.
+
+## Key differentiators
+
+- Stateful workflow with decision reuse by score (`0-100`)
+- Strict final gate with binary output (`OK` or `BLOCKED`)
+- Cost/quality model policy with progressive escalation
+- Functional degraded mode when `.agents` does not exist
+- Smart memory persistence with decision versioning (`(update)`)
+- Modular command structure with shared rules in `_shared`
+- MCP integration for code, contextual memory, and external docs
+
+## How it works (simplified flow)
 
 ```text
 /context
    ↓
 /workflow
    ↓
-/execute (ou /plan, quando necessário)
+/execute (or /plan, when needed)
    ↓
-(/memory-save, se recomendado)
+(/memory-save, if recommended)
    ↓
 /review
    ↓
-/review-enforce-rules (Opcional)
+/review-enforce-rules (Optional)
 ```
 
-## Arquitetura (orquestração vs capacidades)
+## Architecture (orchestration vs capabilities)
 
-### 1) Orquestração (decisão e controle)
+### 1) Orchestration (decision and control)
 
-- `/context`: carrega contexto, memória e modo de operação
-- `/workflow`: classifica tarefa, decide estratégia e modelo
-- `/execute`: aplica a decisão com fallback controlado
-- `/review`: valida aderência técnica e arquitetural
-- `/review-enforce-rules`: validação rígida final (recomendada/opcional)
-- `model-policy.md`: estratégia de seleção e escalada de modelos
+- `/context`: loads context, memory, and operating mode
+- `/workflow`: classifies task, decides strategy and model
+- `/execute`: applies the decision with controlled fallback
+- `/review`: validates technical and architectural adherence
+- `/review-enforce-rules`: strict final validation (recommended/optional)
+- `model-policy.md`: model selection and escalation strategy
 
-### 2) Capacidades (resolução especializada)
+### 2) Capabilities (specialized resolution)
 
-- Descoberta e definição: `/prd`, `/spec`, `/plan`, `/brainstorm`
-- Implementação e qualidade: `/execute`, `/debug`, `/refactor`, `/test-plan`
-- Memória: `/memory-init`, `/memory-save`
+- Discovery and definition: `/prd`, `/spec`, `/plan`, `/brainstorm`
+- Implementation and quality: `/execute`, `/debug`, `/refactor`, `/test-plan`
+- Memory: `/memory-init`, `/memory-save`
 
-### 3) Regras compartilhadas
+### 3) Shared rules
 
-Arquivos em `src/_shared` centralizam normas transversais:
+Files in `src/_shared` centralize cross-cutting standards:
 
 - `base-output.md`
 - `base-preconditions.md`
 - `base-degraded-mode.md`
 
-## Como começar (quick start)
+## Getting started (quick start)
 
-### Pré-requisitos
+### Prerequisites
 
-- Ambiente com suporte a slash commands
-- `bash` e `curl` para macOS/Linux
-- `PowerShell 7+` para Windows nativo
+- Environment with slash-command support
+- `bash` and `curl` for macOS/Linux
+- `PowerShell 7+` for native Windows
 
-### Instalação
+### Installation
 
-#### Opção A — one-liner (macOS/Linux)
+#### Option A - one-liner (macOS/Linux)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install
 ```
 
-O wizard `MEMFLOW` guia as escolhas de:
+The `MEMFLOW` wizard guides choices for:
 
-1. Sistema operacional
-2. Plataforma de instalação (`OpenCode`)
-3. Escopo (`local` ou `global`)
+1. Operating system
+2. Installation platform (`OpenCode`)
+3. Scope (`local` or `global`)
 
-#### Opção B — execução local do script (macOS/Linux)
+#### Option B - local script execution (macOS/Linux)
 
 ```bash
 git clone https://github.com/BrunoLagoa/memflow-command-system.git
@@ -115,7 +121,7 @@ chmod +x scripts/install.sh
 ./scripts/install.sh install
 ```
 
-#### Opção C — Windows nativo (PowerShell)
+#### Option C - native Windows (PowerShell)
 
 ```powershell
 git clone https://github.com/BrunoLagoa/memflow-command-system.git
@@ -123,18 +129,18 @@ cd memflow-command-system
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 ```
 
-#### Escopo global vs local
+#### Global vs local scope
 
-- **`global`**: instalação no perfil do usuário (`~/.config/...`); disponível em qualquer diretório. Em comandos não interativos, use `--scope global` (ou `-Scope global` no PowerShell).
-- **`local`**: instalação dentro de um projeto; use `--scope local --project-dir <caminho>` (em geral `--project-dir .` na raiz do repositório).
+- **`global`**: installed in user profile (`~/.config/...`); available from any directory. In non-interactive commands, use `--scope global` (or `-Scope global` in PowerShell).
+- **`local`**: installed inside a project; use `--scope local --project-dir <path>` (usually `--project-dir .` at repository root).
 
-A mesma convenção vale para **`install`**, **`memflowctl`** (`update`, `check`, `uninstall`) e **`install.sh` / `install.ps1`** quando você passa escopo explicitamente.
+The same convention applies to **`install`**, **`memflowctl`** (`update`, `check`, `uninstall`), and **`install.sh` / `install.ps1`** when you pass scope explicitly.
 
-No **`update`**, se você já instalou antes, o instalador pode **inferir** global vs local pelo manifest (`.memflow-install.json`); nesse caso `--scope` / `-Scope` é opcional — veja a seção [Atualizar para nova versão](#atualizar-para-nova-versão).
+For **`update`**, if MEMFLOW was installed previously, the installer can **infer** global vs local from the manifest (`.memflow-install.json`); in that case `--scope` / `-Scope` is optional - see [Update to a new version](#update-to-a-new-version).
 
-### Instalação não interativa
+### Non-interactive installation
 
-Os exemplos abaixo seguem a convenção da subseção [Escopo global vs local](#escopo-global-vs-local) acima.
+Examples below follow the convention from [Global vs local scope](#global-vs-local-scope).
 
 #### Global
 
@@ -150,7 +156,7 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
 ```
 
-#### Local (projeto atual)
+#### Local (current project)
 
 ##### macOS/Linux
 
@@ -164,23 +170,23 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target opencode
 ```
 
-### Atualizar para nova versão
+### Update to a new version
 
-Por padrão, o update usa a release tagueada mais recente.
+By default, update uses the latest tagged release.
 
-Se não existir instalação prévia no escopo solicitado:
-- no modo **interativo**, o comando informa o problema e pergunta se deve iniciar uma instalação nova;
-- no modo **não interativo**, falha com erro explícito e código de saída `2`.
+If there is no previous installation in the requested scope:
+- in **interactive** mode, the command explains the issue and asks whether to start a fresh install;
+- in **non-interactive** mode, it fails with an explicit error and exit code `2`.
 
-Se você **já instalou** o MEMFLOW antes, o instalador pode **descobrir automaticamente** se a instalação foi **global** ou **local** lendo o manifest (`.memflow-install.json`). Nesse caso **não é obrigatório** passar `--scope` / `-Scope` — use quando quiser forçar um escopo explícito.
+If you **already installed** MEMFLOW, the installer can **auto-detect** whether installation was **global** or **local** by reading the manifest (`.memflow-install.json`). In this case, passing `--scope` / `-Scope` is not mandatory - use it only when you want to force a scope explicitly.
 
-Sem `--scope`, o `update` só atua nos escopos onde houver instalação detectada por manifest: se existir apenas em um escopo, atualiza apenas esse; se existir em **global e local**, aplica nos dois na ordem `global` -> `local`.
+Without `--scope`, `update` only affects scopes where installation is detected by manifest: if only one scope exists, it updates only that one; if both **global and local** exist, it applies to both in order `global` -> `local`.
 
-#### Comando geral
+#### General command
 
-Use o `install.sh` / `install.ps1` direto do repositório (não depende de `memflowctl` estar no PATH).
+Use `install.sh` / `install.ps1` directly from the repository (does not require `memflowctl` in PATH).
 
-Execute no **mesmo diretório** em que você costuma trabalhar (para instalação local, normalmente a raiz do projeto onde existe `.opencode/commands`).
+Run from the **same directory** where you usually work (for local installation, typically the project root where `.opencode/commands` exists).
 
 ##### macOS/Linux
 
@@ -194,13 +200,13 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -NonInteractive"
 ```
 
-### Check de versão
+### Version check
 
-O `check` verifica se existe versão mais recente sem alterar a instalação.
+`check` verifies whether a newer version is available without changing the installation.
 
-Sem `--scope`, o `check` avalia apenas os escopos com instalação detectada por manifest: se existir só um escopo, verifica só ele; se existir em **global e local**, verifica os dois na ordem `global` -> `local`.
+Without `--scope`, `check` evaluates only scopes with installation detected by manifest: if there is only one scope, it checks only that one; if both **global and local** exist, it checks both in order `global` -> `local`.
 
-#### Comando geral
+#### General command
 
 ##### macOS/Linux
 
@@ -214,15 +220,15 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"
 ```
 
-### Remover instalação
+### Remove installation
 
-Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Escopo global vs local](#escopo-global-vs-local).
+Use the same **`--scope`** and **`--project-dir`** values from [Global vs local scope](#global-vs-local-scope).
 
-Se não existir instalação no escopo informado, o `uninstall` retorna erro explícito com código de saída `2` para evitar falso positivo de sucesso.
+If no installation exists in the informed scope, `uninstall` returns an explicit error with exit code `2` to avoid false-success scenarios.
 
-Sem `--scope`, o `uninstall` também usa descoberta automática por manifest e remove apenas os escopos que realmente tiverem instalação: se existir só em um escopo, remove só esse; se encontrar em **global e local**, remove os dois na ordem `global` -> `local`.
+Without `--scope`, `uninstall` also uses manifest auto-discovery and removes only scopes that actually have an installation: if one scope exists, removes only that one; if both **global and local** are found, removes both in order `global` -> `local`.
 
-#### Comando geral
+#### General command
 
 ##### macOS/Linux
 
@@ -236,123 +242,124 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 uninstall -NonInteractive"
 ```
 
-### Destinos de instalação
+### Installation targets
 
-Correspondem aos modos **global** e **local** descritos em [Escopo global vs local](#escopo-global-vs-local):
+These match the **global** and **local** modes described in [Global vs local scope](#global-vs-local-scope):
 
 - `global`: `~/.config/opencode/commands/memflow`
-- `local`: `<projeto>/.opencode/commands/memflow`
+- `local`: `<project>/.opencode/commands/memflow`
 
-### Primeiro uso
+### First use
 
 ```bash
 /context
 /workflow
 ```
 
-Se a tarefa for simples, o próximo passo normalmente é:
+If the task is simple, the next step is usually:
 
 ```bash
 /execute
 /review
-/review-enforce-rules  # recomendado para validação rígida final
+/review-enforce-rules  # recommended for strict final validation
 ```
 
-## Exemplo de fluxo real
+## Real flow example
 
-Exemplo: implementar uma feature de média complexidade com memória ativa.
+Example: implementing a medium-complexity feature with active memory.
 
 ```text
 1. /context
-   - Carrega .agents e memória existente
+   - Loads .agents and existing memory
 
 2. /workflow
-   - Detecta decisão prévia em decisions.md
-   - Reaproveita decisão se score for alto
+   - Detects previous decision in decisions.md
+   - Reuses decision when score is high
 
 3. /plan
-   - Necessário por complexidade/risco
+   - Required due to complexity/risk
 
 4. /execute
-   - Implementa com validações e testes
-   - Calcula score de relevância da sessão
+   - Implements with validations and tests
+   - Calculates session relevance score
 
 5. /memory-save
-   - Registra decisão relevante com categoria, impacto e score
+   - Records relevant decision with category, impact, and score
 
 6. /review
-   - Verifica qualidade, segurança e arquitetura
+   - Checks quality, security, and architecture
 
-7. /review-enforce-rules (opcional/recomendado)
-   - Aplica validação rígida adicional (OK ou BLOQUEADO)
+7. /review-enforce-rules (optional/recommended)
+   - Applies additional strict validation (OK or BLOCKED)
 ```
 
-## Suporte de ferramentas
+## Tool support
 
-Esta seção será atualizada continuamente conforme novos ambientes forem validados.
+This section is continuously updated as new environments are validated.
 
-| Ferramenta | Suporte | Observações |
+| Tool | Support | Notes |
 | ---------- | ------- | ----------- |
-| `opencode` | ✅ | Plataforma principal do projeto, com suporte completo a comandos slash e fluxo SDLC. |
+| `opencode` | ✅ | Main project platform, with full support for slash commands and SDLC flow. |
 
-## Documentação (links para docs)
+## Documentation (doc links)
 
-- Histórico de versões: [`CHANGELOG.md`](CHANGELOG.md)
-- Guia conceitual de SDLC: [`docs/SDLC.md`](docs/SDLC.md)
-- Política de modelos (operacional): [`src/model-policy.md`](src/model-policy.md)
-- Comando de contexto: [`src/context.md`](src/context.md)
-- Comando de decisão: [`src/workflow.md`](src/workflow.md)
-- Comando de execução: [`src/execute.md`](src/execute.md)
-- Validação rígida opcional: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
+- Version history: [`CHANGELOG.md`](CHANGELOG.md)
+- SDLC conceptual guide (English): [`docs/SDLC.md`](docs/SDLC.md)
+- SDLC conceptual guide (Portuguese): [`docs/SDLC.pt-BR.md`](docs/SDLC.pt-BR.md)
+- Model policy (operational): [`src/model-policy.md`](src/model-policy.md)
+- Context command: [`src/context.md`](src/context.md)
+- Decision command: [`src/workflow.md`](src/workflow.md)
+- Execution command: [`src/execute.md`](src/execute.md)
+- Optional strict validation: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
 
-## Filosofia do sistema
+## System philosophy
 
-> Workflow decide.  
-> Modelo executa.  
-> Regras protegem.
+> Workflow decides.  
+> Model executes.  
+> Rules protect.
 
-Princípios operacionais:
+Operational principles:
 
-- Começar barato, escalar modelo apenas quando necessário
-- Não executar sem contexto e sem decisão de fluxo
-- Não perder aprendizado: decisão importante vira memória estruturada
-- Não "aprovar no feeling": validação é explícita e rastreável
+- Start cheap, escalate model only when needed
+- Do not execute without context and workflow decision
+- Do not lose learning: important decisions become structured memory
+- Do not "approve by feeling": validation must be explicit and traceable
 
-## Casos de uso
+## Use cases
 
-- Times que querem padronizar SDLC assistido por IA com governança
-- Projetos que sofrem com decisões inconsistentes entre sessões
-- Ambientes que precisam equilibrar custo de modelo e qualidade técnica
-- Fluxos com alto requisito de conformidade arquitetural e segurança
-- Adoção de IA em engenharia sem abrir mão de previsibilidade
+- Teams that want to standardize AI-assisted SDLC with governance
+- Projects that suffer from inconsistent decisions across sessions
+- Environments that need to balance model cost and technical quality
+- Flows with high architectural/security compliance requirements
+- Engineering AI adoption without sacrificing predictability
 
 ## Roadmap
 
-- Ampliar `docs/` com guias complementares além do SDLC e dos assets de marca
-- Adicionar suíte de validação automatizada para comandos
-- Disponibilizar templates por stack para onboarding mais rápido
-- Incluir métricas de efetividade (lead time, retrabalho, custo por tarefa)
+- Expand `docs/` with complementary guides beyond SDLC and brand assets
+- Add automated validation suite for commands
+- Provide stack-based templates for faster onboarding
+- Add effectiveness metrics (lead time, rework, cost per task)
 
-## Pessoas por trás do Memflow
+## People behind Memflow
 
-Este projeto evolui com contribuições de pessoas que acreditam em engenharia de software com IA de forma disciplinada, prática e auditável.
+This project evolves with contributions from people who believe in disciplined, practical, and auditable AI software engineering.
 
 <p align="left">
   <a href="https://github.com/BrunoLagoa/memflow-command-system/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=BrunoLagoa/memflow-command-system&max=100" alt="Contribuidores do projeto" width="45" />
+    <img src="https://contrib.rocks/image?repo=BrunoLagoa/memflow-command-system&max=100" alt="Project contributors" width="45" />
   </a>
 </p>
 
-Quer aparecer aqui também? Abra uma issue, sugira melhorias ou envie um PR.
+Want to show up here too? Open an issue, suggest improvements, or send a PR.
 
-## Suporte
+## Support
 
-Para obter suporte, abra uma issue no GitHub. Relatos de bugs, solicitações de recursos e dúvidas de uso são bem-vindos.
+For support, open a GitHub issue. Bug reports, feature requests, and usage questions are welcome.
 
-## Licença
+## License
 
-Este projeto está licenciado sob os termos da licença MIT. Consulte o arquivo [`LICENSE`](LICENSE) para os termos completos.
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE) for full terms.
 
 ---
 
-Se você quer IA atuando como copiloto de engenharia real, e não como gerador de snippets, este sistema foi feito para isso.
+If you want AI acting as a real engineering copilot, not just a snippet generator, this system was built for that.

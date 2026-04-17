@@ -1,35 +1,41 @@
-# 🧠 SDLC Completo — Ciclo de Vida do Desenvolvimento de Software
+# SDLC Complete - Software Development Life Cycle
 
-Este documento explica o que é SDLC (Software Development Life Cycle) e como ele se aplica ao sistema de desenvolvimento com IA.
+<!-- README-I18N:START -->
 
----
+**English** | [Português (Brasil)](./SDLC.pt-BR.md)
 
-# 🚀 O que é SDLC
+<!-- README-I18N:END -->
 
-**SDLC (Software Development Life Cycle)** é o processo completo de criação de software.
-
-👉 Em português: **Ciclo de Vida do Desenvolvimento de Software**
+This document explains what SDLC (Software Development Life Cycle) is and how it applies to the AI-driven development system.
 
 ---
 
-# 🔄 SDLC Completo
+# What is SDLC
 
-Um SDLC completo cobre todas as etapas, do início até a evolução contínua:
+**SDLC (Software Development Life Cycle)** is the complete software creation process.
+
+In Portuguese: **Ciclo de Vida do Desenvolvimento de Software**
+
+---
+
+# Complete SDLC
+
+A complete SDLC covers every stage from start to continuous evolution:
 
 ```text
-ideia → definição → planejamento → desenvolvimento → testes → validação → entrega → evolução
+idea -> definition -> planning -> development -> testing -> validation -> delivery -> evolution
 ```
 
 ---
 
-# 🏗️ Etapas do SDLC
+# SDLC Stages
 
-## 1. 📌 Descoberta / Ideia
+## 1. Discovery / Idea
 
-* Definição do problema
-* Entendimento do contexto
+* Problem definition
+* Context understanding
 
-👉 No sistema:
+In this system:
 
 ```
 /prd
@@ -37,12 +43,12 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-## 2. 🧩 Especificação
+## 2. Specification
 
-* Definição do comportamento esperado
-* Regras e fluxos
+* Expected behavior definition
+* Rules and flows
 
-👉 No sistema:
+In this system:
 
 ```
 /spec
@@ -50,12 +56,12 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-## 3. 🧠 Planejamento
+## 3. Planning
 
-* Estratégia de implementação
-* Definição de passos técnicos
+* Implementation strategy
+* Technical step definition
 
-👉 No sistema:
+In this system:
 
 ```
 /plan
@@ -63,11 +69,11 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-## 4. ⚙️ Desenvolvimento
+## 4. Development
 
-* Implementação do código
+* Code implementation
 
-👉 No sistema:
+In this system:
 
 ```
 /execute
@@ -75,12 +81,12 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-## 5. 🧪 Testes
+## 5. Testing
 
-* Validação funcional
-* Cobertura de cenários
+* Functional validation
+* Scenario coverage
 
-👉 No sistema:
+In this system:
 
 ```
 /test-plan
@@ -88,12 +94,12 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-## 6. 🔍 Validação
+## 6. Validation
 
-* Verificação de aderência
-* Qualidade técnica e arquitetural
+* Adherence verification
+* Technical and architectural quality
 
-👉 No sistema:
+In this system:
 
 ```
 /review
@@ -101,11 +107,11 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-## 7. 🚫 Gate de Qualidade
+## 7. Quality Gate
 
-* Validação rígida adicional recomendada antes de considerar pronto
+* Additional strict validation recommended before considering work done
 
-👉 No sistema:
+In this system:
 
 ```
 /review-enforce-rules
@@ -113,13 +119,13 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-## 8. 🔁 Manutenção e Evolução
+## 8. Maintenance and Evolution
 
-* Correção de bugs
-* Refatoração
-* Aprendizado contínuo
+* Bug fixing
+* Refactoring
+* Continuous learning
 
-👉 No sistema:
+In this system:
 
 ```
 /debug
@@ -130,9 +136,9 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 ---
 
-# 🧠 SDLC no sistema de IA
+# SDLC in the AI system
 
-O sistema implementa um SDLC completo com comandos:
+The system implements a complete SDLC with commands:
 
 ```text
 /context
@@ -152,45 +158,45 @@ O sistema implementa um SDLC completo com comandos:
 
 ---
 
-# 🔥 Diferença do modelo tradicional
+# Difference from the traditional model
 
-## ❌ Uso comum de IA
+## Common AI usage
 
-* geração de código isolado
-* sem validação
-* sem controle de fluxo
-
----
-
-## ✅ Sistema com SDLC completo
-
-* fluxo estruturado
-* decisões controladas
-* validação consistente (com gate rígido opcional)
-* qualidade consistente
+* isolated code generation
+* no validation
+* no flow control
 
 ---
 
-# 💡 Benefícios
+## System with complete SDLC
 
-* Maior previsibilidade
-* Redução de erros
-* Melhor qualidade de código
-* Menor retrabalho
-* Evolução contínua
-
----
-
-# 🧠 Essência
-
-> SDLC completo é transformar uma ideia em software funcional, validado e evolutivo.
+* structured flow
+* controlled decisions
+* consistent validation (with optional strict gate)
+* consistent quality
 
 ---
 
-# 🚀 Conclusão
+# Benefits
 
-Este sistema não apenas utiliza IA para gerar código.
+* Higher predictability
+* Error reduction
+* Better code quality
+* Less rework
+* Continuous evolution
 
-Ele implementa um:
+---
 
-# 👉 Sistema completo de engenharia baseado em SDLC com IA
+# Essence
+
+> Complete SDLC means turning an idea into functional, validated, and evolvable software.
+
+---
+
+# Conclusion
+
+This system does not just use AI to generate code.
+
+It implements:
+
+# A complete AI-based engineering system grounded in SDLC

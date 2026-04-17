@@ -6,6 +6,17 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 
 ## [1.1.8] - 2026-04-16
 
+## [1.1.9] - 2026-04-16
+
+### Adicionado
+- `README.pt-BR.md`: variante em português com seletor de idioma e paridade estrutural com a versão padrão.
+- `docs/SDLC.pt-BR.md`: variante em português do guia SDLC com seletor de idioma e links cruzados.
+- `AGENTS.md`: instruções compactas para sessões OpenCode, com comandos de verificação, layout de alto valor e quirks do instalador.
+
+### Alterado
+- `README.md`: passou a ser a versão padrão em inglês, com seletor de idioma e seção de documentação apontando para SDLC em inglês e português.
+- `docs/SDLC.md`: passou a ser a versão padrão em inglês, mantendo estrutura e comandos do conteúdo original.
+
 ### Adicionado
 - `README.md`: seção **Check de versão** documentada com comando geral (macOS/Linux e PowerShell) logo após **Atualizar para nova versão**.
 - `scripts/tests/test-install-regression.sh`: cobertura para `check` sem escopo nos cenários com instalações em `global`+`local` e `global-only`.
@@ -106,6 +117,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.9]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.5...v1.1.6
