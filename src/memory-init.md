@@ -9,9 +9,7 @@ metadata:
 
 ## Referências normativas (LAZY LOAD)
 
-Arquivos em:
-
-~/.config/opencode/commands
+Referências normativas resolvidas pelo target ativo (via `_shared/target-adapter.md`).
 
 ### Regras:
 
@@ -77,7 +75,7 @@ Deve conter:
 
 ## Sistema de comandos
 
-- Diretório: ~/.config/opencode/commands
+- Diretório: resolvido pelo target ativo (via `_shared/target-adapter.md`)
 - Status: Estável
 - Frequência de mudança: Baixa
 

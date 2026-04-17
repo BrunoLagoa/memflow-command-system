@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.15] - 2026-04-17
+
+### Alterado
+- `src/context.md` e `src/memory-init.md`: referências normativas em lazy load passaram a usar resolução pelo target ativo via `_shared/target-adapter.md`, removendo caminho hardcoded de OpenCode.
+- `src/memory-init.md`: seção "Sistema de comandos" atualizada para descrever diretório normativo de forma agnóstica ao target.
+
 ## [1.1.14] - 2026-04-17
 
 ### Alterado
@@ -159,6 +165,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.15]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.14...v1.1.15
 [1.1.14]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.13...v1.1.14
 [1.1.13]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.12...v1.1.13
 [1.1.12]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.11...v1.1.12

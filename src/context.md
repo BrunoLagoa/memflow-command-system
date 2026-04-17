@@ -93,9 +93,7 @@ Carregar apenas se necessário:
 
 ## Referências normativas (LAZY LOAD)
 
-Arquivos em:
-
-~/.config/opencode/commands
+Referências normativas resolvidas pelo target ativo (via `_shared/target-adapter.md`).
 
 ### Regras:
 
