@@ -172,7 +172,12 @@ Se `.agents` estiver ausente:
 Se APROVADO:
 
 - Opcionalmente executar `/review-enforce-rules` para validação rígida adicional
-- Executar check silencioso de versão do MEMFLOW (`memflowctl check` ou `scripts/install.* check`)
+- Executar check silencioso de versão do MEMFLOW (cross-OS, sem depender de `memflowctl` no PATH)
+  - macOS/Linux (remoto): `curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive`
+  - Windows/PowerShell (remoto): `powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"`
+  - Repositório local (bash): `./scripts/install.sh check --non-interactive`
+  - Repositório local (PowerShell): `powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 check -NonInteractive`
+  - `memflowctl check` é opcional apenas quando o comando existir no ambiente
 - Se houver atualização: exibir aviso com versão atual, última versão e comando recomendado de update não interativo
 
 Se REPROVADO:
