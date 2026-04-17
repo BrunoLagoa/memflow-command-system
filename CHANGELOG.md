@@ -4,6 +4,15 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.13] - 2026-04-17
+
+### Alterado
+- `scripts/install.sh` e `scripts/install.ps1`: suporte ao target `vscode` com resolução de caminho por target (`opencode` e `vscode`) para `install`, `update`, `check` e `uninstall`.
+- `scripts/install.sh` e `scripts/install.ps1`: descoberta sem escopo agora permite filtrar por target explícito (`--target` / `-Target`) e mantém comportamento padrão quando não informado.
+- `scripts/manifest.schema.json`: `target.enum` ampliado para aceitar `vscode`.
+- `scripts/tests/test-install-regression.sh`: cobertura adicionada para fluxo completo de `vscode` (install/update/check/uninstall e cenários de ausência de instalação).
+- `README.md` e `README.pt-BR.md`: documentação atualizada com exemplos de instalação para `--target vscode`, matriz de destinos por target e status de suporte do VSCode.
+
 ## [1.1.12] - 2026-04-17
 
 ### Alterado
@@ -135,6 +144,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.13]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.12...v1.1.13
 [1.1.12]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.11...v1.1.12
 [1.1.11]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.10...v1.1.11
 [1.1.10]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.9...v1.1.10

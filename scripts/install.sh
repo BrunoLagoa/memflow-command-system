@@ -103,7 +103,8 @@ fi
 ACTION="install"
 NON_INTERACTIVE=0
 SCOPE=""
-TARGET="opencode"
+TARGET=""
+TARGET_EXPLICIT=0
 SELECTED_OS=""
 VERSION=""
 PROJECT_DIR="$(pwd)"
@@ -152,7 +153,7 @@ prompt_fresh_install_from_update() {
   fi
 
   local commands_root install_dir manifest_file
-  commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+  commands_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
   install_dir="${commands_root}/memflow"
   manifest_file="${commands_root}/.memflow-install.json"
 
@@ -171,7 +172,7 @@ Uso:
 Opções:
   --non-interactive       Executa sem perguntas interativas
   --scope <global|local>  Escopo de instalação
-  --target <opencode>     Plataforma de comandos (atual: opencode)
+  --target <opencode|vscode>  Plataforma de comandos
   --os <linux|macos|windows>
   --version <tag|local>   Versão alvo (tag de release)
   --project-dir <dir>     Diretório do projeto para escopo local
@@ -204,6 +205,7 @@ parse_args() {
         ;;
       --target)
         TARGET="${2:-}"
+        TARGET_EXPLICIT=1
         shift 2
         ;;
       --os)
@@ -240,10 +242,9 @@ validate_inputs() {
     *) die "Ação inválida: $ACTION" ;;
   esac
 
-  case "$TARGET" in
-    opencode) ;;
-    *) die "Target não suportado: $TARGET" ;;
-  esac
+  if [[ -n "$TARGET" ]] && ! is_supported_target "$TARGET"; then
+    die "Target não suportado: $TARGET"
+  fi
 
   if [[ -n "$SCOPE" ]]; then
     case "$SCOPE" in
@@ -258,6 +259,18 @@ validate_inputs() {
       *) die "Sistema operacional inválido: $SELECTED_OS" ;;
     esac
   fi
+}
+
+supported_targets() {
+  printf "%s\n" "opencode" "vscode"
+}
+
+is_supported_target() {
+  local target="$1"
+  case "$target" in
+    opencode|vscode) return 0 ;;
+    *) return 1 ;;
+  esac
 }
 
 wizard_select() {
@@ -277,7 +290,7 @@ wizard_select() {
   fi
 
   if [[ -z "$TARGET" ]]; then
-    TARGET="$(choose_option_tty "2 - Selecione o local de instalação" "opencode")"
+    TARGET="$(choose_option_tty "2 - Selecione o local de instalação" "opencode" "vscode")"
   else
     printf "2 - Selecione o local de instalação\n  > %s\n" "$TARGET"
   fi
@@ -301,18 +314,19 @@ default_missing_values() {
 
 commands_root_for_scope() {
   local scope="$1"
-  local os_name="$2"
-  local project_dir="$3"
+  local target="$2"
+  local os_name="$3"
+  local project_dir="$4"
   local root=""
 
   if [[ "$scope" == "global" ]]; then
     if [[ "$os_name" == "windows" && -n "${USERPROFILE:-}" ]]; then
-      root="${USERPROFILE}/.config/opencode/commands"
+      root="${USERPROFILE}/.config/${target}/commands"
     else
-      root="${HOME}/.config/opencode/commands"
+      root="${HOME}/.config/${target}/commands"
     fi
   else
-    root="${project_dir}/.opencode/commands"
+    root="${project_dir}/.${target}/commands"
   fi
 
   printf "%s" "$root"
@@ -327,18 +341,26 @@ parse_manifest_value() {
 find_existing_manifest() {
   local os_name="$1"
   local project_dir="$2"
-  local global_root local_root
-  global_root="$(commands_root_for_scope "global" "$os_name" "$project_dir")"
-  local_root="$(commands_root_for_scope "local" "$os_name" "$project_dir")"
+  local target_filter="${3:-}"
+  local target global_root local_root
+  while IFS= read -r target; do
+    [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
+    global_root="$(commands_root_for_scope "global" "$target" "$os_name" "$project_dir")"
+    local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
 
-  if [[ -f "${global_root}/.memflow-install.json" ]]; then
-    printf "%s" "${global_root}/.memflow-install.json"
-    return 0
-  fi
+    if [[ -f "${global_root}/.memflow-install.json" ]]; then
+      printf "%s" "${global_root}/.memflow-install.json"
+      return 0
+    fi
 
-  if [[ -f "${local_root}/.memflow-install.json" ]]; then
-    printf "%s" "${local_root}/.memflow-install.json"
-    return 0
+    if [[ -f "${local_root}/.memflow-install.json" ]]; then
+      printf "%s" "${local_root}/.memflow-install.json"
+      return 0
+    fi
+  done < <(supported_targets)
+
+  if [[ -n "$target_filter" ]] && ! is_supported_target "$target_filter"; then
+    return 1
   fi
 
   return 1
@@ -347,17 +369,21 @@ find_existing_manifest() {
 collect_existing_manifests() {
   local os_name="$1"
   local project_dir="$2"
-  local global_root local_root
-  global_root="$(commands_root_for_scope "global" "$os_name" "$project_dir")"
-  local_root="$(commands_root_for_scope "local" "$os_name" "$project_dir")"
+  local target_filter="${3:-}"
+  local target global_root local_root
+  while IFS= read -r target; do
+    [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
+    global_root="$(commands_root_for_scope "global" "$target" "$os_name" "$project_dir")"
+    local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
 
-  if [[ -f "${global_root}/.memflow-install.json" ]]; then
-    printf "%s\n" "${global_root}/.memflow-install.json"
-  fi
+    if [[ -f "${global_root}/.memflow-install.json" ]]; then
+      printf "%s\n" "${global_root}/.memflow-install.json"
+    fi
 
-  if [[ -f "${local_root}/.memflow-install.json" ]]; then
-    printf "%s\n" "${local_root}/.memflow-install.json"
-  fi
+    if [[ -f "${local_root}/.memflow-install.json" ]]; then
+      printf "%s\n" "${local_root}/.memflow-install.json"
+    fi
+  done < <(supported_targets)
 }
 
 fetch_latest_release_tag() {
@@ -588,7 +614,7 @@ run_install() {
   fi
 
   local commands_root
-  commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+  commands_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
   local install_dir="${commands_root}/memflow"
   local manifest_file="${commands_root}/.memflow-install.json"
 
@@ -614,10 +640,14 @@ run_install() {
 
 run_update() {
   local user_scope="${SCOPE:-}"
+  local target_filter=""
+  if [[ "$TARGET_EXPLICIT" -eq 1 ]]; then
+    target_filter="$TARGET"
+  fi
   BACKUP_ENABLED=0
   default_missing_values
   local commands_root manifest_file existing_manifest=""
-  commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+  commands_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
   manifest_file="${commands_root}/.memflow-install.json"
   local -a manifests_to_update=()
 
@@ -629,7 +659,7 @@ run_update() {
   if [[ -z "$user_scope" ]]; then
     while IFS= read -r existing_manifest; do
       [[ -n "$existing_manifest" ]] && manifests_to_update+=("$existing_manifest")
-    done < <(collect_existing_manifests "$SELECTED_OS" "$PROJECT_DIR")
+    done < <(collect_existing_manifests "$SELECTED_OS" "$PROJECT_DIR" "$target_filter")
 
     if [[ "${#manifests_to_update[@]}" -eq 0 ]]; then
       if prompt_fresh_install_from_update "$user_scope"; then
@@ -641,15 +671,22 @@ run_update() {
     local updated_count=0
     for manifest_file in "${manifests_to_update[@]}"; do
       installed_version="$(parse_manifest_value "$manifest_file" "version")"
+      local manifest_scope manifest_target manifest_os
       manifest_scope="$(parse_manifest_value "$manifest_file" "scope")"
+      manifest_target="$(parse_manifest_value "$manifest_file" "target")"
+      manifest_os="$(parse_manifest_value "$manifest_file" "os")"
       if [[ -n "$manifest_scope" ]]; then
         SCOPE="$manifest_scope"
       fi
-      TARGET="${TARGET:-$(parse_manifest_value "$manifest_file" "target")}"
-      SELECTED_OS="${SELECTED_OS:-$(parse_manifest_value "$manifest_file" "os")}"
+      if [[ -n "$manifest_target" ]]; then
+        TARGET="$manifest_target"
+      fi
+      if [[ -n "$manifest_os" ]]; then
+        SELECTED_OS="$manifest_os"
+      fi
 
       local updated_root install_dir manifest_updated
-      updated_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+      updated_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
       install_dir="${updated_root}/memflow"
       manifest_updated="${updated_root}/.memflow-install.json"
 
@@ -674,9 +711,19 @@ run_update() {
 
   if [[ -f "$manifest_file" ]]; then
     installed_version="$(parse_manifest_value "$manifest_file" "version")"
-    SCOPE="${SCOPE:-$(parse_manifest_value "$manifest_file" "scope")}"
-    TARGET="${TARGET:-$(parse_manifest_value "$manifest_file" "target")}"
-    SELECTED_OS="${SELECTED_OS:-$(parse_manifest_value "$manifest_file" "os")}"
+    local manifest_scope manifest_target manifest_os
+    manifest_scope="$(parse_manifest_value "$manifest_file" "scope")"
+    manifest_target="$(parse_manifest_value "$manifest_file" "target")"
+    manifest_os="$(parse_manifest_value "$manifest_file" "os")"
+    if [[ -n "$manifest_scope" ]]; then
+      SCOPE="$manifest_scope"
+    fi
+    if [[ -n "$manifest_target" ]]; then
+      TARGET="$manifest_target"
+    fi
+    if [[ -n "$manifest_os" ]]; then
+      SELECTED_OS="$manifest_os"
+    fi
   else
     if [[ "$SCOPE" == "local" && "$PROJECT_DIR_EXPLICIT" -eq 0 ]]; then
       die "Para atualizar instalação local fora do projeto atual, informe --project-dir <dir>."
@@ -688,7 +735,7 @@ run_update() {
   fi
 
   local updated_root
-  updated_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+  updated_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
   local install_dir="${updated_root}/memflow"
   local manifest_updated="${updated_root}/.memflow-install.json"
 
@@ -707,9 +754,13 @@ run_update() {
 
 run_uninstall() {
   local user_scope="${SCOPE:-}"
+  local target_filter=""
+  if [[ "$TARGET_EXPLICIT" -eq 1 ]]; then
+    target_filter="$TARGET"
+  fi
   default_missing_values
   local commands_root install_dir manifest_file existing_manifest=""
-  commands_root="$(commands_root_for_scope "$SCOPE" "$SELECTED_OS" "$PROJECT_DIR")"
+  commands_root="$(commands_root_for_scope "$SCOPE" "$TARGET" "$SELECTED_OS" "$PROJECT_DIR")"
   install_dir="${commands_root}/memflow"
   manifest_file="${commands_root}/.memflow-install.json"
   local -a manifests_to_remove=()
@@ -717,7 +768,7 @@ run_uninstall() {
   if [[ -z "$user_scope" ]]; then
     while IFS= read -r existing_manifest; do
       [[ -n "$existing_manifest" ]] && manifests_to_remove+=("$existing_manifest")
-    done < <(collect_existing_manifests "$SELECTED_OS" "$PROJECT_DIR")
+    done < <(collect_existing_manifests "$SELECTED_OS" "$PROJECT_DIR" "$target_filter")
   else
     manifests_to_remove+=("$manifest_file")
   fi
@@ -779,11 +830,19 @@ run_uninstall() {
 run_check() {
   local user_scope="${SCOPE:-}"
   local os_name="${SELECTED_OS:-$(detect_os)}"
+  local effective_target="$TARGET"
+  if [[ -z "$effective_target" ]]; then
+    effective_target="opencode"
+  fi
+  local target_filter=""
+  if [[ "$TARGET_EXPLICIT" -eq 1 ]]; then
+    target_filter="$effective_target"
+  fi
   local manifest_file=""
   local -a manifests_to_check=()
   if [[ -n "$user_scope" ]]; then
     local commands_root
-    commands_root="$(commands_root_for_scope "$user_scope" "$os_name" "$PROJECT_DIR")"
+    commands_root="$(commands_root_for_scope "$user_scope" "$effective_target" "$os_name" "$PROJECT_DIR")"
     manifest_file="${commands_root}/.memflow-install.json"
     if [[ -f "$manifest_file" ]]; then
       manifests_to_check+=("$manifest_file")
@@ -791,7 +850,7 @@ run_check() {
   else
     while IFS= read -r manifest_file; do
       [[ -n "$manifest_file" ]] && manifests_to_check+=("$manifest_file")
-    done < <(collect_existing_manifests "$os_name" "$PROJECT_DIR")
+    done < <(collect_existing_manifests "$os_name" "$PROJECT_DIR" "$target_filter")
   fi
 
   if [[ "${#manifests_to_check[@]}" -eq 0 ]]; then

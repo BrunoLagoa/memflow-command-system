@@ -4,8 +4,8 @@ param(
   [string]$Action = "install",
   [ValidateSet("global", "local")]
   [string]$Scope,
-  [ValidateSet("opencode")]
-  [string]$Target = "opencode",
+  [ValidateSet("opencode", "vscode")]
+  [string]$Target,
   [ValidateSet("linux", "macos", "windows")]
   [string]$Os,
   [string]$Version,
@@ -19,7 +19,9 @@ $ErrorActionPreference = "Stop"
 $script:VersionCheckTtlSeconds = 86400
 $script:ProjectDirProvided = $PSBoundParameters.ContainsKey("ProjectDir")
 $script:MemflowScopeProvided = $PSBoundParameters.ContainsKey("Scope")
+$script:MemflowTargetProvided = $PSBoundParameters.ContainsKey("Target")
 $script:NotFoundExitCode = 2
+$script:SupportedTargets = @("opencode", "vscode")
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $CommonScript = Join-Path $ScriptDir "lib/common.ps1"
@@ -81,20 +83,25 @@ function Get-MissingInstallationMessage {
   return "Não é possível executar $ActionName`: nenhuma instalação MEMFLOW encontrada."
 }
 
+function Get-SupportedTargets {
+  return $script:SupportedTargets
+}
+
 function Resolve-CommandsRoot {
   param(
     [string]$ResolvedScope,
+    [string]$ResolvedTarget,
     [string]$ResolvedOs,
     [string]$ResolvedProjectDir
   )
 
   if ($ResolvedScope -eq "global") {
     if ($ResolvedOs -eq "windows") {
-      return (Join-Path $env:USERPROFILE ".config\opencode\commands")
+      return (Join-Path $env:USERPROFILE ".config\$ResolvedTarget\commands")
     }
-    return (Join-Path $HOME ".config/opencode/commands")
+    return (Join-Path $HOME ".config/$ResolvedTarget/commands")
   }
-  return (Join-Path $ResolvedProjectDir ".opencode\commands")
+  return (Join-Path $ResolvedProjectDir ".$ResolvedTarget\commands")
 }
 
 function Get-LatestReleaseTag {
@@ -213,29 +220,41 @@ function Test-IsVersionNewer {
 function Find-ExistingManifest {
   param(
     [string]$ResolvedOs,
-    [string]$ResolvedProjectDir
+    [string]$ResolvedProjectDir,
+    [string]$TargetFilter
   )
-  $globalRoot = Resolve-CommandsRoot -ResolvedScope "global" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
-  $localRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
-  $globalManifest = Join-Path $globalRoot ".memflow-install.json"
-  $localManifest = Join-Path $localRoot ".memflow-install.json"
-  if (Test-Path $globalManifest) { return $globalManifest }
-  if (Test-Path $localManifest) { return $localManifest }
+  foreach ($candidateTarget in (Get-SupportedTargets)) {
+    if ($TargetFilter -and $candidateTarget -ne $TargetFilter) {
+      continue
+    }
+    $globalRoot = Resolve-CommandsRoot -ResolvedScope "global" -ResolvedTarget $candidateTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+    $localRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedTarget $candidateTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+    $globalManifest = Join-Path $globalRoot ".memflow-install.json"
+    $localManifest = Join-Path $localRoot ".memflow-install.json"
+    if (Test-Path $globalManifest) { return $globalManifest }
+    if (Test-Path $localManifest) { return $localManifest }
+  }
   return $null
 }
 
 function Find-ExistingManifests {
   param(
     [string]$ResolvedOs,
-    [string]$ResolvedProjectDir
+    [string]$ResolvedProjectDir,
+    [string]$TargetFilter
   )
   $manifests = @()
-  $globalRoot = Resolve-CommandsRoot -ResolvedScope "global" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
-  $localRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
-  $globalManifest = Join-Path $globalRoot ".memflow-install.json"
-  $localManifest = Join-Path $localRoot ".memflow-install.json"
-  if (Test-Path $globalManifest) { $manifests += $globalManifest }
-  if (Test-Path $localManifest) { $manifests += $localManifest }
+  foreach ($candidateTarget in (Get-SupportedTargets)) {
+    if ($TargetFilter -and $candidateTarget -ne $TargetFilter) {
+      continue
+    }
+    $globalRoot = Resolve-CommandsRoot -ResolvedScope "global" -ResolvedTarget $candidateTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+    $localRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedTarget $candidateTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
+    $globalManifest = Join-Path $globalRoot ".memflow-install.json"
+    $localManifest = Join-Path $localRoot ".memflow-install.json"
+    if (Test-Path $globalManifest) { $manifests += $globalManifest }
+    if (Test-Path $localManifest) { $manifests += $localManifest }
+  }
   return $manifests
 }
 
@@ -327,7 +346,7 @@ function Invoke-Install {
     [string]$ResolvedVersion
   )
 
-  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
   $installDir = Join-Path $commandsRoot "memflow"
   $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
 
@@ -365,8 +384,9 @@ function Invoke-Update {
   $nextVersion = if ($Version) { $Version } else { Get-LatestReleaseTag -RepoName $Repo }
   $manifestPath = $null
   $manifestPaths = @()
+  $targetFilter = if ($script:MemflowTargetProvided) { $ResolvedTarget } else { $null }
   if ([string]::IsNullOrEmpty($ResolvedScope)) {
-    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir)
+    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir -TargetFilter $targetFilter)
     if ($manifestPaths.Count -eq 0) {
       Stop-NotFound (Get-MissingInstallationMessage -ActionName "update" -ResolvedScope $ResolvedScope -HasExplicitScope $false)
     }
@@ -385,6 +405,9 @@ function Invoke-Update {
       $effectiveScope = if ($manifest -and $manifest.scope) { [string]$manifest.scope } else { "global" }
       $effectiveOs = if ($manifest -and $manifest.os) { [string]$manifest.os } else { $ResolvedOs }
       $effectiveTarget = if ($manifest -and $manifest.target) { [string]$manifest.target } else { $ResolvedTarget }
+      if ([string]::IsNullOrEmpty($effectiveTarget)) {
+        $effectiveTarget = "opencode"
+      }
 
       if ($installedVersion -and ($installedVersion -eq $nextVersion)) {
         Write-Info "[$effectiveScope] MEMFLOW já está atualizado ($installedVersion)"
@@ -407,7 +430,7 @@ function Invoke-Update {
     return
   }
 
-  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+  $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
   $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
 
   if (-not $manifestPath -or -not (Test-Path $manifestPath)) {
@@ -459,20 +482,29 @@ function Invoke-Update {
   } else {
     Write-Info "Atualização do MEMFLOW iniciada para versão $nextVersion"
   }
-  Invoke-Install -ResolvedScope $effectiveScope -ResolvedTarget $ResolvedTarget -ResolvedOs $effectiveOs -ResolvedVersion $nextVersion
+  $effectiveTarget = $ResolvedTarget
+  if ($manifest -and $manifest.target) {
+    $effectiveTarget = [string]$manifest.target
+  }
+  if ([string]::IsNullOrEmpty($effectiveTarget)) {
+    $effectiveTarget = "opencode"
+  }
+  Invoke-Install -ResolvedScope $effectiveScope -ResolvedTarget $effectiveTarget -ResolvedOs $effectiveOs -ResolvedVersion $nextVersion
 }
 
 function Invoke-Uninstall {
   param(
     [string]$ResolvedScope,
+    [string]$ResolvedTarget,
     [string]$ResolvedOs
   )
 
   $manifestPaths = @()
+  $targetFilter = if ($script:MemflowTargetProvided) { $ResolvedTarget } else { $null }
   if ([string]::IsNullOrEmpty($ResolvedScope)) {
-    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir)
+    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir -TargetFilter $targetFilter)
   } else {
-    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
     $manifestPaths = @((Join-Path $commandsRoot ".memflow-install.json"))
   }
 
@@ -537,17 +569,19 @@ function Invoke-Uninstall {
 function Invoke-Check {
   param(
     [string]$ResolvedScope,
+    [string]$ResolvedTarget,
     [string]$ResolvedOs
   )
   $manifestPaths = @()
-  if ($Scope) {
-    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
+  $targetFilter = if ($script:MemflowTargetProvided) { $ResolvedTarget } else { $null }
+  if ($ResolvedScope) {
+    $commandsRoot = Resolve-CommandsRoot -ResolvedScope $ResolvedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
     $candidateManifestPath = Join-Path $commandsRoot ".memflow-install.json"
     if (Test-Path $candidateManifestPath) {
       $manifestPaths += $candidateManifestPath
     }
   } else {
-    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir)
+    $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir -TargetFilter $targetFilter)
   }
 
   if ($manifestPaths.Count -eq 0) {
@@ -586,7 +620,11 @@ function Resolve-WizardValues {
 
   if ($Action -eq "check") {
     if (-not $resolvedOs) { $resolvedOs = if ($IsWindows) { "windows" } elseif ($IsMacOS) { "macos" } else { "linux" } }
-    if (-not $resolvedScope) { $resolvedScope = "global" }
+    if (-not $script:MemflowScopeProvided) {
+      $resolvedScope = $null
+    } elseif (-not $resolvedScope) {
+      $resolvedScope = "global"
+    }
     if (-not $resolvedTarget) { $resolvedTarget = "opencode" }
   } elseif (-not $NonInteractive) {
     Show-MemflowBanner
@@ -599,7 +637,7 @@ function Resolve-WizardValues {
       $resolvedOs = Select-Option -Prompt "1 - Escolha seu sistema operacional" -Options @("windows", "linux", "macos")
     }
     if (-not $resolvedTarget) {
-      $resolvedTarget = Select-Option -Prompt "2 - Selecione o local de instalação" -Options @("opencode")
+      $resolvedTarget = Select-Option -Prompt "2 - Selecione o local de instalação" -Options (Get-SupportedTargets)
     } else {
       Write-Host "2 - Selecione o local de instalação"
       Write-Host "  > $resolvedTarget"
@@ -657,9 +695,9 @@ switch ($Action) {
     Invoke-Update -ResolvedScope $resolvedScope -ResolvedTarget $resolvedTarget -ResolvedOs $resolvedOs
   }
   "uninstall" {
-    Invoke-Uninstall -ResolvedScope $resolvedScope -ResolvedOs $resolvedOs
+    Invoke-Uninstall -ResolvedScope $resolvedScope -ResolvedTarget $resolvedTarget -ResolvedOs $resolvedOs
   }
   "check" {
-    Invoke-Check -ResolvedScope $resolvedScope -ResolvedOs $resolvedOs
+    Invoke-Check -ResolvedScope $resolvedScope -ResolvedTarget $resolvedTarget -ResolvedOs $resolvedOs
   }
 }

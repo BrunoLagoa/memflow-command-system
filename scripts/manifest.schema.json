@@ -31,7 +31,7 @@
     },
     "target": {
       "type": "string",
-      "enum": ["opencode"]
+      "enum": ["opencode", "vscode"]
     },
     "channel": {
       "type": "string",

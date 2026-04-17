@@ -109,7 +109,7 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 The `MEMFLOW` wizard guides choices for:
 
 1. Operating system
-2. Installation platform (`OpenCode`)
+2. Installation platform (`OpenCode` or `VSCode`)
 3. Scope (`local` or `global`)
 
 #### Option B - local script execution (macOS/Linux)
@@ -150,10 +150,18 @@ Examples below follow the convention from [Global vs local scope](#global-vs-loc
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target opencode
 ```
 
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target vscode
+```
+
 ##### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target vscode
 ```
 
 #### Local (current project)
@@ -164,10 +172,18 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInter
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target opencode
 ```
 
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target vscode
+```
+
 ##### PowerShell
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target opencode
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target vscode
 ```
 
 ### Update to a new version
@@ -186,7 +202,7 @@ Without `--scope`, `update` only affects scopes where installation is detected b
 
 Use `install.sh` / `install.ps1` directly from the repository (does not require `memflowctl` in PATH).
 
-Run from the **same directory** where you usually work (for local installation, typically the project root where `.opencode/commands` exists).
+Run from the **same directory** where you usually work (for local installation, typically the project root where `.<target>/commands` exists).
 
 ##### macOS/Linux
 
@@ -246,8 +262,10 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 
 These match the **global** and **local** modes described in [Global vs local scope](#global-vs-local-scope):
 
-- `global`: `~/.config/opencode/commands/memflow`
-- `local`: `<project>/.opencode/commands/memflow`
+- `opencode` global: `~/.config/opencode/commands/memflow`
+- `opencode` local: `<project>/.opencode/commands/memflow`
+- `vscode` global: `~/.config/vscode/commands/memflow`
+- `vscode` local: `<project>/.vscode/commands/memflow`
 
 ### First use
 
@@ -300,7 +318,7 @@ This section is continuously updated as new environments are validated.
 | Tool | Support | Notes |
 | ---------- | ------- | ----------- |
 | `OpenCode` | ✅ | Main project platform, with full support for slash commands and SDLC flow. |
-| `VSCode` | ⏳ | Support pending validation; we still need to test this environment. |
+| `VSCode` | ✅ | Supported by installer targets (`--target vscode`) for global and local scopes. |
 | `Antigravity` | ⏳ | Support pending validation; we still need to test this environment. |
 | `Cursor` | ⏳ | Support pending validation; we still need to test this environment. |
 

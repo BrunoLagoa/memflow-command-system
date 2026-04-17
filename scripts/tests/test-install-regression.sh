@@ -39,7 +39,7 @@ run_expect_success() {
   fi
 }
 
-tmp_root="$(mktemp -d)"
+tmp_root="$(mktemp -d "${SCRIPT_DIR}/.tmp-install-regression.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_root"
 }
@@ -140,6 +140,58 @@ if [[ -d "${project_local}/.opencode/commands/memflow" ]]; then
   fail_count=$((fail_count + 1))
 else
   printf "[PASS] cenário global-only não depende de instalação local\n"
+  pass_count=$((pass_count + 1))
+fi
+
+project_vscode="${tmp_root}/vscode-project"
+mkdir -p "$project_vscode"
+
+home_vscode="${tmp_root}/home-vscode"
+mkdir -p "$home_vscode"
+
+run_expect_exit \
+  "update vscode local sem instalação deve falhar com código 2" \
+  2 \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" update --scope local --project-dir "$project_vscode" --target vscode --non-interactive --version local
+
+run_expect_exit \
+  "uninstall vscode global sem instalação deve falhar com código 2" \
+  2 \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" uninstall --scope global --target vscode --non-interactive
+
+run_expect_success \
+  "install vscode local inicial deve funcionar" \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" install --scope local --project-dir "$project_vscode" --target vscode --non-interactive --version local
+
+run_expect_success \
+  "install vscode global inicial deve funcionar" \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" install --scope global --target vscode --non-interactive --version local
+
+run_expect_success \
+  "update vscode sem escopo deve funcionar com global e local existentes" \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" update --target vscode --non-interactive --project-dir "$project_vscode" --version local
+
+run_expect_success \
+  "check vscode sem escopo deve funcionar com global e local existentes" \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" check --target vscode --non-interactive --project-dir "$project_vscode"
+
+run_expect_success \
+  "uninstall vscode sem escopo deve remover global e local existentes" \
+  env HOME="$home_vscode" bash "$INSTALL_SCRIPT" uninstall --target vscode --non-interactive --project-dir "$project_vscode"
+
+if [[ -d "${project_vscode}/.vscode/commands/memflow" ]]; then
+  printf "[FAIL] uninstall vscode sem escopo manteve instalação local\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] uninstall vscode sem escopo remove instalação local\n"
+  pass_count=$((pass_count + 1))
+fi
+
+if [[ -d "${home_vscode}/.config/vscode/commands/memflow" ]]; then
+  printf "[FAIL] uninstall vscode sem escopo manteve instalação global\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] uninstall vscode sem escopo remove instalação global\n"
   pass_count=$((pass_count + 1))
 fi
 
