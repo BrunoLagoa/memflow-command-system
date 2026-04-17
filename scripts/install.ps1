@@ -92,7 +92,8 @@ function Import-InstallerModule {
 }
 
 Import-InstallerModule -LocalRelativePath "installers/powershell/core.ps1" -RemoteRelativePath "scripts/installers/powershell/core.ps1"
-Import-InstallerModule -LocalRelativePath "installers/powershell/targets.ps1" -RemoteRelativePath "scripts/installers/powershell/targets.ps1"
+Import-InstallerModule -LocalRelativePath "installers/powershell/targets/opencode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/opencode.ps1"
+Import-InstallerModule -LocalRelativePath "installers/powershell/targets/vscode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/vscode.ps1"
 Import-InstallerModule -LocalRelativePath "installers/powershell/actions.ps1" -RemoteRelativePath "scripts/installers/powershell/actions.ps1"
 
 $resolved = Resolve-WizardValues

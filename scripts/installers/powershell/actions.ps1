@@ -1,6 +1,52 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+function Invoke-TargetInstallFromSource {
+  param(
+    [string]$Target,
+    [string]$CommandsRoot,
+    [string]$InstallDir,
+    [string]$ManifestPath,
+    [string]$ResolvedVersion,
+    [string]$SourceDir,
+    [string]$NormalizedScope,
+    [string]$ResolvedOs
+  )
+
+  switch ($Target) {
+    "opencode" {
+      Install-OpencodeTargetFromSource -CommandsRoot $CommandsRoot -InstallDir $InstallDir -ManifestPath $ManifestPath -ResolvedVersion $ResolvedVersion -SourceDir $SourceDir -NormalizedScope $NormalizedScope -ResolvedTarget $Target -ResolvedOs $ResolvedOs
+    }
+    "vscode" {
+      Install-VscodeTargetFromSource -CommandsRoot $CommandsRoot -ManifestPath $ManifestPath -ResolvedVersion $ResolvedVersion -SourceDir $SourceDir -NormalizedScope $NormalizedScope -ResolvedTarget $Target -ResolvedOs $ResolvedOs
+    }
+    default {
+      Stop-WithError "Target não suportado para instalação: $Target"
+    }
+  }
+}
+
+function Invoke-TargetUninstall {
+  param(
+    [string]$Target,
+    [string]$CommandsRoot,
+    [string]$InstallDir,
+    [string]$ManifestPath
+  )
+
+  switch ($Target) {
+    "opencode" {
+      Uninstall-OpencodeTargetInstallation -InstallDir $InstallDir -ManifestPath $ManifestPath
+    }
+    "vscode" {
+      Uninstall-VscodeTargetInstallation -CommandsRoot $CommandsRoot -ManifestPath $ManifestPath
+    }
+    default {
+      Stop-WithError "Target não suportado para remoção: $Target"
+    }
+  }
+}
+
 function Invoke-Install {
   param(
     [string]$ResolvedScope,
@@ -13,70 +59,10 @@ function Invoke-Install {
   $commandsRoot = Resolve-CommandsRoot -ResolvedScope $normalizedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir
   $installDir = Resolve-InstallDir -CommandsRoot $commandsRoot -ResolvedTarget $ResolvedTarget
   $manifestPath = Join-Path $commandsRoot ".memflow-install.json"
-
-  New-Item -Path $commandsRoot -ItemType Directory -Force | Out-Null
-
   $sourceDir = Resolve-SourceDir -RepoName $Repo -RequestedVersion $ResolvedVersion -InstallerScriptDir $ScriptDir
-  if ($ResolvedTarget -eq "vscode") {
-    $promptsDir = Join-Path $commandsRoot "prompts"
-    $legacyAgentsDir = Join-Path $commandsRoot "agents"
-    New-Item -Path $promptsDir -ItemType Directory -Force | Out-Null
 
-    if (-not $NonInteractive) {
-      $existingPrompts = @(Get-ChildItem -Path $promptsDir -Filter "memflow.*.prompt.md" -ErrorAction SilentlyContinue)
-      $existingLegacyAgents = @(Get-ChildItem -Path $legacyAgentsDir -Filter "memflow.*.agent.md" -ErrorAction SilentlyContinue)
-      if ($existingPrompts.Count -gt 0 -or $existingLegacyAgents.Count -gt 0) {
-        $backup = Read-Host "Comandos MEMFLOW existentes detectados para VSCode. Criar backup? [Y/n]"
-        if ([string]::IsNullOrWhiteSpace($backup) -or $backup.ToLower() -eq "y" -or $backup.ToLower() -eq "yes") {
-          $backupDir = Join-Path $commandsRoot ("memflow-vscode-backup." + (Get-Date -Format yyyyMMddHHmmss))
-          New-Item -Path $backupDir -ItemType Directory -Force | Out-Null
-          Copy-Item -Path $promptsDir -Destination (Join-Path $backupDir "prompts") -Recurse -Force -ErrorAction SilentlyContinue
-          Copy-Item -Path $legacyAgentsDir -Destination (Join-Path $backupDir "agents") -Recurse -Force -ErrorAction SilentlyContinue
-          Write-Info "Backup criado: $backupDir"
-        }
-      }
-    }
-
-    Get-ChildItem -Path $promptsDir -Filter "memflow.*.prompt.md" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-    Get-ChildItem -Path $legacyAgentsDir -Filter "memflow.*.agent.md" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-
-    $sourceFiles = @(Get-ChildItem -Path $sourceDir -File -Filter "*.md")
-    if ($sourceFiles.Count -eq 0) {
-      Stop-WithError "Nenhum comando encontrado em $sourceDir para instalação VSCode."
-    }
-    foreach ($srcFile in $sourceFiles) {
-      $stem = [System.IO.Path]::GetFileNameWithoutExtension($srcFile.Name)
-      $promptFile = Join-Path $promptsDir ("memflow.$stem.prompt.md")
-      Render-VscodePromptWithShared -SourceFile $srcFile.FullName -DestinationFile $promptFile -SourceDir $sourceDir
-    }
-
-    Write-Manifest -ManifestPath $manifestPath -ResolvedVersion $ResolvedVersion -ResolvedScope $normalizedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -InstallDir $promptsDir -CommandsRoot $commandsRoot -RepoName $Repo
-    Write-Info "Instalação concluída com sucesso."
-    Write-Info "Destino prompts: $promptsDir"
-    return
-  }
-
-  if (Test-Path $installDir) {
-    if (-not $NonInteractive) {
-      $backup = Read-Host "Instalação existente detectada. Criar backup? [Y/n]"
-      if ([string]::IsNullOrWhiteSpace($backup) -or $backup.ToLower() -eq "y" -or $backup.ToLower() -eq "yes") {
-        $backupDir = "$installDir.bak.$(Get-Date -Format yyyyMMddHHmmss)"
-        Copy-Item -Path $installDir -Destination $backupDir -Recurse
-        Write-Info "Backup criado: $backupDir"
-      }
-    }
-    Remove-Item -Path $installDir -Recurse -Force
-  }
-
-  New-Item -Path $installDir -ItemType Directory -Force | Out-Null
-  Copy-Item -Path (Join-Path $sourceDir "*") -Destination $installDir -Recurse -Force
-
-  Write-Manifest -ManifestPath $manifestPath -ResolvedVersion $ResolvedVersion -ResolvedScope $normalizedScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -InstallDir $installDir -CommandsRoot $commandsRoot -RepoName $Repo
-
-  Write-Info "Instalação concluída com sucesso."
-  Write-Info "Destino: $installDir"
+  Invoke-TargetInstallFromSource -Target $ResolvedTarget -CommandsRoot $commandsRoot -InstallDir $installDir -ManifestPath $manifestPath -ResolvedVersion $ResolvedVersion -SourceDir $sourceDir -NormalizedScope $normalizedScope -ResolvedOs $ResolvedOs
 }
-
 
 function Invoke-Update {
   param(
@@ -196,7 +182,6 @@ function Invoke-Update {
   Invoke-Install -ResolvedScope $effectiveScope -ResolvedTarget $effectiveTarget -ResolvedOs $effectiveOs -ResolvedVersion $nextVersion
 }
 
-
 function Invoke-Uninstall {
   param(
     [string]$ResolvedScope,
@@ -259,10 +244,6 @@ function Invoke-Uninstall {
   }
   foreach ($target in $targetsToRemove) {
     Write-Host "Destino de remoção: $($target.InstallDir)"
-    if ($target.Target -eq "vscode") {
-      $promptsPath = Join-Path (Split-Path -Parent $target.ManifestPath) "prompts"
-      Write-Host "Destino de remoção: $promptsPath"
-    }
   }
 
   if (-not $NonInteractive) {
@@ -274,18 +255,8 @@ function Invoke-Uninstall {
   }
 
   foreach ($target in $targetsToRemove) {
-    if ($target.Target -eq "vscode") {
-      $currentCommandsRoot = Split-Path -Parent $target.ManifestPath
-      $agentsDir = Join-Path $currentCommandsRoot "agents"
-      $promptsDir = Join-Path $currentCommandsRoot "prompts"
-      Get-ChildItem -Path $agentsDir -Filter "memflow.*.agent.md" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-      Get-ChildItem -Path $promptsDir -Filter "memflow.*.prompt.md" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-    } elseif (Test-Path $target.InstallDir) {
-      Remove-Item -Path $target.InstallDir -Recurse -Force
-    }
-    if (Test-Path $target.ManifestPath) {
-      Remove-Item -Path $target.ManifestPath -Force
-    }
+    $currentCommandsRoot = Split-Path -Parent $target.ManifestPath
+    Invoke-TargetUninstall -Target $target.Target -CommandsRoot $currentCommandsRoot -InstallDir $target.InstallDir -ManifestPath $target.ManifestPath
   }
 
   if ($targetsToRemove.Count -gt 1) {
@@ -294,7 +265,6 @@ function Invoke-Uninstall {
     Write-Info "MEMFLOW removido com sucesso."
   }
 }
-
 
 function Invoke-Check {
   param(

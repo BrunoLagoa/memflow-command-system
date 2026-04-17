@@ -23,7 +23,8 @@ $tmpScript = Join-Path $tmpRoot "scripts/install.ps1"
 $downloadFiles = @(
   "scripts/install.ps1",
   "scripts/installers/powershell/core.ps1",
-  "scripts/installers/powershell/targets.ps1",
+  "scripts/installers/powershell/targets/opencode.ps1",
+  "scripts/installers/powershell/targets/vscode.ps1",
   "scripts/installers/powershell/actions.ps1",
   "scripts/lib/common.ps1"
 )

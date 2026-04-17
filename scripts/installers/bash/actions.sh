@@ -1,5 +1,45 @@
 #!/usr/bin/env bash
 
+dispatch_install_for_target() {
+  local target="$1"
+  local commands_root="$2"
+  local install_dir="$3"
+  local manifest_file="$4"
+  local version="$5"
+  local source_dir="$6"
+
+  case "$target" in
+    opencode)
+      opencode_install_from_source "$commands_root" "$install_dir" "$manifest_file" "$version" "$source_dir"
+      ;;
+    vscode)
+      vscode_install_from_source "$commands_root" "$manifest_file" "$version" "$source_dir"
+      ;;
+    *)
+      die "Target não suportado para instalação: $target"
+      ;;
+  esac
+}
+
+dispatch_uninstall_for_target() {
+  local target="$1"
+  local commands_root="$2"
+  local install_dir="$3"
+  local manifest_file="$4"
+
+  case "$target" in
+    opencode)
+      opencode_uninstall_installation "$install_dir" "$manifest_file"
+      ;;
+    vscode)
+      vscode_uninstall_installation "$commands_root" "$manifest_file"
+      ;;
+    *)
+      die "Target não suportado para remoção: $target"
+      ;;
+  esac
+}
+
 prompt_fresh_install_from_update() {
   local explicit_scope="$1"
   local message=""
@@ -29,79 +69,15 @@ prompt_fresh_install_from_update() {
   return 0
 }
 
-
 perform_install() {
   local commands_root="$1"
   local install_dir="$2"
   local manifest_file="$3"
   local version="$4"
-
   local source_dir
   source_dir="$(resolve_source_dir "$version")"
-
-  if [[ "$TARGET" == "vscode" ]]; then
-    local prompts_dir legacy_agents_dir src_file stem prompt_file
-    prompts_dir="${commands_root}/prompts"
-    legacy_agents_dir="${commands_root}/agents"
-    mkdir -p "$prompts_dir"
-
-    if [[ "$BACKUP_ENABLED" -eq 1 && "$NON_INTERACTIVE" -eq 0 ]] && { compgen -G "${prompts_dir}/memflow.*.prompt.md" >/dev/null || compgen -G "${legacy_agents_dir}/memflow.*.agent.md" >/dev/null; }; then
-      if confirm_tty "Comandos MEMFLOW existentes detectados para VSCode. Deseja criar backup?" "y"; then
-        local backup_dir="${commands_root}/memflow-vscode-backup.$(date +%Y%m%d%H%M%S)"
-        mkdir -p "$backup_dir"
-        cp -R "$prompts_dir" "$backup_dir/prompts" 2>/dev/null || true
-        cp -R "$legacy_agents_dir" "$backup_dir/agents" 2>/dev/null || true
-        log_info "Backup criado em ${backup_dir}"
-      fi
-    fi
-
-    rm -f "${prompts_dir}/memflow."*.prompt.md
-    rm -f "${legacy_agents_dir}/memflow."*.agent.md
-
-    local generated_count=0
-    shopt -s nullglob
-    for src_file in "${source_dir}"/*.md; do
-      stem="$(basename "$src_file" .md)"
-      prompt_file="${prompts_dir}/memflow.${stem}.prompt.md"
-      render_vscode_prompt_with_shared "$src_file" "$prompt_file" "$source_dir"
-      generated_count=$((generated_count + 1))
-    done
-    shopt -u nullglob
-
-    if [[ "$generated_count" -eq 0 ]]; then
-      die "Nenhum comando encontrado em ${source_dir} para instalação VSCode."
-    fi
-
-    local manifest_scope
-    manifest_scope="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
-    write_manifest "$manifest_file" "$version" "$manifest_scope" "$TARGET" "$SELECTED_OS" "$prompts_dir" "$commands_root"
-
-    log_info "Instalação concluída com sucesso."
-    log_info "Destino prompts: ${prompts_dir}"
-    return 0
-  fi
-
-  mkdir -p "$commands_root"
-
-  if [[ -d "$install_dir" ]]; then
-    if [[ "$BACKUP_ENABLED" -eq 1 && "$NON_INTERACTIVE" -eq 0 ]] && confirm_tty "Instalação existente detectada em ${install_dir}. Deseja criar backup?" "y"; then
-      local backup_dir="${install_dir}.bak.$(date +%Y%m%d%H%M%S)"
-      cp -R "$install_dir" "$backup_dir"
-      log_info "Backup criado em ${backup_dir}"
-    fi
-    rm -rf "$install_dir"
-  fi
-
-  mkdir -p "$install_dir"
-  cp -R "${source_dir}/." "$install_dir/"
-  local manifest_scope
-  manifest_scope="$(normalize_scope_for_target "$SCOPE" "$TARGET")"
-  write_manifest "$manifest_file" "$version" "$manifest_scope" "$TARGET" "$SELECTED_OS" "$install_dir" "$commands_root"
-
-  log_info "Instalação concluída com sucesso."
-  log_info "Destino: ${install_dir}"
+  dispatch_install_for_target "$TARGET" "$commands_root" "$install_dir" "$manifest_file" "$version" "$source_dir"
 }
-
 
 run_install() {
   BACKUP_ENABLED=1
@@ -138,7 +114,6 @@ run_install() {
 
   perform_install "$commands_root" "$install_dir" "$manifest_file" "$resolved_version"
 }
-
 
 run_update() {
   local user_scope="${SCOPE:-}"
@@ -257,7 +232,6 @@ run_update() {
   perform_install "$updated_root" "$install_dir" "$manifest_updated" "$VERSION"
 }
 
-
 run_uninstall() {
   local user_scope="${SCOPE:-}"
   local target_filter=""
@@ -289,7 +263,16 @@ run_uninstall() {
   local -a removable_manifests=()
   for manifest_file in "${manifests_to_remove[@]}"; do
     commands_root="$(dirname "$manifest_file")"
-    install_dir="${commands_root}/memflow"
+    local target_in_manifest
+    if [[ -f "$manifest_file" ]]; then
+      target_in_manifest="$(parse_manifest_value "$manifest_file" "target")"
+    else
+      target_in_manifest=""
+    fi
+    if [[ -z "$target_in_manifest" ]]; then
+      target_in_manifest="${TARGET:-opencode}"
+    fi
+    install_dir="$(install_dir_for_target "$commands_root" "$target_in_manifest")"
     if [[ -d "$install_dir" || -f "$manifest_file" ]]; then
       removable_manifests+=("$manifest_file")
     fi
@@ -309,12 +292,16 @@ run_uninstall() {
   for manifest_file in "${removable_manifests[@]}"; do
     commands_root="$(dirname "$manifest_file")"
     local target_in_manifest
-    target_in_manifest="$(parse_manifest_value "$manifest_file" "target")"
+    if [[ -f "$manifest_file" ]]; then
+      target_in_manifest="$(parse_manifest_value "$manifest_file" "target")"
+    else
+      target_in_manifest=""
+    fi
+    if [[ -z "$target_in_manifest" ]]; then
+      target_in_manifest="${TARGET:-opencode}"
+    fi
     install_dir="$(install_dir_for_target "$commands_root" "$target_in_manifest")"
     printf "Destino de remoção: %s\n" "$install_dir"
-    if [[ "$target_in_manifest" == "vscode" ]]; then
-      printf "Destino de remoção: %s\n" "${commands_root}/prompts"
-    fi
   done
 
   if [[ "$NON_INTERACTIVE" -eq 0 ]] && ! confirm_tty "Confirmar remoção completa do MEMFLOW?" "n"; then
@@ -326,15 +313,16 @@ run_uninstall() {
   for manifest_file in "${removable_manifests[@]}"; do
     commands_root="$(dirname "$manifest_file")"
     local target_in_manifest
-    target_in_manifest="$(parse_manifest_value "$manifest_file" "target")"
-    install_dir="$(install_dir_for_target "$commands_root" "$target_in_manifest")"
-    if [[ "$target_in_manifest" == "vscode" ]]; then
-      rm -f "${commands_root}/prompts/memflow."*.prompt.md
-      rm -f "${commands_root}/agents/memflow."*.agent.md
+    if [[ -f "$manifest_file" ]]; then
+      target_in_manifest="$(parse_manifest_value "$manifest_file" "target")"
     else
-      rm -rf "$install_dir"
+      target_in_manifest=""
     fi
-    rm -f "$manifest_file"
+    if [[ -z "$target_in_manifest" ]]; then
+      target_in_manifest="${TARGET:-opencode}"
+    fi
+    install_dir="$(install_dir_for_target "$commands_root" "$target_in_manifest")"
+    dispatch_uninstall_for_target "$target_in_manifest" "$commands_root" "$install_dir" "$manifest_file"
     removed_count=$((removed_count + 1))
   done
 
@@ -344,7 +332,6 @@ run_uninstall() {
     log_info "MEMFLOW removido com sucesso."
   fi
 }
-
 
 run_check() {
   local user_scope="${SCOPE:-}"
