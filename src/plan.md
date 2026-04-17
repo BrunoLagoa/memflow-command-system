@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Cria plano de implementação detalhado quando /workflow decide PLANEJAR PRIMEIRO, alinhado a ~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local) — sequência de passos, arquivos afetados, impacto, riscos e critérios de sucesso. Não escreve código. Saída: Status (Plano criado/Bloqueado), Análise com 9 subseções, Problemas e Próximos passos. Bloqueia se houver ambiguidade. Próximo passo: /execute.
+description: Cria plano de implementação detalhado quando /workflow decide PLANEJAR PRIMEIRO, alinhado a `model-policy.md` do target ativo (via `_shared/target-adapter.md`) — sequência de passos, arquivos afetados, impacto, riscos e critérios de sucesso. Não escreve código. Saída: Status (Plano criado/Bloqueado), Análise com 9 subseções, Problemas e Próximos passos. Bloqueia se houver ambiguidade. Próximo passo: /execute.
 license: MIT
 metadata:
   author: BrunoCastro
@@ -9,10 +9,13 @@ metadata:
 
 ## Referência normativa comum
 
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-output.md` (global) ou `.opencode/commands/memflow/_shared/base-output.md` (local).
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-preconditions.md` (global) ou `.opencode/commands/memflow/_shared/base-preconditions.md` (local).
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md` (global) ou `.opencode/commands/memflow/_shared/base-degraded-mode.md` (local).
-- Resolver essas referências somente pelos caminhos oficiais acima (sem fallback para o projeto aberto).
+Aplicar obrigatoriamente:
+
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
+- Resolver essas referências conforme `_shared/target-adapter.md` (sem fallback fora do target ativo).
 
 ---
 
@@ -82,9 +85,9 @@ Este comando deve:
 1. Basear-se em:
    - `.agents` (quando disponível)
    - `docs`
-   - `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
+   - `model-policy.md` resolvido pelo target ativo (via `_shared/target-adapter.md`)
    - estrutura real (via Serena, se disponível)
-   - resolver `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)` apenas nesses caminhos oficiais
+   - resolver `model-policy.md` com as regras do target ativo (via `_shared/target-adapter.md`)
 
 2. NÃO escrever código
 

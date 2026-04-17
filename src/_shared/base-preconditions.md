@@ -81,17 +81,9 @@ Se memória NÃO existir:
 
 ## Resolução de caminhos (obrigatória)
 
-- Para arquivos normativos do sistema, usar os caminhos oficiais por escopo:
-
-  ~/.config/opencode/commands/memflow/... (global) ou .opencode/commands/memflow/... (local)
-
-- Nunca resolver:
-  - model-policy.md
-  - _shared/*.md
-
-  relativo ao projeto aberto
-
-- Se não encontrado em nenhum caminho oficial:
+- Regras de resolução de caminhos normativos e de `model-policy.md` devem seguir `_shared/target-adapter.md`.
+- Nunca inferir caminhos fora do adaptador de target.
+- Se o adaptador não estiver disponível:
   - reportar ausência
   - NÃO usar fallback
 

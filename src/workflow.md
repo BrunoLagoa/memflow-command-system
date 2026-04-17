@@ -11,9 +11,10 @@ metadata:
 
 Aplicar obrigatoriamente:
 
-- ~/.config/opencode/commands/memflow/_shared/base-output.md (global) ou .opencode/commands/memflow/_shared/base-output.md (local)
-- ~/.config/opencode/commands/memflow/_shared/base-preconditions.md (global) ou .opencode/commands/memflow/_shared/base-preconditions.md (local)
-- ~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md (global) ou .opencode/commands/memflow/_shared/base-degraded-mode.md (local)
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
 
 ---
 
@@ -44,7 +45,7 @@ Utilizar obrigatoriamente:
 - `.agents`
 - `docs`
 - `.agents/memory/decisions.md`
-- `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
+- `model-policy.md` resolvido pelo target ativo (via `_shared/target-adapter.md`)
 
 ---
 

@@ -4,6 +4,16 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.14] - 2026-04-17
+
+### Alterado
+- `src/_shared/base-preconditions.md` e `src/_shared/base-degraded-mode.md`: regras comportamentais tornadas agnósticas de target, com resolução delegada ao adaptador.
+- `src/_shared/target-adapter.md` e `src/_shared/target-adapter.vscode.md`: novos adaptadores de resolução normativa por target (`opencode` e `vscode`).
+- `src/*.md`: referências normativas comuns atualizadas para usar `_shared/base-*` + `_shared/target-adapter.md`, removendo paths OpenCode hardcoded dos comandos.
+- `src/execute.md`, `src/plan.md`, `src/review.md`, `src/review-enforce-rules.md`, `src/refactor.md`, `src/debug.md` e `src/workflow.md`: referências de `model-policy.md` migradas para resolução por target via adaptador compartilhado.
+- `scripts/installers/bash/targets/vscode.sh` e `scripts/installers/powershell/targets/vscode.ps1`: renderização de prompts VSCode atualizada para injetar `target-adapter.vscode.md` quando houver referência a `target-adapter.md`.
+- `README.md` e `README.pt-BR.md`: documentação de `_shared` e do fluxo de geração VSCode atualizada para refletir a arquitetura núcleo + adaptador de target.
+
 ## [1.1.13] - 2026-04-17
 
 ### Alterado
@@ -149,6 +159,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.14]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.13...v1.1.14
 [1.1.13]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.12...v1.1.13
 [1.1.12]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.11...v1.1.12
 [1.1.11]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.10...v1.1.11

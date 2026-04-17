@@ -89,6 +89,8 @@ Files in `src/_shared` centralize cross-cutting standards:
 - `base-output.md`
 - `base-preconditions.md`
 - `base-degraded-mode.md`
+- `target-adapter.md` (OpenCode target resolver)
+- `target-adapter.vscode.md` (VSCode target resolver)
 
 ## Getting started (quick start)
 
@@ -133,7 +135,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 
 - **`opencode`**: keeps both `global` and `local` scopes.
 - **`vscode`**: uses a **single project installation** in `.github/prompts` (no global/local split).
-  - During installation, `.../_shared/...` references in commands are replaced by the actual shared-base content inside each generated prompt.
+  - During installation, references to `.../_shared/...` are inlined in each generated prompt.
+  - `target-adapter.md` references are resolved to `target-adapter.vscode.md` in generated prompts.
+  - OpenCode-only path rules are not carried into VSCode prompts.
 
 For **`update`**, if MEMFLOW was installed previously, the installer uses the manifest (`.memflow-install.json`) to locate existing installations.
 

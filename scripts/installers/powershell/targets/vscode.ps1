@@ -12,8 +12,9 @@ function Render-VscodePromptWithShared {
   $sharedOutput = Join-Path $sharedDir "base-output.md"
   $sharedPreconditions = Join-Path $sharedDir "base-preconditions.md"
   $sharedDegraded = Join-Path $sharedDir "base-degraded-mode.md"
+  $sharedTargetAdapterVscode = Join-Path $sharedDir "target-adapter.vscode.md"
 
-  foreach ($required in @($sharedOutput, $sharedPreconditions, $sharedDegraded)) {
+  foreach ($required in @($sharedOutput, $sharedPreconditions, $sharedDegraded, $sharedTargetAdapterVscode)) {
     if (-not (Test-Path $required)) {
       Stop-WithError "Arquivo compartilhado não encontrado: $required"
     }
@@ -22,22 +23,28 @@ function Render-VscodePromptWithShared {
   $sharedOutputLines = Get-Content -Path $sharedOutput
   $sharedPreconditionsLines = Get-Content -Path $sharedPreconditions
   $sharedDegradedLines = Get-Content -Path $sharedDegraded
+  $sharedTargetAdapterVscodeLines = Get-Content -Path $sharedTargetAdapterVscode
   $result = New-Object System.Collections.Generic.List[string]
 
   foreach ($line in (Get-Content -Path $SourceFile)) {
-    if ($line -match "_shared/base-output\.md") {
+    if ($line -match "^\s*-\s+`?_shared/base-output\.md`?\s*$") {
       $result.Add("### Conteúdo injetado: _shared/base-output.md")
       foreach ($sharedLine in $sharedOutputLines) { $result.Add($sharedLine) }
       continue
     }
-    if ($line -match "_shared/base-preconditions\.md") {
+    if ($line -match "^\s*-\s+`?_shared/base-preconditions\.md`?\s*$") {
       $result.Add("### Conteúdo injetado: _shared/base-preconditions.md")
       foreach ($sharedLine in $sharedPreconditionsLines) { $result.Add($sharedLine) }
       continue
     }
-    if ($line -match "_shared/base-degraded-mode\.md") {
+    if ($line -match "^\s*-\s+`?_shared/base-degraded-mode\.md`?\s*$") {
       $result.Add("### Conteúdo injetado: _shared/base-degraded-mode.md")
       foreach ($sharedLine in $sharedDegradedLines) { $result.Add($sharedLine) }
+      continue
+    }
+    if ($line -match "^\s*-\s+`?_shared/target-adapter\.md`?\s*$") {
+      $result.Add("### Conteúdo injetado: _shared/target-adapter.vscode.md")
+      foreach ($sharedLine in $sharedTargetAdapterVscodeLines) { $result.Add($sharedLine) }
       continue
     }
     $result.Add($line)

@@ -9,9 +9,12 @@ metadata:
 
 ## Referência normativa comum
 
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-output.md` (global) ou `.opencode/commands/memflow/_shared/base-output.md` (local).
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-preconditions.md` (global) ou `.opencode/commands/memflow/_shared/base-preconditions.md` (local).
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md` (global) ou `.opencode/commands/memflow/_shared/base-degraded-mode.md` (local).
+Aplicar obrigatoriamente:
+
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
 
 ---
 
@@ -43,8 +46,8 @@ Este comando deve:
 
 - utilizar modelo intermediário ou avançado
 - priorizar qualidade de análise e segurança da refatoração
-- seguir `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
-- resolver `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)` apenas nesses caminhos oficiais
+- seguir `model-policy.md` resolvido pelo target ativo (via `_shared/target-adapter.md`)
+- resolver `model-policy.md` com as regras do target ativo (via `_shared/target-adapter.md`)
 
 ---
 

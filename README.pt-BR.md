@@ -89,6 +89,8 @@ Arquivos em `src/_shared` centralizam normas transversais:
 - `base-output.md`
 - `base-preconditions.md`
 - `base-degraded-mode.md`
+- `target-adapter.md` (resolvedor de target OpenCode)
+- `target-adapter.vscode.md` (resolvedor de target VSCode)
 
 ## Como começar (quick start)
 
@@ -133,7 +135,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 
 - **`opencode`**: mantém escopos `global` e `local`.
 - **`vscode`**: usa instalação **única por projeto** em `.github/prompts` (sem separação global/local).
-  - Durante a instalação, referências a `.../_shared/...` nos comandos são substituídas pelo conteúdo real das bases compartilhadas dentro de cada prompt gerado.
+  - Durante a instalação, referências a `.../_shared/...` são injetadas no próprio prompt gerado.
+  - Referências a `target-adapter.md` são resolvidas para `target-adapter.vscode.md` nos prompts gerados.
+  - Regras de path exclusivas do OpenCode não são carregadas para prompts VSCode.
 
 No **`update`**, se você já instalou antes, o instalador usa o manifest (`.memflow-install.json`) para localizar a instalação existente.
 

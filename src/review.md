@@ -1,6 +1,6 @@
 ---
 name: review
-description: Validação inteligente de qualidade antes da validação rígida opcional — avalia aderência a .agents, segurança (client/server), arquitetura, produto (docs), fluxo do sistema e ~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local). Saída: Aprovado ou Reprovado, com problemas por categoria (Regras, Segurança, Arquitetura, Fluxo, Modelo). Não corrige. Pode ser complementado por /review-enforce-rules.
+description: Validação inteligente de qualidade antes da validação rígida opcional — avalia aderência a .agents, segurança (client/server), arquitetura, produto (docs), fluxo do sistema e `model-policy.md` do target ativo (via `_shared/target-adapter.md`). Saída: Aprovado ou Reprovado, com problemas por categoria (Regras, Segurança, Arquitetura, Fluxo, Modelo). Não corrige. Pode ser complementado por /review-enforce-rules.
 license: MIT
 metadata:
   author: BrunoCastro
@@ -9,9 +9,12 @@ metadata:
 
 ## Referência normativa comum
 
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-output.md` (global) ou `.opencode/commands/memflow/_shared/base-output.md` (local).
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-preconditions.md` (global) ou `.opencode/commands/memflow/_shared/base-preconditions.md` (local).
-Aplicar obrigatoriamente `~/.config/opencode/commands/memflow/_shared/base-degraded-mode.md` (global) ou `.opencode/commands/memflow/_shared/base-degraded-mode.md` (local).
+Aplicar obrigatoriamente:
+
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
 
 ---
 
@@ -23,7 +26,7 @@ Avaliar se a solução:
 - está alinhada com `docs` (produto)
 - respeita a arquitetura do projeto
 - segue corretamente o fluxo do sistema
-- está de acordo com `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
+- está de acordo com `model-policy.md` resolvido pelo target ativo (via `_shared/target-adapter.md`)
 
 Este comando atua como **validação inteligente principal**, podendo ser complementado pela validação rígida (`/review-enforce-rules`) quando necessário.
 
@@ -35,7 +38,7 @@ Utilizar obrigatoriamente:
 
 - `.agents/**/*` → regras técnicas (quando disponível)
 - `docs/**/*` → produto
-- `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)` → uso de modelos
+- `model-policy.md` do target ativo (via `_shared/target-adapter.md`) → uso de modelos
 - decisões do `/workflow`
 - plano (`/plan`) quando aplicável
 
@@ -130,7 +133,7 @@ Responda SEMPRE com:
   - regras
   - arquitetura
   - fluxo
-  - `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`
+  - `model-policy.md` do target ativo (via `_shared/target-adapter.md`)
 
 ---
 
@@ -194,7 +197,7 @@ Reprovar se houver:
 - execução fora do fluxo correto
 - ausência de planejamento quando necessário
 - inconsistência com `docs`
-- uso inadequado de modelo (contra `~/.config/opencode/commands/memflow/model-policy.md (global) ou .opencode/commands/memflow/model-policy.md (local)`)
+- uso inadequado de modelo (contra `model-policy.md` do target ativo via `_shared/target-adapter.md`)
 
 Observação:
 

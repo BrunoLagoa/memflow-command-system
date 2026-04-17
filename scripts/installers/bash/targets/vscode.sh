@@ -8,15 +8,18 @@ render_vscode_prompt_with_shared() {
   local shared_output="${shared_dir}/base-output.md"
   local shared_preconditions="${shared_dir}/base-preconditions.md"
   local shared_degraded="${shared_dir}/base-degraded-mode.md"
+  local shared_target_adapter_vscode="${shared_dir}/target-adapter.vscode.md"
 
   [[ -f "$shared_output" ]] || die "Arquivo compartilhado não encontrado: ${shared_output}"
   [[ -f "$shared_preconditions" ]] || die "Arquivo compartilhado não encontrado: ${shared_preconditions}"
   [[ -f "$shared_degraded" ]] || die "Arquivo compartilhado não encontrado: ${shared_degraded}"
+  [[ -f "$shared_target_adapter_vscode" ]] || die "Arquivo compartilhado não encontrado: ${shared_target_adapter_vscode}"
 
   awk \
     -v shared_output_file="$shared_output" \
     -v shared_preconditions_file="$shared_preconditions" \
-    -v shared_degraded_file="$shared_degraded" '
+    -v shared_degraded_file="$shared_degraded" \
+    -v shared_target_adapter_vscode_file="$shared_target_adapter_vscode" '
       function inject_file(path, title,   line) {
         print title
         while ((getline line < path) > 0) {
@@ -25,16 +28,20 @@ render_vscode_prompt_with_shared() {
         close(path)
       }
       {
-        if ($0 ~ /_shared\/base-output\.md/) {
+        if ($0 ~ /^[[:space:]]*-[[:space:]]+`?_shared\/base-output\.md`?[[:space:]]*$/) {
           inject_file(shared_output_file, "### Conteúdo injetado: _shared/base-output.md")
           next
         }
-        if ($0 ~ /_shared\/base-preconditions\.md/) {
+        if ($0 ~ /^[[:space:]]*-[[:space:]]+`?_shared\/base-preconditions\.md`?[[:space:]]*$/) {
           inject_file(shared_preconditions_file, "### Conteúdo injetado: _shared/base-preconditions.md")
           next
         }
-        if ($0 ~ /_shared\/base-degraded-mode\.md/) {
+        if ($0 ~ /^[[:space:]]*-[[:space:]]+`?_shared\/base-degraded-mode\.md`?[[:space:]]*$/) {
           inject_file(shared_degraded_file, "### Conteúdo injetado: _shared/base-degraded-mode.md")
+          next
+        }
+        if ($0 ~ /^[[:space:]]*-[[:space:]]+`?_shared\/target-adapter\.md`?[[:space:]]*$/) {
+          inject_file(shared_target_adapter_vscode_file, "### Conteúdo injetado: _shared/target-adapter.vscode.md")
           next
         }
         print
