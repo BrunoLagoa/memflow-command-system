@@ -10,6 +10,8 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - `scripts/install.sh` e `scripts/install.ps1`: target `vscode` agora usa instalação única por projeto gerando apenas prompt files em `.github/prompts` (sem geração de `.github/agents`), sem divisão entre escopos `global` e `local`.
 - `scripts/install.sh` e `scripts/install.ps1`: para `vscode`, referências de caminhos `.../_shared/...` nos comandos agora são substituídas pelo conteúdo real das bases compartilhadas durante a geração dos `.prompt.md`.
 - `scripts/install.sh` e `scripts/install.ps1`: descoberta sem escopo agora permite filtrar por target explícito (`--target` / `-Target`) e mantém comportamento padrão quando não informado.
+- `scripts/install.sh` e `scripts/install.ps1`: arquitetura interna refatorada para módulos por domínio/target/ação (`scripts/installers/bash/*` e `scripts/installers/powershell/*`), mantendo a interface de CLI.
+- `scripts/memflowctl` e `scripts/memflowctl.ps1`: download remoto atualizado para buscar também os módulos do instalador, preservando execução via bootstrap remoto.
 - `scripts/manifest.schema.json`: `target.enum` ampliado para aceitar `vscode`.
 - `scripts/tests/test-install-regression.sh`: cobertura atualizada para fluxo único de `vscode` (install/update/check/uninstall e ausência de instalação), garantindo que não exista instalação global para esse target.
 - `README.md` e `README.pt-BR.md`: documentação atualizada para refletir o modelo único de instalação no `vscode`.

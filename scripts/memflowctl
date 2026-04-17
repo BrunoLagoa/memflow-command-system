@@ -44,13 +44,28 @@ if ! command -v bash >/dev/null 2>&1; then
   exit 1
 fi
 
-tmp_script="$(mktemp)"
+tmp_dir="$(mktemp -d)"
+tmp_script="${tmp_dir}/scripts/install.sh"
 cleanup() {
-  rm -f "$tmp_script"
+  rm -rf "$tmp_dir"
 }
 trap cleanup EXIT
 
-script_url="https://raw.githubusercontent.com/${MEMFLOW_REPO}/${MEMFLOW_REF}/scripts/install.sh"
-curl -fsSL "$script_url" -o "$tmp_script"
+base_url="https://raw.githubusercontent.com/${MEMFLOW_REPO}/${MEMFLOW_REF}"
+download_files=(
+  "scripts/install.sh"
+  "scripts/installers/bash/core.sh"
+  "scripts/installers/bash/targets.sh"
+  "scripts/installers/bash/actions.sh"
+  "scripts/lib/common.sh"
+)
+
+for relative_path in "${download_files[@]}"; do
+  destination_path="${tmp_dir}/${relative_path}"
+  destination_dir="$(dirname "$destination_path")"
+  mkdir -p "$destination_dir"
+  curl -fsSL "${base_url}/${relative_path}" -o "$destination_path"
+done
+
 chmod +x "$tmp_script"
 bash "$tmp_script" "$@"

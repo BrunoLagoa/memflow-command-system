@@ -17,14 +17,28 @@ if (-not $Action) {
   exit 1
 }
 
-$scriptUrl = "https://raw.githubusercontent.com/$repo/$ref/scripts/install.ps1"
-$tmpScript = Join-Path ([System.IO.Path]::GetTempPath()) ("memflow-install-" + [Guid]::NewGuid().ToString("N") + ".ps1")
+$baseUrl = "https://raw.githubusercontent.com/$repo/$ref"
+$tmpRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("memflow-install-" + [Guid]::NewGuid().ToString("N"))
+$tmpScript = Join-Path $tmpRoot "scripts/install.ps1"
+$downloadFiles = @(
+  "scripts/install.ps1",
+  "scripts/installers/powershell/core.ps1",
+  "scripts/installers/powershell/targets.ps1",
+  "scripts/installers/powershell/actions.ps1",
+  "scripts/lib/common.ps1"
+)
 
 try {
-  Invoke-WebRequest -Uri $scriptUrl -OutFile $tmpScript
+  New-Item -Path $tmpRoot -ItemType Directory -Force | Out-Null
+  foreach ($relativePath in $downloadFiles) {
+    $destinationPath = Join-Path $tmpRoot $relativePath
+    $destinationDir = Split-Path -Parent $destinationPath
+    New-Item -Path $destinationDir -ItemType Directory -Force | Out-Null
+    Invoke-WebRequest -Uri "$baseUrl/$relativePath" -OutFile $destinationPath
+  }
   & $tmpScript $Action @RemainingArgs
 } finally {
-  if (Test-Path $tmpScript) {
-    Remove-Item -Path $tmpScript -Force
+  if (Test-Path $tmpRoot) {
+    Remove-Item -Path $tmpRoot -Recurse -Force
   }
 }
