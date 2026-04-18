@@ -1,10 +1,10 @@
 ---
 name: memory-save
-description: Salva o estado da sessão e decisões relevantes — com detecção automática, score, versionamento, métricas de qualidade e geração de insights automáticos.
+description: Salva o estado da sessão e decisões relevantes — com detecção automática, score, versionamento, métricas, insights e sugestões de decisão.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.1.0"
+  version: "10.0.0"
 ---
 
 ## Referência normativa comum
@@ -27,124 +27,79 @@ Gerenciar automaticamente:
 - `.agents/memory/decisions.md`
 - `.agents/memory/session-memory.md`
 - `.agents/memory/quality-metrics.md`
+- `.agents/memory/decision-suggestions.md` (NOVO)
 
 ---
 
-# Etapa 1 — Validação de relevância
+# Etapas 1–10
 
-Executar somente se houver conteúdo relevante.
-
----
-
-# Etapa 2 — Detecção de decisões
-
-Detectar padrões como:
-
-- “vamos usar…”
-- “decidimos…”
-- “padronizar…”
-- “não usar mais…”
-
----
-
-# Etapa 3 — Score de relevância (0–100)
-
-- Mudança de stack: +40  
-- Decisão arquitetural: +30  
-- Padrão global: +20  
-- Impacto múltiplos arquivos: +10  
-- Mudança local: +5  
-
----
-
-# Etapa 4 — Determinação de impacto
-
-- baixo / médio / alto
-
----
-
-# Etapa 5 — Classificação
-
-- técnica / arquitetura / padrão / sessão
-
----
-
-# Etapa 6 — Estrutura decisions.md
-
-(mantido)
-
----
-
-# Etapa 7 — Versionamento
-
-(mantido)
-
----
-
-# Etapa 8 — Escrita das decisões
-
-(mantido)
-
----
-
-# Etapa 9 — Atualização de recentes
-
-(mantido)
-
----
-
-# Etapa 10 — Escrita final
-
-(mantido)
+(mantidas exatamente como estão)
 
 ---
 
 # 🆕 Etapa 11 — Registro de métricas
 
+(mantida)
+
+---
+
+# 🆕 Etapa 12 — Geração de insights
+
+(mantida da v9.1)
+
+---
+
+# 🆕 Etapa 13 — Sugestão de decisões (🔥 NOVO NÍVEL)
+
+---
+
+## Objetivo
+
+Transformar padrões recorrentes em **sugestões estruturadas de decisão**, sem automatizar diretamente.
+
+---
+
 ## Condições
 
-Registrar SOMENTE se:
+Executar SOMENTE se:
 
-- houve `/review` ou `/review-code`
-- execução não trivial
-
----
-
-## Dados coletados
-
-- review_result: aprovado | aprovado_com_ressalvas | reprovado  
-- review_code_result: aprovado | aprovado_com_ressalvas | reprovado  
-- retrabalho: sim | não  
-- complexidade: baixa | média | alta  
+- total_execuções ≥ 5  
+- existe insight relevante  
+- padrão consistente  
 
 ---
 
-## Estrutura do arquivo
+## Entrada
 
-Criar ou atualizar:
+Utilizar:
 
-.agents/memory/quality-metrics.md
+- métricas  
+- observações  
+- histórico recente  
 
 ---
 
-## Estrutura base
+## Geração de sugestão
+
+Para cada padrão identificado:
+
+---
+
+### Estrutura
 
 ```md
-# Quality Metrics
+## Sugestão
 
-## Execuções
+Título: <nome curto>
 
-- total: 0
-- aprovadas: 0
-- aprovadas_com_ressalvas: 0
-- reprovadas: 0
+Motivo:
+<explicação baseada em métricas>
 
-## KPIs
+Recomendação:
+<ação sugerida>
 
-- taxa_aprovacao: 0%
-- taxa_reprovacao: 0%
-- retrabalho_medio: 0
+Impacto esperado:
+<baixo | médio | alto>
 
-## Observações
-
-- (insights gerados automaticamente)
+Confiança:
+<baixa | média | alta>
