@@ -1,320 +1,150 @@
 ---
-name: context
-description: Primeiro comando do fluxo — carrega e valida .agents, memória persistente (decisões e métricas) e MCPs. Utiliza memória como fonte primária e prepara contexto para decisões inteligentes no /workflow.
+name: memory-save
+description: Salva o estado da sessão e decisões relevantes — com detecção automática, score, versionamento, métricas de qualidade e geração de insights automáticos.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "7.0.0"
+  version: "9.1.0"
 ---
 
-## Carregar contexto
+## Referência normativa comum
 
----
+Aplicar obrigatoriamente:
 
-# Memória persistente (ALTA PRIORIDADE)
-
-Se existir:
-
-- .agents/memory/memory.md
-- .agents/memory/session-memory.md
-- .agents/memory/decisions.md
-- .agents/memory/quality-metrics.md
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
 
 ---
 
-## Uso da memória
+## Objetivo
 
-Se memória estiver disponível:
+Salvar o estado atual da sessão e preservar decisões importantes sem poluir a memória.
 
-### Fonte primária (CRÍTICO)
+Gerenciar automaticamente:
 
-- memory.md → identidade do projeto
-- decisions.md → decisões estratégicas
-
----
-
-### Fonte secundária (NOVO)
-
-- quality-metrics.md → desempenho do sistema
-
-Uso:
-
-- NÃO definir contexto base
-- NÃO substituir decisões
-- NÃO alterar comportamento diretamente
-- apenas enriquecer interpretação
+- `.agents/memory/decisions.md`
+- `.agents/memory/session-memory.md`
+- `.agents/memory/quality-metrics.md`
 
 ---
 
-## Regra de confiança da memória (CRÍTICO)
+# Etapa 1 — Validação de relevância
 
-Se existirem:
-
-- memory.md
-- decisions.md
-
-→ memória considerada confiável
+Executar somente se houver conteúdo relevante.
 
 ---
 
-### Observação importante
+# Etapa 2 — Detecção de decisões
 
-- quality-metrics.md NÃO define confiabilidade
-- atua apenas como camada analítica
+Detectar padrões como:
+
+- “vamos usar…”
+- “decidimos…”
+- “padronizar…”
+- “não usar mais…”
 
 ---
 
-# 🆕 Interpretação de métricas (PREPARAÇÃO PARA WORKFLOW)
+# Etapa 3 — Score de relevância (0–100)
 
-Se existir:
+- Mudança de stack: +40  
+- Decisão arquitetural: +30  
+- Padrão global: +20  
+- Impacto múltiplos arquivos: +10  
+- Mudança local: +5  
+
+---
+
+# Etapa 4 — Determinação de impacto
+
+- baixo / médio / alto
+
+---
+
+# Etapa 5 — Classificação
+
+- técnica / arquitetura / padrão / sessão
+
+---
+
+# Etapa 6 — Estrutura decisions.md
+
+(mantido)
+
+---
+
+# Etapa 7 — Versionamento
+
+(mantido)
+
+---
+
+# Etapa 8 — Escrita das decisões
+
+(mantido)
+
+---
+
+# Etapa 9 — Atualização de recentes
+
+(mantido)
+
+---
+
+# Etapa 10 — Escrita final
+
+(mantido)
+
+---
+
+# 🆕 Etapa 11 — Registro de métricas
+
+## Condições
+
+Registrar SOMENTE se:
+
+- houve `/review` ou `/review-code`
+- execução não trivial
+
+---
+
+## Dados coletados
+
+- review_result: aprovado | aprovado_com_ressalvas | reprovado  
+- review_code_result: aprovado | aprovado_com_ressalvas | reprovado  
+- retrabalho: sim | não  
+- complexidade: baixa | média | alta  
+
+---
+
+## Estrutura do arquivo
+
+Criar ou atualizar:
 
 .agents/memory/quality-metrics.md
 
 ---
 
-## Extrair informações:
+## Estrutura base
 
-- taxa_aprovacao
-- taxa_reprovacao
-- padrões em "Observações"
+```md
+# Quality Metrics
 
----
+## Execuções
 
-## Classificação de qualidade (derivada)
+- total: 0
+- aprovadas: 0
+- aprovadas_com_ressalvas: 0
+- reprovadas: 0
 
-- qualidade_alta → baixa taxa de erro (<10%)
-- qualidade_media → erro moderado (10–30%)
-- qualidade_baixa → alta taxa de erro (>30%)
+## KPIs
 
----
+- taxa_aprovacao: 0%
+- taxa_reprovacao: 0%
+- retrabalho_medio: 0
 
-## Resultado gerado (interno)
+## Observações
 
-Preparar sinal para o `/workflow`:
-
-- qualidade_alta
-- qualidade_media
-- qualidade_baixa
-
----
-
-## Regras
-
-- NÃO decidir execução
-- NÃO alterar fluxo
-- NÃO bloquear ações
-- apenas preparar contexto
-
----
-
-# Modo otimizado
-
-Se memória confiável:
-
----
-
-## NÃO fazer:
-
-- NÃO varrer projeto completo
-- NÃO carregar docs automaticamente
-- NÃO ler código sem necessidade
-- NÃO reprocessar `/commands`
-
----
-
-## FAZER:
-
-- carregar `.agents`
-- carregar memória
-- considerar métricas como contexto adicional
-- usar Serena de forma otimizada
-
----
-
-# Modo fallback (SEM memória)
-
-Se memória NÃO existir:
-
-- carregar docs/**
-- explorar código
-- comportamento padrão
-
----
-
-# Contexto principal (sempre carregar)
-
-- .agents/**
-- AGENTS.md (se existir)
-
----
-
-# Contexto sob demanda
-
-Carregar apenas se necessário:
-
-- docs/**
-- código
-- configs grandes
-
----
-
-# Referências normativas (LAZY LOAD)
-
-Referências resolvidas via `_shared/target-adapter.md`
-
----
-
-## Regras:
-
-- NÃO carregar automaticamente
-- assumir como conhecidas
-- carregar apenas quando necessário
-
----
-
-# Integração com MCP
-
-### Serena MCP (OTIMIZADO)
-
-Carregar:
-
-- project_overview
-
----
-
-### NÃO carregar automaticamente:
-
-- code_style
-- suggested_commands
-- task_completion
-
----
-
-### Carregamento sob demanda:
-
-- code_style → ao gerar código
-- suggested_commands → ao executar comandos
-- task_completion → ao finalizar tarefas
-
----
-
-## Regra de otimização
-
-- evitar múltiplas memórias
-- priorizar menor contexto possível
-
----
-
-## Outros MCPs
-
-- Context Mode → memória complementar
-- Context7 → documentação externa sob demanda
-
----
-
-# Prioridade de fontes
-
-1. memory.md  
-2. decisions.md  
-3. quality-metrics.md  
-4. .agents  
-5. Serena MCP  
-6. model-policy  
-7. docs  
-8. código  
-
----
-
-# Regras obrigatórias
-
-- memória é fonte primária
-- métricas são suporte
-- evitar leitura desnecessária
-- não reprocessar comandos
-- sem `.agents` → modo degradado
-
----
-
-# Modo de saída
-
----
-
-## 🟢 Modo ultra-light (PRIORITÁRIO)
-
-Ativar quando:
-
-- memória confiável
-- nenhuma inconsistência detectada
-
----
-
-### Saída (ultra-light)
-
-- Contexto: OK
-- Memória: carregada
-- Métricas: disponíveis / não disponíveis
-
----
-
-## Status
-
-- Contexto: OK / Falhou
-- Memória: SIM / NÃO
-- Métricas: SIM / NÃO
-- Modo: Normal / Degradado / Otimizado
-
----
-
-## Resumo
-
-- Estratégia de carregamento
-- Uso da memória
-- Uso de métricas
-
----
-
-## Estado do fluxo
-
-- Etapa atual: context
-
----
-
-# Regras de consistência
-
-- NÃO decidir execução
-- NÃO escolher modelo
-- NÃO aplicar métricas diretamente
-- SEMPRE delegar para /workflow
-
----
-
-# Validação mínima
-
-(usar apenas fora do ultra-light)
-
-- Memória encontrada: SIM/NÃO
-- Métricas encontradas: SIM/NÃO
-- Modo: Normal/Degradado/Otimizado
-
----
-
-# Limitações
-
-- métricas podem ser incompletas
-- ausência de métricas não impacta execução
-- dados históricos podem não refletir contexto atual
-
----
-
-# Importante
-
-- NÃO implementar
-- NÃO decidir fluxo
-- NÃO carregar contexto desnecessário
-- métricas são suporte, não decisão
-
----
-
-# Próximos passos
-
-- Executar /workflow
+- (insights gerados automaticamente)

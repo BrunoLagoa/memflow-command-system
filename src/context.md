@@ -1,292 +1,255 @@
 ---
 name: context
-description: Primeiro comando do fluxo — carrega e valida .agents, memória persistente e MCPs. Utiliza memória como fonte primária, modo ultra-light automático, fallback inteligente, Serena otimizado e carregamento sob demanda. Próximo passo obrigatório: /workflow.
+description: Primeiro comando do fluxo — carrega memória (decisões, estado e métricas), interpreta padrões e prepara contexto inteligente para o /workflow.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "6.0.0"
+  version: "8.0.0"
 ---
 
 ## Carregar contexto
 
 ---
 
-## Memória persistente (ALTA PRIORIDADE)
+# Memória persistente (ALTA PRIORIDADE)
 
 Se existir:
 
 - .agents/memory/memory.md
 - .agents/memory/session-memory.md
 - .agents/memory/decisions.md
+- .agents/memory/quality-metrics.md
 
 ---
 
-## Uso da memória
+# Uso da memória
 
-Se memória estiver disponível:
+## Fonte primária (CRÍTICO)
 
-- utilizar como fonte primária de contexto
-- utilizar como histórico de decisões
-- utilizar como estado atual do projeto
+- memory.md → identidade
+- decisions.md → decisões
 
 ---
 
-## Regra de confiança da memória (CRÍTICO)
+## Fonte secundária
+
+- quality-metrics.md → desempenho
+
+---
+
+## Regra de confiança
 
 Se existirem:
 
-- .agents/memory/memory.md
-- .agents/memory/decisions.md
+- memory.md
+- decisions.md
 
-→ considerar memória como confiável
-
----
-
-## Modo otimizado
-
-Se memória for confiável:
-
-### NÃO fazer:
-
-- NÃO varrer projeto completo
-- NÃO carregar docs automaticamente
-- NÃO ler código sem necessidade
-- NÃO reprocessar diretório `/commands`
+→ memória confiável
 
 ---
 
-### FAZER:
+# 🧠 Interpretação de métricas
 
-- carregar apenas `.agents`
+Se existir:
+
+.agents/memory/quality-metrics.md
+
+---
+
+## Extrair:
+
+- taxa_aprovacao
+- taxa_reprovacao
+- observações
+
+---
+
+## Classificação de qualidade
+
+- qualidade_alta → erro < 10%
+- qualidade_media → 10–30%
+- qualidade_baixa → >30%
+
+---
+
+# 🆕 Interpretação de padrões (INSIGHTS 🔥)
+
+Se existirem observações:
+
+Exemplo:
+
+- "tasks com baixa clareza falham mais"
+- "integrações externas têm alto erro"
+
+---
+
+## Gerar sinais estratégicos
+
+Converter observações em sinais:
+
+### Tipos de sinal:
+
+- risco_alto_por_clareza
+- risco_alto_por_integracao
+- necessidade_de_planejamento
+- necessidade_de_validacao_reforcada
+
+---
+
+## Resultado interno
+
+Preparar estrutura:
+
+- qualidade: alta | media | baixa
+- sinais:
+  - lista de sinais detectados
+
+---
+
+## Regras
+
+- NÃO decidir ação
+- NÃO modificar fluxo
+- NÃO bloquear execução
+- apenas enriquecer contexto
+
+---
+
+# Modo otimizado
+
+Se memória confiável:
+
+---
+
+## NÃO fazer:
+
+- varrer projeto
+- carregar docs
+- ler código sem necessidade
+
+---
+
+## FAZER:
+
 - carregar memória
-- usar Serena de forma otimizada
-- carregar arquivos apenas quando necessário
+- interpretar métricas
+- interpretar sinais
+- usar Serena otimizado
 
 ---
 
-## Modo fallback (SEM memória)
+# Modo fallback
 
-Se memória NÃO existir:
+Se memória ausente:
 
-- carregar docs/** (se existir)
-- explorar código
-- comportamento completo padrão
+- comportamento padrão
 
 ---
 
-## Contexto principal (sempre carregar)
+# Contexto principal
 
 - .agents/**
-- AGENTS.md (se existir)
+- AGENTS.md
 
 ---
 
-## Contexto sob demanda
+# Contexto sob demanda
 
-Carregar apenas se necessário:
-
-- docs/**
+- docs
 - código
-- configs grandes
+- configs
 
 ---
 
-## Referências normativas (LAZY LOAD)
+# Integração MCP
 
-Referências normativas resolvidas pelo target ativo (via `_shared/target-adapter.md`).
-
-### Regras:
-
-- NÃO carregar automaticamente
-- Assumir como conhecidos
-- NÃO reprocessar a cada execução
-- Carregar apenas se necessário
-
-Inclui:
-
-- base-output
-- base-preconditions
-- base-degraded-mode
-- model-policy
+(mantido)
 
 ---
 
-## Integração com MCP
+# Prioridade de fontes
 
-### Serena MCP (OTIMIZADO)
-
-Uso padrão:
-
-- Carregar apenas:
-  - project_overview
-
----
-
-NÃO carregar automaticamente:
-
-- code_style
-- suggested_commands
-- task_completion
+1. memory.md  
+2. decisions.md  
+3. quality-metrics.md  
+4. .agents  
+5. Serena  
+6. docs  
+7. código  
 
 ---
 
-### Carregamento sob demanda
-
-Carregar somente quando necessário:
-
-- code_style → ao gerar/modificar código
-- suggested_commands → ao usar comandos
-- task_completion → ao finalizar tarefas
-
----
-
-### Regra de otimização
-
-- evitar múltiplas memórias simultâneas
-- priorizar menor contexto possível
-
----
-
-### Context Mode MCP
-
-- memória complementar
-
----
-
-### Context7 MCP
-
-- documentação externa sob demanda
-
----
-
-## Prioridade de fontes
-
-1. memory (fonte principal)
-2. .agents
-3. Serena MCP (project_overview)
-4. model-policy (sob demanda)
-5. docs (sob demanda)
-6. código (sob demanda)
-
----
-
-## Regras obrigatórias
+# Regras obrigatórias
 
 - memória é fonte primária
+- métricas são suporte
+- sinais NÃO substituem regras
 - evitar leitura desnecessária
-- não reprocessar comandos estáveis
-- usar Serena apenas quando necessário
-- sem `.agents` → modo degradado
 
 ---
 
-## Modo de saída
-
-### Continuidade do fluxo (crítico)
-
-- A indicação do comando seguinte (`/workflow`) deve aparecer **somente** em `## Próximos passos`, **sempre** como última seção `##` da mensagem.
-- Não usar linhas do tipo `Próximo passo:` em `### Saída (ultra-light)`, `## Resumo`, `## Estado do fluxo` nem em outras seções.
-
-### 🟢 Modo ultra-light (PRIORITÁRIO)
-
-Ativar automaticamente quando:
-
-- memória confiável
-- nenhuma inconsistência detectada
-- modo otimizado ativo
+# Saída
 
 ---
 
-### Saída (ultra-light)
+## 🟢 Ultra-light
 
-- Contexto: OK (carregamento mínimo suficiente)
-- Continuidade do fluxo: apenas na seção final `## Próximos passos` (ex.: `/workflow`)
-
----
-
-## Modo compacto (fallback padrão)
-
-Usar quando ultra-light não for possível
+- Contexto: OK
+- Memória: carregada
+- Métricas: SIM/NÃO
+- Qualidade: alta/media/baixa
+- Sinais: nenhum / detectados
 
 ---
 
 ## Status
 
 - Contexto: OK / Falhou
-- Memória: SIM / NÃO (confiável ou não)
+- Memória: SIM / NÃO
+- Métricas: SIM / NÃO
 - Modo: Normal / Degradado / Otimizado
 
 ---
 
 ## Resumo
 
-- Estratégia de carregamento
-- Uso da memória
-
----
-
-## Modo detalhado (fallback avançado)
-
-Ativar quando:
-
-- erro detectado
-- conflito detectado
-- memória inconsistente
-- ausência de memória
-- modo degradado
-- solicitação explícita do usuário
+- uso da memória
+- uso de métricas
+- sinais detectados
 
 ---
 
 ## Estado do fluxo
 
-- Etapa atual: context
+- Etapa: context
 
 ---
 
-## Regras de consistência
+# Regras de consistência
 
 - NÃO decidir execução
-- NÃO escolher modelo
+- NÃO aplicar métricas diretamente
+- NÃO aplicar sinais diretamente
 - SEMPRE delegar para /workflow
 
 ---
 
-## Validação mínima
+# Limitações
 
-Informar (somente fora do ultra-light):
-
-- Memória encontrada: SIM/NÃO
-- Memória confiável: SIM/NÃO
-- Docs carregados: SIM/NÃO
-- Código carregado: SIM/NÃO
-- Modo: Normal/Degradado/Otimizado
+- observações podem ser incompletas
+- sinais dependem da qualidade dos dados
+- ausência de sinais não indica ausência de problema
 
 ---
 
-## Limitações
-
-- sem Serena → avisar
-- memória inconsistente → fallback
-
----
-
-## Regras de bloqueio
-
-- conflito crítico → fallback
-- inconsistência grave → fallback
-
----
-
-## Importante
+# Importante
 
 - NÃO implementar
 - NÃO decidir fluxo
-- NÃO carregar contexto desnecessário
-- priorizar eficiência máxima
+- sinais são apoio estratégico
 
 ---
 
-## Próximos passos
+# Próximos passos
 
 - Executar /workflow
