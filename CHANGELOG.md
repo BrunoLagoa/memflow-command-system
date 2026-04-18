@@ -4,6 +4,14 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.17] - 2026-04-17
+
+### Alterado
+- `src/_shared/base-output.md`: `## Regras de uso` antecede o bloco Status → Análise → Problemas → Próximos passos, deixando `## Próximos passos` como última seção do template normativo.
+- Comandos em `src/*.md`: alinhamento do formato de saída para que `## Próximos passos` seja sempre a última seção `##` da resposta — metas (`## Importante`, `## Boas práticas`, `## Regras` onde aplicável) e critérios passam a preceder `## Formato obrigatório de saída`; onde havia conteúdo de saída após Próximos passos (ex.: modelo no plano, persistência/bloqueios no execute), esse conteúdo foi reordenado para antes de `## Próximos passos`.
+- `src/review-enforce-rules.md`: removida duplicação de modelo de `## Problemas` / `## Próximos passos` no fim do arquivo; detalhe incorporado ao bloco de formato obrigatório.
+- `src/brainstorm.md`: `## Regras específicas` e `## Importante` antes do formato; `## Final` removido com orientação fundida em **Próximos passos**.
+
 ## [1.1.16] - 2026-04-17
 
 ### Alterado
@@ -170,6 +178,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.17]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.16...v1.1.17
 [1.1.16]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.15...v1.1.16
 [1.1.15]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.14...v1.1.15
 [1.1.14]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.13...v1.1.14

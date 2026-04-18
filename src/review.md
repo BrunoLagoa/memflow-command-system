@@ -114,6 +114,32 @@ Utilizar obrigatoriamente:
 
 ---
 
+## Critérios de reprovação automática
+
+Reprovar se houver:
+
+- violação de `.agents`
+- falha de segurança
+- execução fora do fluxo correto
+- ausência de planejamento quando necessário
+- inconsistência com `docs`
+- uso inadequado de modelo (contra `model-policy.md` do target ativo via `_shared/target-adapter.md`)
+
+Observação:
+
+- ausência de `.agents`, isoladamente, NÃO reprova automaticamente; usar modo degradado com alerta
+
+---
+
+## Importante
+
+- Este comando NÃO implementa nada
+- Atua como QA do sistema
+- Dúvidas leves podem ser registradas sem bloqueio automático
+- Deve garantir qualidade antes da validação final
+
+---
+
 ## Formato obrigatório de saída
 
 Responda SEMPRE com:
@@ -185,29 +211,3 @@ Se REPROVADO:
 - Corrigir problemas listados
 - Executar novamente `/review`
 - Ainda assim executar check silencioso de versão do MEMFLOW ao final (somente exibir mensagem se houver update)
-
----
-
-## Critérios de reprovação automática
-
-Reprovar se houver:
-
-- violação de `.agents`
-- falha de segurança
-- execução fora do fluxo correto
-- ausência de planejamento quando necessário
-- inconsistência com `docs`
-- uso inadequado de modelo (contra `model-policy.md` do target ativo via `_shared/target-adapter.md`)
-
-Observação:
-
-- ausência de `.agents`, isoladamente, NÃO reprova automaticamente; usar modo degradado com alerta
-
----
-
-## Importante
-
-- Este comando NÃO implementa nada
-- Atua como QA do sistema
-- Dúvidas leves podem ser registradas sem bloqueio automático
-- Deve garantir qualidade antes da validação final

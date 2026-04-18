@@ -15,6 +15,11 @@ Aplicar obrigatoriamente este formato base de resposta em comandos do sistema:
 
 - Todas as respostas e comunicações devem ser em **Português do Brasil (pt-BR)**.
 
+## Regras de uso
+
+- Se um comando tiver formato próprio mais específico, ele pode estender este padrão.
+- Em caso de conflito entre este arquivo e um comando específico, prevalece o comando específico.
+
 ## Status
 
 - Estado atual claro do comando (ex.: concluído, bloqueado, parcial)
@@ -38,10 +43,3 @@ Aplicar obrigatoriamente este formato base de resposta em comandos do sistema:
 ## Próximos passos
 
 - Ações concretas para continuidade do fluxo
-
----
-
-## Regras de uso
-
-- Se um comando tiver formato próprio mais específico, ele pode estender este padrão.
-- Em caso de conflito entre este arquivo e um comando específico, prevalece o comando específico.

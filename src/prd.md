@@ -153,6 +153,15 @@ Antes de finalizar, responder:
 
 ---
 
+## Importante
+
+- NÃO implementar
+- NÃO gerar código
+- NÃO assumir comportamento
+- Este comando define a base de todo o sistema
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -202,12 +211,3 @@ Se incompleto:
 
 - Ajustar PRD
 - Solicitar mais informações
-
----
-
-## Importante
-
-- NÃO implementar
-- NÃO gerar código
-- NÃO assumir comportamento
-- Este comando define a base de todo o sistema

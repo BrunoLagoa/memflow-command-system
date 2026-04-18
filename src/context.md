@@ -275,15 +275,15 @@ Informar (somente fora do ultra-light):
 
 ---
 
-## Próximos passos
-
-- Executar /workflow
-
----
-
 ## Importante
 
 - NÃO implementar
 - NÃO decidir fluxo
 - NÃO carregar contexto desnecessário
 - priorizar eficiência máxima
+
+---
+
+## Próximos passos
+
+- Executar /workflow

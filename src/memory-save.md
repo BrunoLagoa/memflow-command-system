@@ -212,6 +212,27 @@ Se validado:
 
 ---
 
+## Boas práticas
+
+- Usar ao final de cada tarefa relevante
+- Evitar uso em tarefas triviais
+- Priorizar qualidade sobre quantidade
+
+---
+
+## Importante
+
+- Este comando mantém continuidade do sistema
+- `.agents/memory/decisions.md` é a fonte de verdade das decisões
+- Decisões nunca devem ser sobrescritas
+- Histórico deve ser preservado
+- Score deve refletir importância real
+- Impacto deve ser coerente com o score
+- Em caso de dúvida:
+  → NÃO salvar
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -257,24 +278,3 @@ Se ATUALIZADO:
 
 - Contexto salvo com sucesso
 - Dashboard de decisões atualizado
-
----
-
-## Boas práticas
-
-- Usar ao final de cada tarefa relevante
-- Evitar uso em tarefas triviais
-- Priorizar qualidade sobre quantidade
-
----
-
-## Importante
-
-- Este comando mantém continuidade do sistema
-- `.agents/memory/decisions.md` é a fonte de verdade das decisões
-- Decisões nunca devem ser sobrescritas
-- Histórico deve ser preservado
-- Score deve refletir importância real
-- Impacto deve ser coerente com o score
-- Em caso de dúvida:
-  → NÃO salvar

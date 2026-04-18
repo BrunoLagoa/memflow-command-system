@@ -112,6 +112,48 @@ Se NÃO:
 
 ---
 
+## Regras específicas
+
+- NÃO planejar com base em suposição
+- NÃO criar arquivos sem validar necessidade
+- NÃO ignorar padrões existentes
+- Sugestão: se a atividade envolver muitas áreas, arquivos ou dependências, quebrar em tarefas menores/subtarefas para facilitar desenvolvimento, validação e acompanhamento
+
+---
+
+## Limitações
+
+Se Serena NÃO estiver disponível:
+
+- avisar limitação
+- planejar com base nos arquivos disponíveis
+
+Se `.agents` NÃO estiver disponível:
+
+- avisar limitação
+- manter plano em modo degradado
+- não bloquear automaticamente por esse motivo
+
+---
+
+## Bloqueios
+
+- Falta de contexto → PARAR
+- Ambiguidade → PARAR
+- Conflito com `.agents` (quando existir) → PARAR
+- Estrutura desconhecida → PARAR
+
+---
+
+## Importante
+
+- NÃO implementar
+- NÃO avançar sem clareza total
+- NÃO seguir para `/execute` sem validação
+- Este comando define a qualidade da execução
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -209,14 +251,6 @@ Se não houver:
 
 ---
 
-## Próximos passos
-
-- Aguardar confirmação
-- Ajustar plano (se necessário)
-- Seguir para `/execute`
-
----
-
 ## Modelo recomendado
 
 - Modelo: (ex: GPT-5.4)
@@ -227,42 +261,8 @@ Se não houver:
 
 ---
 
-## Regras específicas
+## Próximos passos
 
-- NÃO planejar com base em suposição
-- NÃO criar arquivos sem validar necessidade
-- NÃO ignorar padrões existentes
-- Sugestão: se a atividade envolver muitas áreas, arquivos ou dependências, quebrar em tarefas menores/subtarefas para facilitar desenvolvimento, validação e acompanhamento
-
----
-
-## Limitações
-
-Se Serena NÃO estiver disponível:
-
-- avisar limitação
-- planejar com base nos arquivos disponíveis
-
-Se `.agents` NÃO estiver disponível:
-
-- avisar limitação
-- manter plano em modo degradado
-- não bloquear automaticamente por esse motivo
-
----
-
-## Bloqueios
-
-- Falta de contexto → PARAR
-- Ambiguidade → PARAR
-- Conflito com `.agents` (quando existir) → PARAR
-- Estrutura desconhecida → PARAR
-
----
-
-## Importante
-
-- NÃO implementar
-- NÃO avançar sem clareza total
-- NÃO seguir para `/execute` sem validação
-- Este comando define a qualidade da execução
+- Aguardar confirmação
+- Ajustar plano (se necessário)
+- Seguir para `/execute`

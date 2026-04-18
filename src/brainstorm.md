@@ -59,6 +59,26 @@ Explorar múltiplas abordagens possíveis antes de definir uma solução.
 
 ---
 
+## Regras específicas
+
+- NÃO assumir arquitetura sem validar no código
+- NÃO propor soluções que contradizem padrões existentes
+- Se Serena estiver disponível:
+  - validar pelo menos uma hipótese no código real
+- Se Serena NÃO estiver disponível:
+  - avisar limitação na análise
+
+---
+
+## Importante
+
+- Se alguma abordagem violar `.agents` → DESCARTAR
+- Se houver dúvida → PERGUNTAR
+- NÃO implementar nada
+- NÃO inferir comportamento sem evidência
+
+---
+
 ## Formato obrigatório de saída
 
 Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com estes nomes exatos**:
@@ -66,7 +86,7 @@ Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com este
 1. **Status** — ex.: `Em exploração`, `Bloqueado (dúvida)`, `Pronto para /plan` (um valor claro).
 2. **Análise** — conteúdo principal; use apenas `###` para subdividir (ver lista abaixo).
 3. **Problemas** — violações a `.agents`, lacunas de contexto, riscos inaceitáveis; se não houver: **Nenhum**.
-4. **Próximos passos** — ex.: perguntas ao usuário, rodar `/plan`, descartar opção X (ações concretas).
+4. **Próximos passos** — ex.: perguntas ao usuário, rodar `/plan`, descartar opção X (ações concretas); quando couber, aguardar confirmação do usuário para seguir para `/plan`.
 
 Não omita seções. Não renomeie os títulos.
 
@@ -112,29 +132,3 @@ Em **Análise**, inclua obrigatoriamente estas subseções `###`:
 ### Confiança na recomendação
 
 - Baixa / Média / Alta
-
----
-
-## Regras específicas
-
-- NÃO assumir arquitetura sem validar no código
-- NÃO propor soluções que contradizem padrões existentes
-- Se Serena estiver disponível:
-  - validar pelo menos uma hipótese no código real
-- Se Serena NÃO estiver disponível:
-  - avisar limitação na análise
-
----
-
-## Importante
-
-- Se alguma abordagem violar `.agents` → DESCARTAR
-- Se houver dúvida → PERGUNTAR
-- NÃO implementar nada
-- NÃO inferir comportamento sem evidência
-
----
-
-## Final
-
-Aguardar confirmação do usuário para seguir para `/plan`.

@@ -123,6 +123,14 @@ Sempre:
 
 ---
 
+## Importante
+
+- NÃO executar refatoração automaticamente
+- NÃO alterar comportamento sem autorização
+- Este comando é apenas de análise + proposta
+
+---
+
 ## Formato obrigatório de saída
 
 Responda SEMPRE com:
@@ -152,11 +160,3 @@ Responda SEMPRE com:
 
 - Confirmar se deve aplicar refatoração
 - Ou ajustar estratégia
-
----
-
-## Importante
-
-- NÃO executar refatoração automaticamente
-- NÃO alterar comportamento sem autorização
-- Este comando é apenas de análise + proposta

@@ -36,6 +36,18 @@ Este é um **gate rígido opcional**, recomendado antes da conclusão em tarefas
 
 ---
 
+## Importante
+
+- Este comando é uma validação rígida opcional
+- NÃO permitir continuidade com dúvidas
+- NÃO aprovar parcialmente
+- NÃO ignorar inconsistências
+- Deve garantir consistência total do sistema
+
+Este comando complementa validações anteriores com um critério mais estrito.
+
+---
+
 ## Formato obrigatório de saída
 
 Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com estes nomes exatos**:
@@ -48,6 +60,10 @@ Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com este
 Não omitir seções
 Não renomear títulos
 Não usar outros `##` principais
+
+Em **Problemas**, listar cada violação encontrada, cada dúvida não resolvida e limitações de validação em modo degradado; se não houver → **Nenhum**.
+
+Em **Próximos passos**: se **BLOQUEADO**, listar correções obrigatórias e indicar ações como `/plan`, `/execute`, `/debug`, `/refactor` ou esclarecimento do usuário; se **OK** → pode continuar.
 
 ---
 
@@ -157,48 +173,3 @@ Status = **BLOQUEADO** se houver:
 Observação:
 
 - ausência de `.agents`, isoladamente, NÃO bloqueia automaticamente; operar em modo degradado com alerta explícito
-
----
-
-## Problemas
-
-Listar:
-
-- cada violação encontrada
-- cada dúvida não resolvida
-- limitações de validação (modo degradado)
-
-Se não houver:
-→ Nenhum
-
----
-
-## Próximos passos
-
-Se Status = BLOQUEADO:
-
-- listar correções obrigatórias
-- indicar ações como:
-  - `/plan`
-  - `/execute`
-  - `/debug`
-  - `/refactor`
-  - esclarecimento do usuário
-
----
-
-Se Status = OK:
-
-→ Pode continuar
-
----
-
-## Importante
-
-- Este comando é uma validação rígida opcional
-- NÃO permitir continuidade com dúvidas
-- NÃO aprovar parcialmente
-- NÃO ignorar inconsistências
-- Deve garantir consistência total do sistema
-
-Este comando complementa validações anteriores com um critério mais estrito.

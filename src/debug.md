@@ -87,6 +87,15 @@ Classificar o erro como:
 
 ---
 
+## Importante
+
+- NÃO corrigir ainda
+- NÃO pular investigação
+- NÃO listar múltiplas causas sem priorizar
+- Sempre indicar causa mais provável
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -171,12 +180,3 @@ Se não houver:
   → `/execute` (erro simples)
   → `/refactor` (erro estrutural)
   → `/plan` (erro complexo)
-
----
-
-## Importante
-
-- NÃO corrigir ainda
-- NÃO pular investigação
-- NÃO listar múltiplas causas sem priorizar
-- Sempre indicar causa mais provável

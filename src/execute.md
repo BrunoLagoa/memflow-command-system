@@ -264,6 +264,15 @@ Recomendar:
 
 ---
 
+## Importante
+
+- NÃO decidir estratégia
+- NÃO pular validações
+- NÃO finalizar com erro
+- NÃO executar sem entendimento
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -293,18 +302,6 @@ Se não houver:
 
 ---
 
-## Próximos passos
-
-- `/review`
-- `/review-enforce-rules` (opcional/recomendado em cenários críticos)
-- `/test-plan` (se aplicável)
-- Se `/review` não for executado: rodar check silencioso de versão do MEMFLOW ao final (exibir aviso somente quando houver atualização)
-- Executar check de versão usando comandos remotos (sem depender de binário local no PATH):
-  - macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive`
-  - Windows/PowerShell: `powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"`
-
----
-
 ## Persistência sugerida
 
 - Score de relevância: X/100
@@ -324,9 +321,12 @@ Se não houver:
 
 ---
 
-## Importante
+## Próximos passos
 
-- NÃO decidir estratégia
-- NÃO pular validações
-- NÃO finalizar com erro
-- NÃO executar sem entendimento
+- `/review`
+- `/review-enforce-rules` (opcional/recomendado em cenários críticos)
+- `/test-plan` (se aplicável)
+- Se `/review` não for executado: rodar check silencioso de versão do MEMFLOW ao final (exibir aviso somente quando houver atualização)
+- Executar check de versão usando comandos remotos (sem depender de binário local no PATH):
+  - macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive`
+  - Windows/PowerShell: `powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"`

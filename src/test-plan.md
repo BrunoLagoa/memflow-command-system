@@ -86,6 +86,15 @@ Sempre incluir:
 
 ---
 
+## Importante
+
+- Priorize cenários críticos
+- Se faltar contexto → AVISAR
+- Não assumir Node/npm quando não for a stack do projeto
+- Plano sem **lista de execução concreta do executor detectado** → **incompleto**; não tratar o passo como encerrado até isso constar na resposta
+
+---
+
 ## Formato obrigatório de saída
 
 Responda SEMPRE com:
@@ -117,12 +126,3 @@ Responda SEMPRE com:
 
 - Executar testes listados
 - Ajustar plano (se necessário)
-
----
-
-## Importante
-
-- Priorize cenários críticos
-- Se faltar contexto → AVISAR
-- Não assumir Node/npm quando não for a stack do projeto
-- Plano sem **lista de execução concreta do executor detectado** → **incompleto**; não tratar o passo como encerrado até isso constar na resposta

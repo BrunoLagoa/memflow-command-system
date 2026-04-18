@@ -168,6 +168,15 @@ Antes de finalizar, responder:
 
 ---
 
+## Importante
+
+- NÃO implementar
+- NÃO gerar código
+- NÃO assumir comportamento
+- Este comando define base técnica para o plano
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -217,12 +226,3 @@ Se incompleto:
 
 - Ajustar especificação
 - Solicitar informações
-
----
-
-## Importante
-
-- NÃO implementar
-- NÃO gerar código
-- NÃO assumir comportamento
-- Este comando define base técnica para o plano

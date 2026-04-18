@@ -178,6 +178,26 @@ Exemplos:
 
 ---
 
+## Regras
+
+- NÃO implementar
+- NÃO pular análise
+- NÃO ignorar decisões existentes
+- NÃO ignorar score
+- NÃO ignorar conflitos
+
+---
+
+## Importante
+
+- Este comando é stateful
+- Deve respeitar memória do projeto
+- Evita decisões duplicadas
+- Usa score para priorização
+- Detecta conflitos antes de decidir
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -275,23 +295,3 @@ Se EXECUTAR DIRETO:
 Se PLANEJAR PRIMEIRO:
 
 - Executar `/plan`
-
----
-
-## Regras
-
-- NÃO implementar
-- NÃO pular análise
-- NÃO ignorar decisões existentes
-- NÃO ignorar score
-- NÃO ignorar conflitos
-
----
-
-## Importante
-
-- Este comando é stateful
-- Deve respeitar memória do projeto
-- Evita decisões duplicadas
-- Usa score para priorização
-- Detecta conflitos antes de decidir

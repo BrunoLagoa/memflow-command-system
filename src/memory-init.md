@@ -192,6 +192,25 @@ Deve conter:
 
 ---
 
+## Boas práticas
+
+- Executar apenas na inicialização
+- NÃO usar para mudanças incrementais
+- Manter memory.md estável
+
+---
+
+## Importante
+
+- Define a base da memória
+- Bootstrap ocorre uma única vez
+- NÃO reprocessar comandos
+- Priorizar eficiência do sistema
+- Em caso de dúvida:
+  → NÃO executar
+
+---
+
 ## Formato obrigatório de saída
 
 ## Status
@@ -231,22 +250,3 @@ Se BLOQUEADO:
 
 Se ATUALIZADO:
 - Executar /workflow
-
----
-
-## Boas práticas
-
-- Executar apenas na inicialização
-- NÃO usar para mudanças incrementais
-- Manter memory.md estável
-
----
-
-## Importante
-
-- Define a base da memória
-- Bootstrap ocorre uma única vez
-- NÃO reprocessar comandos
-- Priorizar eficiência do sistema
-- Em caso de dúvida:
-  → NÃO executar
