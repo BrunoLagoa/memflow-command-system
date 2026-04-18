@@ -19,6 +19,8 @@ Aplicar obrigatoriamente este formato base de resposta em comandos do sistema:
 
 - Se um comando tiver formato próprio mais específico, ele pode estender este padrão.
 - Em caso de conflito entre este arquivo e um comando específico, prevalece o comando específico.
+- **`## Próximos passos` é sempre o último `##` da resposta:** não incluir nenhuma outra seção com título `##` depois de `## Próximos passos`.
+- **Continuidade do fluxo só em `## Próximos passos`:** não usar bullets ou linhas do tipo `Próximo passo:` fora dessa seção (inclui modos compacto, ultra-light ou qualquer resumo intermediário).
 
 ## Status
 

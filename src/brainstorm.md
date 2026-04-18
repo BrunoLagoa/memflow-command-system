@@ -79,19 +79,6 @@ Explorar múltiplas abordagens possíveis antes de definir uma solução.
 
 ---
 
-## Formato obrigatório de saída
-
-Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com estes nomes exatos**:
-
-1. **Status** — ex.: `Em exploração`, `Bloqueado (dúvida)`, `Pronto para /plan` (um valor claro).
-2. **Análise** — conteúdo principal; use apenas `###` para subdividir (ver lista abaixo).
-3. **Problemas** — violações a `.agents`, lacunas de contexto, riscos inaceitáveis; se não houver: **Nenhum**.
-4. **Próximos passos** — ex.: perguntas ao usuário, rodar `/plan`, descartar opção X (ações concretas); quando couber, aguardar confirmação do usuário para seguir para `/plan`.
-
-Não omita seções. Não renomeie os títulos.
-
----
-
 ## Produza (conteúdo de **Análise**)
 
 Em **Análise**, inclua obrigatoriamente estas subseções `###`:
@@ -132,3 +119,16 @@ Em **Análise**, inclua obrigatoriamente estas subseções `###`:
 ### Confiança na recomendação
 
 - Baixa / Média / Alta
+
+---
+
+## Formato obrigatório de saída
+
+Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com estes nomes exatos**:
+
+1. **Status** — ex.: `Em exploração`, `Bloqueado (dúvida)`, `Pronto para /plan` (um valor claro).
+2. **Análise** — conteúdo principal; use apenas `###` para subdividir (ver lista abaixo).
+3. **Problemas** — violações a `.agents`, lacunas de contexto, riscos inaceitáveis; se não houver: **Nenhum**.
+4. **Próximos passos** — ex.: perguntas ao usuário, rodar `/plan`, descartar opção X (ações concretas); quando couber, aguardar confirmação do usuário para seguir para `/plan` (**sempre** a última seção `##` da resposta).
+
+Não omita seções. Não renomeie os títulos.

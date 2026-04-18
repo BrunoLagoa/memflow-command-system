@@ -182,6 +182,11 @@ Carregar somente quando necessário:
 
 ## Modo de saída
 
+### Continuidade do fluxo (crítico)
+
+- A indicação do comando seguinte (`/workflow`) deve aparecer **somente** em `## Próximos passos`, **sempre** como última seção `##` da mensagem.
+- Não usar linhas do tipo `Próximo passo:` em `### Saída (ultra-light)`, `## Resumo`, `## Estado do fluxo` nem em outras seções.
+
 ### 🟢 Modo ultra-light (PRIORITÁRIO)
 
 Ativar automaticamente quando:
@@ -195,7 +200,7 @@ Ativar automaticamente quando:
 ### Saída (ultra-light)
 
 - Contexto: OK (carregamento mínimo suficiente)
-- Próximo passo: executar `/workflow`
+- Continuidade do fluxo: apenas na seção final `## Próximos passos` (ex.: `/workflow`)
 
 ---
 
@@ -217,7 +222,6 @@ Usar quando ultra-light não for possível
 
 - Estratégia de carregamento
 - Uso da memória
-- Próximo passo: /workflow
 
 ---
 
@@ -237,7 +241,6 @@ Ativar quando:
 ## Estado do fluxo
 
 - Etapa atual: context
-- Próximo passo: /workflow
 
 ---
 

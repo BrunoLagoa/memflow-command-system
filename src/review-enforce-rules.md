@@ -48,25 +48,6 @@ Este comando complementa validações anteriores com um critério mais estrito.
 
 ---
 
-## Formato obrigatório de saída
-
-Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com estes nomes exatos**:
-
-1. **Status** — somente `OK` ou `BLOQUEADO`
-2. **Análise** — síntese clara do que foi validado
-3. **Problemas** — lista objetiva de violações ou dúvidas
-4. **Próximos passos** — ações obrigatórias para correção
-
-Não omitir seções
-Não renomear títulos
-Não usar outros `##` principais
-
-Em **Problemas**, listar cada violação encontrada, cada dúvida não resolvida e limitações de validação em modo degradado; se não houver → **Nenhum**.
-
-Em **Próximos passos**: se **BLOQUEADO**, listar correções obrigatórias e indicar ações como `/plan`, `/execute`, `/debug`, `/refactor` ou esclarecimento do usuário; se **OK** → pode continuar.
-
----
-
 ## Base de validação
 
 Fonte de verdade absoluta:
@@ -173,3 +154,22 @@ Status = **BLOQUEADO** se houver:
 Observação:
 
 - ausência de `.agents`, isoladamente, NÃO bloqueia automaticamente; operar em modo degradado com alerta explícito
+
+---
+
+## Formato obrigatório de saída
+
+Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com estes nomes exatos**:
+
+1. **Status** — somente `OK` ou `BLOQUEADO`
+2. **Análise** — síntese clara do que foi validado
+3. **Problemas** — lista objetiva de violações ou dúvidas
+4. **Próximos passos** — ações obrigatórias para correção (sempre a **última** seção `##` da resposta)
+
+Não omitir seções
+Não renomear títulos
+Não usar outros `##` principais
+
+Em **Problemas**, listar cada violação encontrada, cada dúvida não resolvida e limitações de validação em modo degradado; se não houver → **Nenhum**.
+
+Em **Próximos passos**: se **BLOQUEADO**, listar correções obrigatórias e indicar ações como `/plan`, `/execute`, `/debug`, `/refactor` ou esclarecimento do usuário; se **OK** → pode continuar.

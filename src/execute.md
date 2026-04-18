@@ -89,9 +89,9 @@ Classificar:
 
 ### Se exigir plano:
 
-- Status: Parcial
+- Status da resposta: Parcial
 - Motivo: ausência de planejamento
-- Próximo passo: `/plan`
+- Em **Próximos passos** (única seção para continuidade): indicar `/plan`
 
 E PARAR.
 
