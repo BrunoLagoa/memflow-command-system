@@ -1,10 +1,10 @@
 ---
 name: review
-description: Validação inteligente de qualidade antes da validação rígida opcional — avalia aderência a .agents, segurança (client/server), arquitetura, produto (docs), fluxo do sistema e `model-policy.md` do target ativo (via `_shared/target-adapter.md`). Saída: Aprovado ou Reprovado, com problemas por categoria (Regras, Segurança, Arquitetura, Fluxo, Modelo). Não corrige. Pode ser complementado por /review-enforce-rules.
+description: Validação inteligente de qualidade do sistema antes da validação rígida opcional — avalia aderência a .agents, segurança, arquitetura, produto (docs), fluxo do sistema e uso de modelo. Atua como QA de governança. Não corrige. Pode ser complementado por /review-enforce-rules.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
 ## Referência normativa comum
@@ -26,9 +26,18 @@ Avaliar se a solução:
 - está alinhada com `docs` (produto)
 - respeita a arquitetura do projeto
 - segue corretamente o fluxo do sistema
-- está de acordo com `model-policy.md` resolvido pelo target ativo (via `_shared/target-adapter.md`)
+- está de acordo com `model-policy.md` do target ativo
 
-Este comando atua como **validação inteligente principal**, podendo ser complementado pela validação rígida (`/review-enforce-rules`) quando necessário.
+Este comando atua como **validação de governança do sistema**, garantindo que a execução respeita as regras e estrutura do memflow.
+
+---
+
+## Papel no sistema
+
+- NÃO valida código profundamente (isso é responsabilidade do `/review-code`)
+- NÃO implementa nada
+- NÃO corrige automaticamente
+- Atua como **QA do fluxo, arquitetura e regras**
 
 ---
 
@@ -38,153 +47,165 @@ Utilizar obrigatoriamente:
 
 - `.agents/**/*` → regras técnicas (quando disponível)
 - `docs/**/*` → produto
-- `model-policy.md` do target ativo (via `_shared/target-adapter.md`) → uso de modelos
+- `model-policy.md` do target ativo
 - decisões do `/workflow`
-- plano (`/plan`) quando aplicável
+- `/plan` (quando aplicável)
+- execução realizada via `/execute`
 
 ---
 
 ## Regras
 
-1. NÃO implementar nada
-2. NÃO sugerir execução direta
-3. NÃO corrigir automaticamente
-4. Apenas analisar e validar
+1. NÃO implementar nada  
+2. NÃO sugerir execução direta  
+3. NÃO corrigir automaticamente  
+4. Apenas analisar e validar  
 
 ---
 
-## Critérios de avaliação
+# Critérios de avaliação
 
-### Aderência às regras
+---
+
+## 1. Aderência às regras
 
 - Segue `.agents`?
-- Viola alguma regra técnica? (se `.agents` existir)
+- Viola alguma regra técnica?
 
 ---
 
-### Segurança
+## 2. Segurança
 
 - Há exposição de secrets?
 - Client/server está correto?
-- Respeita `.agents/rules/client-server-security.md`?
+- Regras de segurança foram respeitadas?
 
 ---
 
-### Arquitetura
+## 3. Arquitetura
 
-- Está consistente com o padrão do projeto?
-- Segue os padrões de stack definidos em `.agents`?
-- Reutiliza código e componentes existentes?
+- Consistente com o padrão do projeto?
+- Reutiliza componentes existentes?
 - Evita duplicação?
+- Segue padrões definidos?
 
 ---
 
-### Produto
+## 4. Produto
 
-- Está alinhado com `docs`?
+- Alinhado com `docs`?
 - Comportamento esperado foi respeitado?
 
 ---
 
-### Fluxo do sistema
+## 5. Fluxo do sistema
 
-- `/workflow` foi utilizado corretamente?
-- A decisão foi respeitada?
-- `/plan` foi usado quando necessário?
-- `/execute` seguiu corretamente o fluxo?
+- `/workflow` foi seguido corretamente?
+- `/plan` foi utilizado quando necessário?
+- `/execute` respeitou o plano?
 - Houve bypass do sistema?
 
 ---
 
-### Estratégia de execução
+## 6. Estratégia de execução
 
-- Planejamento foi feito quando necessário?
-- Complexidade foi tratada corretamente?
-- Houve execução indevida sem plano?
-
----
-
-### Uso de modelo (ALINHADO AO MODEL-POLICY)
-
-- Modelo foi coerente com a complexidade?
-- Planejamento usou modelo adequado?
-- Execução usou modelo econômico?
-- Escalada foi necessária e ignorada?
-- Houve uso excessivo de modelo avançado?
+- Planejamento foi feito corretamente?
+- Complexidade tratada adequadamente?
+- Execução respeitou o nível esperado?
 
 ---
 
-## Critérios de reprovação automática
+## 7. Uso de modelo
+
+- Modelo adequado à complexidade?
+- Planejamento vs execução coerente?
+- Uso excessivo de modelo avançado?
+
+---
+
+# Classificação de problemas
+
+---
+
+## Critical (MUST FIX)
+
+- violação de `.agents`
+- falha de segurança
+- quebra de fluxo do sistema
+- execução fora do processo correto
+
+---
+
+## Important (SHOULD FIX)
+
+- inconsistência de arquitetura
+- desalinhamento com docs
+- uso incorreto de modelo
+
+---
+
+## Minor (NICE TO HAVE)
+
+- melhorias estruturais
+- ajustes de organização
+
+---
+
+# Critérios de reprovação automática
 
 Reprovar se houver:
 
 - violação de `.agents`
 - falha de segurança
-- execução fora do fluxo correto
+- execução fora do fluxo
 - ausência de planejamento quando necessário
-- inconsistência com `docs`
-- uso inadequado de modelo (contra `model-policy.md` do target ativo via `_shared/target-adapter.md`)
+- inconsistência crítica com docs
+- uso inadequado de modelo
 
 Observação:
 
-- ausência de `.agents`, isoladamente, NÃO reprova automaticamente; usar modo degradado com alerta
+- ausência de `.agents` NÃO reprova automaticamente (modo degradado)
 
 ---
 
-## Importante
+# Importante
 
-- Este comando NÃO implementa nada
+- Este comando NÃO valida código profundamente
+- Este comando NÃO substitui `/review-code`
 - Atua como QA do sistema
-- Dúvidas leves podem ser registradas sem bloqueio automático
-- Deve garantir qualidade antes da validação final
 
 ---
 
-## Formato obrigatório de saída
-
-Responda SEMPRE com:
+# Formato obrigatório de saída
 
 ## Status
 
-- Aprovado / Reprovado
+- Aprovado / Aprovado com ressalvas / Reprovado
 
 ---
 
 ## Análise
 
 - Avaliação geral
-- Qualidade da implementação
+- Qualidade da solução
 - Pontos positivos
 - Alinhamento com:
   - regras
   - arquitetura
   - fluxo
-  - `model-policy.md` do target ativo (via `_shared/target-adapter.md`)
+  - modelo
 
 ---
 
 ## Problemas
 
-Listar problemas separados por tipo:
-
-### Regras
-
+### Critical
 - ...
 
-### Segurança
-
+### Important
 - ...
 
-### Arquitetura
-
-- ...
-
-### Fluxo
-
-- ...
-
-### Modelo
-
+### Minor
 - ...
 
 Se não houver:
@@ -192,7 +213,19 @@ Se não houver:
 
 Se `.agents` estiver ausente:
 
-- marcar explicitamente como limitação em vez de violação automática
+- marcar como limitação (não violação)
+
+---
+
+## Risco
+
+- Baixo / Médio / Alto
+
+Baseado em:
+
+- impacto no sistema
+- impacto no fluxo
+- impacto em produção
 
 ---
 
@@ -200,14 +233,21 @@ Se `.agents` estiver ausente:
 
 Se APROVADO:
 
-- Opcionalmente executar `/review-enforce-rules` para validação rígida adicional
-- Executar check silencioso de versão do MEMFLOW via comandos remotos (cross-OS, sem depender de binário local no PATH)
-  - macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive`
-  - Windows/PowerShell: `powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"`
-- Se houver atualização: exibir aviso com versão atual, última versão e comando recomendado de update não interativo
+- Opcional executar `/review-enforce-rules`
+- Executar `/review-code` antes de produção
+
+---
+
+Se APROVADO COM RESSALVAS:
+
+- Pode seguir fluxo
+- Corrigir itens importantes antes de produção
+- Executar `/review-code`
+
+---
 
 Se REPROVADO:
 
-- Corrigir problemas listados
-- Executar novamente `/review`
-- Ainda assim executar check silencioso de versão do MEMFLOW ao final (somente exibir mensagem se houver update)
+- Corrigir problemas críticos
+- Reexecutar `/review`
+- Após aprovação, executar `/review-code`

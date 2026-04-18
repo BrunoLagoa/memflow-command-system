@@ -1,10 +1,10 @@
 ---
 name: execute
-description: Implementa código com base na decisão do /workflow respeitando `model-policy.md` do target ativo (via `_shared/target-adapter.md`) — executa direto ou bloqueia e exige /plan. Inclui recomendação inteligente de persistência de memória ao final.
+description: Implementa código com base na decisão do /workflow respeitando `model-policy.md` do target ativo — executa direto ou bloqueia e exige /plan. Inclui integração com persistência inteligente e métricas de qualidade.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.0.0"
+  version: "3.1.0"
 ---
 
 ## Referência normativa comum
@@ -23,7 +23,7 @@ Aplicar obrigatoriamente:
 Executar a implementação:
 
 - respeitando a decisão do `/workflow`
-- seguindo `model-policy.md` resolvido pelo target ativo (via `_shared/target-adapter.md`)
+- seguindo `model-policy.md`
 - mantendo consistência com `.agents` e `docs`
 
 Este comando NÃO decide estratégia, apenas executa.
@@ -56,8 +56,8 @@ Evitar:
 
 ### Existe decisão do `/workflow`?
 
-- SIM → seguir decisão
-- NÃO → aplicar fallback controlado
+- SIM → seguir decisão  
+- NÃO → aplicar fallback controlado  
 
 ---
 
@@ -65,33 +65,33 @@ Evitar:
 
 Classificar:
 
-- Complexidade
-- Impacto
-- Risco
+- Complexidade  
+- Impacto  
+- Risco  
 
 ---
 
 ### EXECUTAR DIRETO se:
 
-- baixa complexidade
-- baixo impacto
-- baixo risco
+- baixa complexidade  
+- baixo impacto  
+- baixo risco  
 
 ---
 
 ### EXIGIR `/plan` se:
 
-- média ou alta complexidade
-- médio ou alto impacto
-- médio ou alto risco
+- média ou alta complexidade  
+- médio ou alto impacto  
+- médio ou alto risco  
 
 ---
 
 ### Se exigir plano:
 
-- Status da resposta: Parcial
-- Motivo: ausência de planejamento
-- Em **Próximos passos** (única seção para continuidade): indicar `/plan`
+- Status: Parcial  
+- Motivo: ausência de planejamento  
+- Próximos passos: `/plan`  
 
 E PARAR.
 
@@ -99,16 +99,16 @@ E PARAR.
 
 ## Integração com `/workflow`
 
-- EXECUTAR DIRETO → executar
-- PLANEJAR → bloquear e exigir `/plan`
+- EXECUTAR DIRETO → executar  
+- PLANEJAR → bloquear  
 
 ---
 
 ## Uso de modelo
 
-- seguir model-policy
-- execução → modelo econômico
-- escalar apenas se necessário
+- seguir model-policy  
+- execução → modelo econômico  
+- escalar apenas se necessário  
 
 ---
 
@@ -122,29 +122,29 @@ E PARAR.
 
 ## Execução
 
-- implementar código
-- ajustar arquivos
-- seguir padrões do projeto
+- implementar código  
+- ajustar arquivos  
+- seguir padrões do projeto  
 
 ---
 
 ## Segurança
 
-- respeitar `.agents`
-- evitar exposição de secrets
-- separar client/server corretamente
+- respeitar `.agents`  
+- evitar exposição de secrets  
+- separar client/server corretamente  
 
 Se `.agents` ausente:
-- aplicar boas práticas
-- modo degradado
+- aplicar boas práticas  
+- modo degradado  
 
 ---
 
 ## Testes
 
-- detectar runtime
-- rodar testes relevantes
-- evitar regressão
+- detectar runtime  
+- rodar testes relevantes  
+- evitar regressão  
 
 ---
 
@@ -152,9 +152,9 @@ Se `.agents` ausente:
 
 Identificar:
 
-- linguagem/runtime
-- gerenciador
-- comandos de lint/test
+- linguagem/runtime  
+- gerenciador  
+- comandos de lint/test  
 
 ---
 
@@ -162,171 +162,174 @@ Identificar:
 
 Após implementar:
 
-1. setup (se necessário)
-2. format
-3. lint/typecheck
-4. testes
+1. setup (se necessário)  
+2. format  
+3. lint/typecheck  
+4. testes  
 
-Se erro:
-→ corrigir automaticamente
+Se erro → corrigir automaticamente  
 
 ---
 
 ## Regras específicas
 
-- NÃO sobrescrever sem análise
-- NÃO duplicar código
-- NÃO alterar múltiplos arquivos sem necessidade
+- NÃO sobrescrever sem análise  
+- NÃO duplicar código  
+- NÃO alterar múltiplos arquivos sem necessidade  
 
 ---
 
 ## Resiliência
 
-- erro simples → corrigir
-- erro estrutural → revisar plano
-- erro recorrente → escalar
+- erro simples → corrigir  
+- erro estrutural → revisar plano  
+- erro recorrente → escalar  
 
 ---
 
-## Persistência sugerida (AUTO MEMORY)
+# Persistência inteligente (AUTO MEMORY)
 
-Após a execução, avaliar se há conteúdo relevante para memória.
+Após execução, avaliar relevância para memória.
 
 ---
 
-### Avaliação de relevância
+## Avaliação de relevância
 
 Verificar se houve:
 
-- decisões técnicas
-- mudanças relevantes
-- padrões definidos
-- escolhas arquiteturais
-- contexto útil para futuras sessões
+- decisões técnicas  
+- mudanças relevantes  
+- padrões definidos  
+- escolhas arquiteturais  
+- contexto útil  
 
 ---
 
-### Detecção de decisões
+## Detecção de decisões
 
-Identificar padrões como:
+Detectar padrões:
 
-- “vamos usar…”
-- “decidimos…”
-- “padronizar…”
-- “não usar mais…”
-- “a partir de agora…”
+- “vamos usar…”  
+- “decidimos…”  
+- “padronizar…”  
+- “não usar mais…”  
+- “a partir de agora…”  
 
 ---
 
 ## Score de relevância (0–100)
 
-Calcular com base nos critérios:
-
-- Mudança de stack: +40
-- Decisão arquitetural: +30
-- Definição de padrão global: +20
-- Impacto em múltiplos arquivos: +10
-- Mudança local relevante: +5
-- Ajuste trivial: 0
-
-Regras:
-
-- Somar apenas critérios aplicáveis
-- Limite máximo: 100
-- Não duplicar critérios equivalentes
+- Mudança de stack: +40  
+- Decisão arquitetural: +30  
+- Padrão global: +20  
+- Impacto múltiplos arquivos: +10  
+- Mudança local: +5  
+- Ajuste trivial: 0  
 
 ---
 
-## Interpretação do score
+## Interpretação
 
-- 0–20   → Não salvar
-- 21–50  → Pode salvar
-- 51–80  → Recomendar salvar
-- 81–100 → Recomendar fortemente salvar
+- 0–20 → Não salvar  
+- 21–50 → Pode salvar  
+- 51–80 → Recomendar  
+- 81–100 → Recomendar fortemente  
 
 ---
 
-## Resultado da avaliação
+## Resultado
 
-### Se score >= 51:
-
-Recomendar:
+Se score ≥ 51:
 
 → Executar `/memory-save`
 
+Se score < 51:
+
+→ Não necessário salvar  
+
 ---
 
-### Se score < 51:
+# 🆕 Integração com métricas de qualidade (NOVO)
 
-Recomendar:
+Se a execução for seguida de:
 
-→ Não é necessário salvar
+- `/review`
+- `/review-code`
+
+Então:
+
+→ Priorizar execução do `/memory-save`
+
+Objetivo:
+
+- registrar qualidade da execução  
+- alimentar histórico do sistema  
+- permitir análise futura  
 
 ---
 
 ## Importante
 
-- NÃO decidir estratégia
-- NÃO pular validações
-- NÃO finalizar com erro
-- NÃO executar sem entendimento
+- NÃO decidir estratégia  
+- NÃO pular validações  
+- NÃO finalizar com erro  
+- NÃO executar sem entendimento  
 
 ---
 
-## Formato obrigatório de saída
+# Formato obrigatório de saída
 
 ## Status
 
-- Executado / Falhou / Parcial
+- Executado / Falhou / Parcial  
 
 ---
 
 ## Análise
 
-- O que foi feito
-- Arquivos alterados
-- Uso de Serena
-- Uso de fallback
-- Aderência ao workflow
-- Modo: Normal / Degradado
+- O que foi feito  
+- Arquivos alterados  
+- Uso de Serena  
+- Uso de fallback  
+- Aderência ao workflow  
+- Modo: Normal / Degradado  
 
 ---
 
 ## Problemas
 
-- Erros ou riscos
-- Impactos
+- Erros ou riscos  
+- Impactos  
 
 Se não houver:
-→ Nenhum
+→ Nenhum  
 
 ---
 
 ## Persistência sugerida
 
-- Score de relevância: X/100
-- Conteúdo relevante detectado: SIM / NÃO
-- Decisões detectadas: SIM / NÃO
+- Score de relevância: X/100  
+- Conteúdo relevante: SIM / NÃO  
+- Decisões detectadas: SIM / NÃO  
+- Métricas de qualidade elegíveis: SIM / NÃO  
 - Recomendação:
   - Executar `/memory-save`
-  - Não necessário salvar
+  - Não necessário salvar  
 
 ---
 
 ## Bloqueios
 
-- Plano necessário → PARAR
-- Conflito com `.agents` → PARAR
-- Falta de contexto → PARAR
+- Plano necessário → PARAR  
+- Conflito com `.agents` → PARAR  
+- Falta de contexto → PARAR  
 
 ---
 
 ## Próximos passos
 
-- `/review`
-- `/review-enforce-rules` (opcional/recomendado em cenários críticos)
-- `/test-plan` (se aplicável)
-- Se `/review` não for executado: rodar check silencioso de versão do MEMFLOW ao final (exibir aviso somente quando houver atualização)
-- Executar check de versão usando comandos remotos (sem depender de binário local no PATH):
-  - macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive`
-  - Windows/PowerShell: `powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"`
+- `/review`  
+- `/review-code` (se aplicável)  
+- `/memory-save` (recomendado após validação)  
+- `/review-enforce-rules` (opcional)  
+- `/test-plan` (se aplicável)  

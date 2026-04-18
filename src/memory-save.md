@@ -1,280 +1,320 @@
 ---
-name: memory-save
-description: Salva o estado da sessão e decisões relevantes — com detecção automática de decisões, validação de relevância, score, versionamento e gerenciamento de dashboard de decisões.
+name: context
+description: Primeiro comando do fluxo — carrega e valida .agents, memória persistente (decisões e métricas) e MCPs. Utiliza memória como fonte primária e prepara contexto para decisões inteligentes no /workflow.
 license: MIT
 metadata:
   author: BrunoCastro
   version: "7.0.0"
 ---
 
-## Referência normativa comum
-
-Aplicar obrigatoriamente:
-
-- `_shared/base-output.md`
-- `_shared/base-preconditions.md`
-- `_shared/base-degraded-mode.md`
-- `_shared/target-adapter.md`
+## Carregar contexto
 
 ---
 
-## Objetivo
+# Memória persistente (ALTA PRIORIDADE)
 
-Salvar o estado atual da sessão e preservar decisões importantes sem poluir a memória.
+Se existir:
 
-Gerenciar automaticamente o arquivo `.agents/memory/decisions.md` como dashboard estruturado com histórico de decisões.
-
----
-
-## Etapa 1 — Validação de relevância (OBRIGATÓRIA)
-
-Antes de salvar, analisar:
-
-### NÃO salvar se for:
-
-- Logs técnicos
-- Execuções triviais
-- Repetições de informações
-- Conteúdo temporário
-- Ações sem impacto futuro
+- .agents/memory/memory.md
+- .agents/memory/session-memory.md
+- .agents/memory/decisions.md
+- .agents/memory/quality-metrics.md
 
 ---
 
-### SALVAR apenas se houver:
+## Uso da memória
 
-- Decisões importantes
-- Mudanças relevantes
-- Definições técnicas
-- Contexto útil para continuidade futura
+Se memória estiver disponível:
 
----
+### Fonte primária (CRÍTICO)
 
-## Regra de bloqueio
-
-Se NÃO houver informação relevante:
-
-- NÃO atualizar arquivos
-- BLOQUEAR execução
+- memory.md → identidade do projeto
+- decisions.md → decisões estratégicas
 
 ---
 
-## Etapa 2 — Auto-detecção de decisões
+### Fonte secundária (NOVO)
 
-Analisar a sessão e identificar automaticamente decisões.
+- quality-metrics.md → desempenho do sistema
 
-### Indicadores de decisão
+Uso:
 
-Detectar padrões como:
-
-- “decidimos que…”
-- “vamos usar…”
-- “não vamos mais usar…”
-- “a partir de agora…”
-- “padronizar…”
-- “definido que…”
+- NÃO definir contexto base
+- NÃO substituir decisões
+- NÃO alterar comportamento diretamente
+- apenas enriquecer interpretação
 
 ---
 
-## Etapa 3 — Score de relevância (0–100)
+## Regra de confiança da memória (CRÍTICO)
 
-Calcular o score com base nos critérios:
+Se existirem:
 
-- Mudança de stack: +40
-- Decisão arquitetural: +30
-- Definição de padrão global: +20
-- Impacto em múltiplos arquivos: +10
-- Mudança local relevante: +5
-- Ajuste trivial: 0
+- memory.md
+- decisions.md
 
-Regras:
-
-- Somar apenas critérios aplicáveis
-- Limite máximo: 100
-- Não duplicar critérios equivalentes
+→ memória considerada confiável
 
 ---
 
-## Etapa 4 — Determinação de impacto
+### Observação importante
 
-Definir impacto com base no score:
-
-- 0–20 → baixo
-- 21–50 → médio
-- 51–100 → alto
+- quality-metrics.md NÃO define confiabilidade
+- atua apenas como camada analítica
 
 ---
 
-## Etapa 5 — Classificação de categoria
+# 🆕 Interpretação de métricas (PREPARAÇÃO PARA WORKFLOW)
 
-Classificar automaticamente a decisão:
+Se existir:
 
-### Críticas
-- stack
-- arquitetura
-- mudanças estruturais
-
-### Técnicas
-- padrões
-- regras técnicas
-- decisões de implementação
-
-### UI/UX
-- interface
-- experiência
-- navegação
-
-### Outras
-- fallback
+.agents/memory/quality-metrics.md
 
 ---
 
-## Etapa 6 — Estrutura do decisions.md (CRIAÇÃO AUTOMÁTICA)
+## Extrair informações:
 
-Se `.agents/memory/decisions.md` NÃO existir:
-
-Criar com a estrutura base:
-
-# Decisões do Projeto
-
-## Críticas
-
-## Técnicas
-
-## UI/UX
-
-## Outras
-
-## Recentes
+- taxa_aprovacao
+- taxa_reprovacao
+- padrões em "Observações"
 
 ---
 
-## Etapa 7 — Versionamento de decisões (CRÍTICO)
+## Classificação de qualidade (derivada)
 
-Antes de adicionar uma nova decisão:
-
-Verificar se já existe decisão equivalente.
-
-### Se NÃO existir:
-- adicionar normalmente
-
-### Se EXISTIR e houver mudança:
-
-- NÃO sobrescrever
-- criar nova entrada com sufixo "(update)"
+- qualidade_alta → baixa taxa de erro (<10%)
+- qualidade_media → erro moderado (10–30%)
+- qualidade_baixa → alta taxa de erro (>30%)
 
 ---
 
-## Etapa 8 — Escrita das decisões
+## Resultado gerado (interno)
 
-Adicionar na categoria correta:
+Preparar sinal para o `/workflow`:
 
-## [YYYY-MM-DD] Título da decisão
-
-- Decisão: descrição objetiva
-- Motivo: justificativa
-- Impacto: baixo | médio | alto
-- Score: X/100
+- qualidade_alta
+- qualidade_media
+- qualidade_baixa
 
 ---
 
-## Etapa 9 — Atualização de "Recentes"
+## Regras
 
-Sempre adicionar também em:
-
-## Recentes
-
-Formato:
-
-- [YYYY-MM-DD] Título da decisão
+- NÃO decidir execução
+- NÃO alterar fluxo
+- NÃO bloquear ações
+- apenas preparar contexto
 
 ---
 
-## Regras obrigatórias
+# Modo otimizado
 
-- NÃO duplicar decisões idênticas
-- NÃO sobrescrever decisões antigas
-- Atualizações devem gerar nova entrada
-- Garantir que toda decisão possua Score
-- Garantir que toda decisão possua Impacto
-- NÃO salvar informação irrelevante
-- NÃO transformar session-memory em log
-- Manter `.agents/memory/session-memory.md` entre 300–800 tokens
-- Manter `.agents/memory/decisions.md` organizado por categoria
+Se memória confiável:
 
 ---
 
-## Etapa 10 — Escrita final
+## NÃO fazer:
 
-Se validado:
-
-- Atualizar `.agents/memory/session-memory.md`
-- Criar ou atualizar `.agents/memory/decisions.md`
-
----
-
-## Boas práticas
-
-- Usar ao final de cada tarefa relevante
-- Evitar uso em tarefas triviais
-- Priorizar qualidade sobre quantidade
+- NÃO varrer projeto completo
+- NÃO carregar docs automaticamente
+- NÃO ler código sem necessidade
+- NÃO reprocessar `/commands`
 
 ---
 
-## Importante
+## FAZER:
 
-- Este comando mantém continuidade do sistema
-- `.agents/memory/decisions.md` é a fonte de verdade das decisões
-- Decisões nunca devem ser sobrescritas
-- Histórico deve ser preservado
-- Score deve refletir importância real
-- Impacto deve ser coerente com o score
-- Em caso de dúvida:
-  → NÃO salvar
+- carregar `.agents`
+- carregar memória
+- considerar métricas como contexto adicional
+- usar Serena de forma otimizada
 
 ---
 
-## Formato obrigatório de saída
+# Modo fallback (SEM memória)
+
+Se memória NÃO existir:
+
+- carregar docs/**
+- explorar código
+- comportamento padrão
+
+---
+
+# Contexto principal (sempre carregar)
+
+- .agents/**
+- AGENTS.md (se existir)
+
+---
+
+# Contexto sob demanda
+
+Carregar apenas se necessário:
+
+- docs/**
+- código
+- configs grandes
+
+---
+
+# Referências normativas (LAZY LOAD)
+
+Referências resolvidas via `_shared/target-adapter.md`
+
+---
+
+## Regras:
+
+- NÃO carregar automaticamente
+- assumir como conhecidas
+- carregar apenas quando necessário
+
+---
+
+# Integração com MCP
+
+### Serena MCP (OTIMIZADO)
+
+Carregar:
+
+- project_overview
+
+---
+
+### NÃO carregar automaticamente:
+
+- code_style
+- suggested_commands
+- task_completion
+
+---
+
+### Carregamento sob demanda:
+
+- code_style → ao gerar código
+- suggested_commands → ao executar comandos
+- task_completion → ao finalizar tarefas
+
+---
+
+## Regra de otimização
+
+- evitar múltiplas memórias
+- priorizar menor contexto possível
+
+---
+
+## Outros MCPs
+
+- Context Mode → memória complementar
+- Context7 → documentação externa sob demanda
+
+---
+
+# Prioridade de fontes
+
+1. memory.md  
+2. decisions.md  
+3. quality-metrics.md  
+4. .agents  
+5. Serena MCP  
+6. model-policy  
+7. docs  
+8. código  
+
+---
+
+# Regras obrigatórias
+
+- memória é fonte primária
+- métricas são suporte
+- evitar leitura desnecessária
+- não reprocessar comandos
+- sem `.agents` → modo degradado
+
+---
+
+# Modo de saída
+
+---
+
+## 🟢 Modo ultra-light (PRIORITÁRIO)
+
+Ativar quando:
+
+- memória confiável
+- nenhuma inconsistência detectada
+
+---
+
+### Saída (ultra-light)
+
+- Contexto: OK
+- Memória: carregada
+- Métricas: disponíveis / não disponíveis
+
+---
 
 ## Status
 
-- Atualizado / Bloqueado
+- Contexto: OK / Falhou
+- Memória: SIM / NÃO
+- Métricas: SIM / NÃO
+- Modo: Normal / Degradado / Otimizado
 
 ---
 
-## Análise
+## Resumo
 
-- Conteúdo relevante identificado: SIM / NÃO
-- Decisões detectadas: SIM / NÃO
-- Score calculado: X/100
-- Impacto: baixo | médio | alto
-- Categoria atribuída: Críticas | Técnicas | UI/UX | Outras
-- Tipo de ação:
-  - Nova decisão
-  - Atualização de decisão
-  - Sessão
-- Justificativa
+- Estratégia de carregamento
+- Uso da memória
+- Uso de métricas
 
 ---
 
-## Problemas
+## Estado do fluxo
 
-- Informação irrelevante (se bloqueado)
-- Ambiguidades
-- Possível conflito com decisões existentes
-- Limitações de detecção
-
-Se não houver:
-→ Nenhum
+- Etapa atual: context
 
 ---
 
-## Próximos passos
+# Regras de consistência
 
-Se BLOQUEADO:
+- NÃO decidir execução
+- NÃO escolher modelo
+- NÃO aplicar métricas diretamente
+- SEMPRE delegar para /workflow
 
-- Nenhuma ação necessária
+---
 
-Se ATUALIZADO:
+# Validação mínima
 
-- Contexto salvo com sucesso
-- Dashboard de decisões atualizado
+(usar apenas fora do ultra-light)
+
+- Memória encontrada: SIM/NÃO
+- Métricas encontradas: SIM/NÃO
+- Modo: Normal/Degradado/Otimizado
+
+---
+
+# Limitações
+
+- métricas podem ser incompletas
+- ausência de métricas não impacta execução
+- dados históricos podem não refletir contexto atual
+
+---
+
+# Importante
+
+- NÃO implementar
+- NÃO decidir fluxo
+- NÃO carregar contexto desnecessário
+- métricas são suporte, não decisão
+
+---
+
+# Próximos passos
+
+- Executar /workflow
