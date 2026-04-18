@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.19] - 2026-04-18
+
+### Alterado
+- `src/prd.md`: critérios de aceite por história (seção 4) vs critérios de nível PRD/release (seção 11); fase de ambiguidade com opções e bloqueio até decisão do usuário; metadados v2.1.0.
+- `src/spec.md`: especificação técnica ampliada (contratos entrada/saída, estados/erros, fluxos, modelo de dados, integração com `/plan`, ambiguidade técnica com opções); metadados v2.1.1; seções 8 e 9 com escopos explícitos (modelo de dados vs garantias operacionais) e distinção entre invariantes estruturais e de comportamento.
+
 ## [1.1.18] - 2026-04-18
 
 ### Alterado
@@ -187,6 +193,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.19]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.18...v1.1.19
 [1.1.18]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.17...v1.1.18
 [1.1.17]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.16...v1.1.17
 [1.1.16]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.15...v1.1.16
