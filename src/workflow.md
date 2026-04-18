@@ -1,10 +1,10 @@
 ---
 name: workflow
-description: Orquestrador central — decide execução, validação e adapta comportamento com base em decisões, métricas, insights e sugestões assistidas.
+description: Orquestrador central — decide execução, validação e adapta comportamento com base em decisões, métricas, insights e sugestões assistidas, com controle de previsibilidade e evolução.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.0.0"
+  version: "9.0.0"
 ---
 
 ## Objetivo
@@ -22,30 +22,61 @@ Decidir:
 
 - decisions.md
 - quality-metrics.md
-- decision-suggestions.md (NOVO)
+- decision-suggestions.md
 - model-policy
+
+---
+
+# 🆕 Prioridade de decisão (CRÍTICO)
+
+Ordem obrigatória:
+
+1. **decisions.md (sempre prevalece)**
+2. **regras do workflow**
+3. **insights (ajuste leve)**
+4. **decision-suggestions (modo assistido)**
+
+---
+
+## Regras
+
+- decisões explícitas NUNCA podem ser sobrescritas  
+- insights apenas ajustam comportamento  
+- sugestões NUNCA executam automaticamente  
+- em caso de conflito → respeitar ordem acima  
 
 ---
 
 # Etapa 0 — Decisões existentes
 
-(mantido)
+- verificar decisões anteriores  
+- priorizar por score  
+- detectar conflitos  
 
 ---
 
 # Etapa 0.5 — Métricas
 
-(mantido)
+Se existir:
+
+- taxa_aprovacao  
+- taxa_reprovacao  
+- retrabalho_medio  
 
 ---
 
 # Etapa 0.6 — Insights
 
-(mantido)
+Detectar:
+
+- baixa clareza  
+- alta complexidade  
+- integrações externas  
+- alto retrabalho  
 
 ---
 
-# 🆕 Etapa 0.7 — Decision Suggestions (🔥 NOVO)
+# Etapa 0.7 — Decision Suggestions
 
 Se existir:
 
@@ -57,25 +88,39 @@ Se existir:
 
 Para cada sugestão:
 
-- título
-- recomendação
-- impacto
-- confiança
+- título  
+- recomendação  
+- impacto  
+- confiança  
 
 ---
 
 ## Critérios de ativação
 
-Ativar SOMENTE se:
+- confiança ≥ média  
+- impacto ≥ médio  
 
-- confiança = média ou alta  
-- impacto = médio ou alto  
+---
+
+## 🆕 Limite de uso (CRÍTICO)
+
+- considerar no máximo **2 sugestões por execução**
 
 ---
 
 ## Modo assistido
 
-NÃO aplicar automaticamente
+- NÃO aplicar automaticamente  
+- apenas sugerir  
+
+---
+
+## 🆕 Fechamento de loop (CRÍTICO)
+
+Se usuário decidir aplicar sugestão:
+
+→ converter em `decisions.md`  
+→ remover da lista de sugestões  
 
 ---
 
@@ -83,9 +128,204 @@ NÃO aplicar automaticamente
 
 Adicionar no output:
 
-```md
 ## Sugestões relevantes
 
 - <título>
 - recomendação: <texto>
-- ação sugerida: aplicar / ignorar
+- ação: aplicar / ignorar  
+
+---
+
+# Etapa 1 — Classificação da tarefa
+
+- Complexidade: baixa / média / alta  
+- Impacto: baixo / médio / alto  
+- Risco: baixo / médio / alto  
+- Clareza: alta / média / baixa  
+
+---
+
+# Etapa 2 — Decisão de execução
+
+---
+
+## EXECUÇÃO DIRETA
+
+- baixa complexidade  
+- baixo risco  
+- alta clareza  
+
+---
+
+## EXECUÇÃO COM /plan
+
+- média/alta complexidade  
+- risco médio/alto  
+- baixa clareza  
+
+---
+
+## Ajuste por insights
+
+- baixa clareza → FORÇAR /plan  
+- alta complexidade → priorizar /plan  
+- retrabalho alto → evitar execução direta  
+
+---
+
+# Etapa 3 — Estratégia de validação
+
+---
+
+## /review
+
+- SEMPRE obrigatório  
+
+---
+
+## /review-code
+
+Obrigatório quando:
+
+- código modificado  
+- risco ≥ médio  
+- integração externa  
+- mudança arquitetural  
+- sugestão indicar risco técnico  
+
+---
+
+## Ajuste por insights
+
+- integração externa → FORÇAR /review-code  
+- histórico de erro alto → reforçar validação  
+
+---
+
+# Etapa 4 — Gate de qualidade
+
+---
+
+## BLOQUEAR
+
+- review = Reprovado  
+- review-code = Reprovado  
+
+---
+
+## PERMITIR COM RESSALVAS
+
+- qualquer “com ressalvas”  
+
+---
+
+## APROVAR
+
+- ambos aprovados  
+
+---
+
+# Etapa 5 — Orquestração de modelo
+
+- modelo econômico por padrão  
+- escalar quando necessário  
+
+---
+
+# Etapa 6 — Controle de consistência
+
+- NÃO ignorar decisões  
+- NÃO ignorar métricas  
+- NÃO ignorar insights  
+- NÃO ignorar sugestões  
+- limitar influência de sugestões  
+
+---
+
+# Integração
+
+- /execute  
+- /review  
+- /review-code  
+- /memory-save  
+
+---
+
+# Regras
+
+- NÃO implementar  
+- NÃO permitir bypass  
+- NÃO ignorar risco  
+
+---
+
+# Importante
+
+- decisões são soberanas  
+- insights ajustam  
+- sugestões orientam  
+- sistema deve permanecer previsível  
+
+---
+
+# Formato de saída
+
+## Status
+
+- Decisão tomada  
+
+---
+
+## Análise
+
+### Classificação
+
+- Complexidade:
+- Impacto:
+- Risco:
+- Clareza:
+
+---
+
+### Métricas
+
+- disponíveis: SIM / NÃO  
+- taxa_reprovacao:
+
+---
+
+### Insights
+
+- sinais detectados:
+
+---
+
+### Sugestões
+
+- lista de sugestões relevantes  
+
+---
+
+### Estratégia
+
+- Execução: Direta / Planejada  
+- Validação:
+
+---
+
+## Problemas
+
+- ambiguidades  
+- riscos  
+
+Se não houver:
+→ Nenhum  
+
+---
+
+## Próximos passos
+
+1. /execute ou /plan  
+2. /review  
+3. /review-code  
+4. /memory-save  

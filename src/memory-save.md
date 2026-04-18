@@ -1,10 +1,10 @@
 ---
 name: memory-save
-description: Salva o estado da sessão e decisões relevantes — com detecção automática, score, versionamento, métricas, insights e sugestões de decisão.
+description: Salva o estado da sessão e decisões relevantes — com detecção automática, score, versionamento, métricas, insights, sugestões e controle de crescimento.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "10.0.0"
+  version: "10.1.0"
 ---
 
 ## Referência normativa comum
@@ -27,7 +27,7 @@ Gerenciar automaticamente:
 - `.agents/memory/decisions.md`
 - `.agents/memory/session-memory.md`
 - `.agents/memory/quality-metrics.md`
-- `.agents/memory/decision-suggestions.md` (NOVO)
+- `.agents/memory/decision-suggestions.md`
 
 ---
 
@@ -45,61 +45,53 @@ Gerenciar automaticamente:
 
 # 🆕 Etapa 12 — Geração de insights
 
-(mantida da v9.1)
+(mantida)
 
 ---
 
-# 🆕 Etapa 13 — Sugestão de decisões (🔥 NOVO NÍVEL)
+## 🆕 Controle de insights (CRÍTICO)
+
+- máximo de 10 insights ativos
+- se exceder:
+  → remover os mais antigos  
+  → manter os mais relevantes  
 
 ---
 
-## Objetivo
+# 🆕 Etapa 13 — Sugestão de decisões
 
-Transformar padrões recorrentes em **sugestões estruturadas de decisão**, sem automatizar diretamente.
-
----
-
-## Condições
-
-Executar SOMENTE se:
-
-- total_execuções ≥ 5  
-- existe insight relevante  
-- padrão consistente  
+(mantida)
 
 ---
 
-## Entrada
+## 🆕 Controle de sugestões (CRÍTICO)
 
-Utilizar:
-
-- métricas  
-- observações  
-- histórico recente  
-
----
-
-## Geração de sugestão
-
-Para cada padrão identificado:
+- máximo de 5 sugestões ativas  
+- se exceder:
+  → remover sugestões antigas  
+  → priorizar maior confiança e impacto  
 
 ---
 
-### Estrutura
+## 🆕 Deduplicação de sugestões
+
+- NÃO permitir sugestões com mesmo título  
+- se já existir:
+  → atualizar sugestão existente  
+  → NÃO criar nova  
+
+---
+
+# 🆕 Snapshot de métricas (NOVO)
+
+Atualizar dentro de `quality-metrics.md`:
 
 ```md
-## Sugestão
+## Snapshot atual
 
-Título: <nome curto>
-
-Motivo:
-<explicação baseada em métricas>
-
-Recomendação:
-<ação sugerida>
-
-Impacto esperado:
-<baixo | médio | alto>
-
-Confiança:
-<baixa | média | alta>
+- Execuções: X
+- Taxa aprovação: X%
+- Taxa reprovação: X%
+- Retrabalho médio: X
+- Principal risco: <texto curto>
+- Tendência: melhorando | estável | piorando
