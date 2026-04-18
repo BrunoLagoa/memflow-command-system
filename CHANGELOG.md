@@ -4,6 +4,16 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.20] - 2026-04-18
+
+### Alterado
+- `src/context.md`: fluxo de carregamento de contexto evoluído para interpretação de métricas e sinais estratégicos, com priorização de memória e refinamento do modo ultra-light.
+- `src/execute.md`: integração reforçada com `/review-code` e persistência inteligente pós-execução, com foco em fechamento de ciclo de qualidade.
+- `src/review.md`: validação de governança consolidada com classificação de problemas por severidade e direcionamento explícito para `/review-code`.
+- `src/review-code.md`: novo comando de validação técnica profunda da implementação (aderência ao SPEC/PLAN, arquitetura, testes, segurança e readiness de produção).
+- `src/memory-save.md`: expansão do pipeline de persistência com métricas, insights, sugestões de decisão e controles de crescimento/deduplicação.
+- `src/workflow.md`: orquestração ampliada para decisões baseadas em métricas, insights e sugestões assistidas, com regras de prioridade, limites de ativação e loop de aplicação rastreável.
+
 ## [1.1.19] - 2026-04-18
 
 ### Alterado
@@ -193,6 +203,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.20]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.19...v1.1.20
 [1.1.19]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.18...v1.1.19
 [1.1.18]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.17...v1.1.18
 [1.1.17]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.16...v1.1.17

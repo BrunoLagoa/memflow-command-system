@@ -4,7 +4,7 @@ description: Orquestrador central — decide execução, validação e adapta co
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.0.0"
+  version: "9.1.0"
 ---
 
 ## Objetivo
@@ -115,12 +115,37 @@ Para cada sugestão:
 
 ---
 
-## 🆕 Fechamento de loop (CRÍTICO)
+# 🆕 Aplicação de sugestão (INLINE 🔥)
 
-Se usuário decidir aplicar sugestão:
+Quando uma sugestão for apresentada:
 
-→ converter em `decisions.md`  
-→ remover da lista de sugestões  
+### O usuário pode decidir:
+
+- **aplicar**
+- **ignorar**
+
+---
+
+## Se aplicar:
+
+- converter recomendação em decisão  
+- registrar em `decisions.md`  
+- remover da lista de sugestões  
+- registrar via `/memory-save`  
+
+---
+
+## Se ignorar:
+
+- manter sugestão (ou permitir expiração natural)  
+
+---
+
+## Importante
+
+- aplicação deve ser explícita  
+- nunca automática  
+- deve gerar rastreabilidade  
 
 ---
 
@@ -130,9 +155,11 @@ Adicionar no output:
 
 ## Sugestões relevantes
 
-- <título>
+- título: <nome>
 - recomendação: <texto>
-- ação: aplicar / ignorar  
+- ação disponível:
+  - aplicar
+  - ignorar  
 
 ---
 
@@ -303,6 +330,7 @@ Obrigatório quando:
 ### Sugestões
 
 - lista de sugestões relevantes  
+- ações disponíveis: aplicar / ignorar  
 
 ---
 
