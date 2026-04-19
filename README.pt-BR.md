@@ -141,6 +141,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 
 No **`update`**, se você já instalou antes, o instalador usa o manifest (`.memflow-install.json`) para localizar a instalação existente.
 
+No runtime dos comandos em **`opencode`**, os arquivos normativos são resolvidos primeiro pela raiz do comando ativo (com detecção automática de escopo `global` vs `local`) e só depois por descoberta dos caminhos oficiais (`global -> local`) quando necessário.
+
 ### Instalação não interativa
 
 Os exemplos abaixo seguem a convenção da subseção [Escopo por target](#escopo-por-target) acima.

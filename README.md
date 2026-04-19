@@ -141,6 +141,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 
 For **`update`**, if MEMFLOW was installed previously, the installer uses the manifest (`.memflow-install.json`) to locate existing installations.
 
+For command runtime on **`opencode`**, normative files are resolved from the active command root first (auto-detecting `global` vs `local`), and only then fallback to official path discovery (`global -> local`) when needed.
+
 ### Non-interactive installation
 
 Examples below follow the convention from [Scope by target](#scope-by-target).

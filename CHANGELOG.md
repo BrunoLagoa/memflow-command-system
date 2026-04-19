@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.22] - 2026-04-18
+
+### Alterado
+- `README.md` e `README.pt-BR.md`: documentação atualizada para explicitar que, no runtime de comandos `opencode`, a resolução normativa detecta automaticamente o escopo (`global` vs `local`) pela raiz do comando ativo antes da descoberta por caminhos oficiais.
+
 ## [1.1.21] - 2026-04-18
 
 ### Alterado
@@ -208,6 +213,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.22]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.21...v1.1.22
 [1.1.21]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.20...v1.1.21
 [1.1.20]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.19...v1.1.20
 [1.1.19]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.18...v1.1.19
