@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Adaptador de target (OpenCode)
@@ -20,6 +20,17 @@ Aplicar este adaptador quando o target ativo for `opencode`.
   - `model-policy.md`
   - `_shared/*.md`
   relativo ao projeto aberto.
+
+## Detecção automática de escopo (obrigatória)
+
+- Determinar escopo de instalação antes de pedir qualquer confirmação ao usuário.
+- Ordem obrigatória:
+  1. Detectar o diretório do comando em execução (`.../commands/memflow/<comando>.md`) e usar este diretório como raiz normativa.
+  2. Se a raiz detectada estiver em `~/.config/opencode/commands/memflow`, classificar como **global**.
+  3. Se a raiz detectada estiver em `.opencode/commands/memflow`, classificar como **local**.
+  4. Resolver `_shared/*.md` e `model-policy.md` de forma relativa à raiz detectada.
+- Só tentar descoberta por caminhos oficiais (`global -> local`) quando o caminho do comando em execução não estiver disponível.
+- Não solicitar ao usuário confirmação de localização de arquivos normativos quando a detecção automática for possível.
 
 ## Ausência de arquivo oficial
 
