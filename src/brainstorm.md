@@ -4,7 +4,7 @@ description: Brainstorming estruturado antes de qualquer implementação — exp
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 ## Referência normativa comum
@@ -63,6 +63,7 @@ Explorar múltiplas abordagens possíveis antes de definir uma solução.
 
 - NÃO assumir arquitetura sem validar no código
 - NÃO propor soluções que contradizem padrões existentes
+- NÃO pedir confirmação de caminho de arquivos normativos quando o comando já estiver em execução no target ativo
 - Se Serena estiver disponível:
   - validar pelo menos uma hipótese no código real
 - Se Serena NÃO estiver disponível:

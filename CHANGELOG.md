@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.23] - 2026-04-18
+
+### Alterado
+- `src/_shared/base-preconditions.md`: regra de resolução normativa reforçada para impedir solicitação de confirmação manual de caminhos quando o comando ativo já está carregado no target.
+- `src/brainstorm.md`: adicionada restrição explícita para não pedir confirmação de localização de arquivos normativos durante execução normal do comando.
+
 ## [1.1.22] - 2026-04-18
 
 ### Alterado
@@ -213,6 +219,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.23]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.22...v1.1.23
 [1.1.22]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.21...v1.1.22
 [1.1.21]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.20...v1.1.21
 [1.1.20]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.19...v1.1.20
