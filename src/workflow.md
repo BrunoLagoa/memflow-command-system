@@ -59,9 +59,9 @@ Ordem obrigatória:
 
 Se existir:
 
-- taxa_aprovacao  
-- taxa_reprovacao  
-- retrabalho_medio  
+- taxa aprovação  
+- taxa reprovação  
+- retrabalho médio  
 
 ---
 
@@ -317,7 +317,7 @@ Obrigatório quando:
 ### Métricas
 
 - disponíveis: SIM / NÃO  
-- taxa_reprovacao:
+- taxa_reprovação:
 
 ---
 
