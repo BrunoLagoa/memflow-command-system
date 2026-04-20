@@ -179,26 +179,32 @@ else
   pass_count=$((pass_count + 1))
 fi
 
-workflow_prompt="${project_vscode}/.github/prompts/memflow.workflow.prompt.md"
-if [[ -f "$workflow_prompt" ]]; then
-  workflow_prompt_content="$(<"$workflow_prompt")"
-  if [[ "$workflow_prompt_content" == *"~/.config/opencode/commands/memflow/_shared/base-output.md"* ]] || [[ "$workflow_prompt_content" == *".opencode/commands/memflow/_shared/base-output.md"* ]]; then
-    printf "[FAIL] install vscode manteve referência de caminho _shared no prompt\n"
-    fail_count=$((fail_count + 1))
-  else
-    printf "[PASS] install vscode substitui referências _shared por conteúdo\n"
-    pass_count=$((pass_count + 1))
+shared_path_reference_found=0
+base_output_marker_found=0
+for prompt_file in "${project_vscode}/.github/prompts/memflow."*.prompt.md; do
+  prompt_content="$(<"$prompt_file")"
+  if [[ "$prompt_content" == *"~/.config/opencode/commands/memflow/_shared/base-output.md"* ]] || [[ "$prompt_content" == *".opencode/commands/memflow/_shared/base-output.md"* ]]; then
+    shared_path_reference_found=1
+    break
   fi
+  if [[ "$prompt_content" == *"Conteúdo injetado: _shared/base-output.md"* ]]; then
+    base_output_marker_found=1
+  fi
+done
 
-  if [[ "$workflow_prompt_content" == *"Conteúdo injetado: _shared/base-output.md"* ]]; then
-    printf "[PASS] install vscode injeta conteúdo de base-output no prompt\n"
-    pass_count=$((pass_count + 1))
-  else
-    printf "[FAIL] install vscode não injetou conteúdo de base-output no prompt\n"
-    fail_count=$((fail_count + 1))
-  fi
+if [[ "$shared_path_reference_found" -eq 1 ]]; then
+  printf "[FAIL] install vscode manteve referência de caminho _shared no prompt\n"
+  fail_count=$((fail_count + 1))
 else
-  printf "[FAIL] prompt workflow não encontrado para validar injeção _shared\n"
+  printf "[PASS] install vscode substitui referências _shared por conteúdo\n"
+  pass_count=$((pass_count + 1))
+fi
+
+if [[ "$base_output_marker_found" -eq 1 ]]; then
+  printf "[PASS] install vscode injeta conteúdo de base-output no prompt\n"
+  pass_count=$((pass_count + 1))
+else
+  printf "[FAIL] install vscode não injetou conteúdo de base-output no prompt\n"
   fail_count=$((fail_count + 1))
 fi
 
