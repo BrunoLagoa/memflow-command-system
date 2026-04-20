@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.24] - 2026-04-20
+
+### Alterado
+- `src/workflow.md`: terminologia atualizada na camada de métricas de aprovação para manter consistência entre recomendação, status e critérios de aceite no fluxo.
+- `src/brainstorm.md`: reforço do gate de aprovação antes de `/plan`, inclusão de critérios de prontidão (DoD), novas subseções obrigatórias de análise (premissas/lacunas, critérios de sucesso e opções rejeitadas) e padronização fechada de valores para `Status`.
+
 ## [1.1.23] - 2026-04-18
 
 ### Alterado
@@ -219,6 +225,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.24]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.23...v1.1.24
 [1.1.23]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.22...v1.1.23
 [1.1.22]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.21...v1.1.22
 [1.1.21]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.20...v1.1.21
