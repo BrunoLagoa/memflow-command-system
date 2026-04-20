@@ -4,7 +4,7 @@ description: Cria ou atualiza o memory.md com o contexto base do projeto — inc
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "4.0.0"
+  version: "4.1.0"
 ---
 
 ## Referências normativas (LAZY LOAD)
@@ -55,6 +55,7 @@ Criar:
 - `.agents/memory/memory.md`
 - `.agents/memory/session-memory.md`
 - `.agents/memory/decisions.md`
+- `.agents/memory/quality-metrics.md`
 
 ---
 
@@ -102,6 +103,19 @@ Regras:
 ## UI/UX
 ## Outras
 ## Recentes
+
+---
+
+#### quality-metrics.md
+
+Conteúdo inicial mínimo:
+
+# Métricas de Qualidade
+
+- taxa_aprovacao:
+- taxa_reprovacao:
+- retrabalho_medio:
+- observacoes:
 
 ---
 
@@ -243,10 +257,10 @@ Se não houver:
 ## Próximos passos
 
 Se BOOTSTRAP:
-- Executar /workflow
+- Executar /context
 
 Se BLOQUEADO:
 - Usar /memory-save
 
 Se ATUALIZADO:
-- Executar /workflow
+- Executar /context

@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  install-regression:
+  install-regression-linux:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -16,7 +16,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Run install regression tests
+      - name: Run install regression tests (bash)
         run: |
           chmod +x scripts/tests/test-install-regression.sh
+          chmod +x scripts/tests/test-vscode-prompt-generation.sh
+          chmod +x scripts/tests/test-doc-flow-consistency.sh
           scripts/tests/test-install-regression.sh
+          scripts/tests/test-vscode-prompt-generation.sh
+          scripts/tests/test-doc-flow-consistency.sh
+
+  install-regression-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Run install regression tests (powershell)
+        shell: pwsh
+        run: |
+          ./scripts/tests/test-install-regression.ps1

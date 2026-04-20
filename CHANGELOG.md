@@ -4,6 +4,24 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.25] - 2026-04-20
+
+### Alterado
+- `src/workflow.md`, `src/execute.md`, `src/review.md` e `src/review-enforce-rules.md`: fluxo unificado para exigir decisão explícita do `/workflow` antes de `/execute`, removendo fallback local de estratégia e reforçando validação anti-bypass.
+- `src/context.md`, `src/memory-init.md` e `src/_shared/base-preconditions.md`: contrato de memória harmonizado com `quality-metrics.md`, ordem canônica de inicialização (`/memory-init` -> `/context` -> comandos operacionais) e continuidade de bootstrap via `/context`.
+- `src/_shared/base-output.md`, `src/_shared/base-degraded-mode.md`, `src/_shared/target-adapter.md` e `src/_shared/target-adapter.vscode.md`: precedência refinada com invariantes não sobrescrevíveis para reduzir ambiguidade entre bases compartilhadas e comandos específicos.
+- `README.md` e `README.pt-BR.md`: fluxo público atualizado com `/review-code`, documentação de bootstrap remoto (`main`) versus versão instalada (release tag) e exemplo de pin com `MEMFLOW_REF`.
+- `scripts/installers/bash/core.sh`, `scripts/installers/powershell/core.ps1` e `scripts/installers/powershell/actions.ps1`: robustez e paridade cross-platform aprimoradas (detecção de SO em modo não interativo, fallback interativo de `update` sem instalação no PowerShell e mensagens de atualização alinhadas aos scripts remotos).
+- `scripts/manifest.schema.json`: schema endurecido com `os` obrigatório, `installedAt` em `date-time` e bloqueio de propriedades adicionais não previstas.
+- `scripts/tests/test-install-regression.sh`: cobertura ampliada para casos críticos (`check` silencioso e validação de `--project-dir` em update local), com isolamento de logs temporários por execução.
+- `.github/workflows/install-regression.yml`: CI expandido com job Linux (regressões + consistência docs/fluxo + smoke VSCode) e job Windows para regressão PowerShell.
+
+### Adicionado
+- `.github/workflows/release.yml`: automação de release por tag (`v*`) com gate de consistência tag/changelog e publicação automática usando notas extraídas da seção correspondente do `CHANGELOG.md`.
+- `scripts/tests/test-install-regression.ps1`: suíte de regressão dedicada ao instalador PowerShell.
+- `scripts/tests/test-doc-flow-consistency.sh`: validação automática de consistência entre fluxo público documentado e comandos normativos.
+- `scripts/tests/test-vscode-prompt-generation.sh`: smoke/regressão de geração de prompts `vscode` com verificação de injeção de bases compartilhadas.
+
 ## [1.1.24] - 2026-04-20
 
 ### Alterado
@@ -111,8 +129,6 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 ### Corrigido
 - `src/*.md`: atualização das referências normativas para o novo namespace `commands/memflow`, incluindo `_shared` e `model-policy.md`.
 - `src/*.md`: instruções de resolução de caminhos ajustadas para considerar explicitamente os dois escopos oficiais (`global` e `local`) sem fallback fora dos caminhos definidos.
-
-## [1.1.8] - 2026-04-16
 
 ## [1.1.9] - 2026-04-16
 
@@ -225,6 +241,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.25]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.24...v1.1.25
 [1.1.24]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.23...v1.1.24
 [1.1.23]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.22...v1.1.23
 [1.1.22]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.21...v1.1.22
@@ -240,8 +257,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 [1.1.12]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.11...v1.1.12
 [1.1.11]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.10...v1.1.11
 [1.1.10]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.9...v1.1.10
-[1.1.9]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.8...v1.1.9
-[1.1.8]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.7...v1.1.8
+[1.1.9]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.7...v1.1.9
 [1.1.7]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.4...v1.1.5

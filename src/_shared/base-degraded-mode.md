@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Base comum de modo degradado (referência normativa)
@@ -26,4 +26,7 @@ Aplicar este bloco quando `.agents` não estiver disponível, ausente ou incompl
 
 - Este arquivo define o padrão comum.
 - Regras específicas de cada comando podem estender este padrão.
-- Em caso de conflito, prevalece o comando específico.
+- Invariantes não sobrescrevíveis:
+  - ausência de `.agents` não bloqueia automaticamente
+  - limitações devem ser reportadas explicitamente
+  - confiança da análise deve ser reduzida

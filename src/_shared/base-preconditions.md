@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Base comum de pré-condições (referência normativa)
@@ -34,6 +34,7 @@ Se existir memória persistente no projeto:
 - .agents/memory/memory.md
 - .agents/memory/session-memory.md
 - .agents/memory/decisions.md
+- .agents/memory/quality-metrics.md
 
 Então:
 
@@ -71,6 +72,19 @@ Se memória NÃO existir:
 
 ---
 
+## Exceção: comando `/memory-init`
+
+- pode executar bootstrap da estrutura de memória sem contexto prévio
+- após bootstrap, deve exigir reentrada pelo `/context` antes de qualquer execução crítica
+
+---
+
+## Ordem canônica de inicialização
+
+1. `/memory-init` (somente quando estrutura de memória não existir)
+2. `/context` (carregamento obrigatório de contexto e memória)
+3. comandos de decisão/execução (`/workflow`, `/execute`, `/plan`, etc.)
+
 ## Regra de consistência global
 
 - Nenhum comando pode executar sem contexto válido
@@ -94,10 +108,12 @@ Se memória NÃO existir:
 
 ## Regra de precedência
 
-- Este arquivo define o padrão global
-- Comandos podem estender essas regras
-- Em caso de conflito:
-  → prevalece o comando específico
+- Este arquivo define invariantes globais de execução.
+- Comandos podem estender regras operacionais, sem invalidar invariantes.
+- Invariantes não sobrescrevíveis:
+  - nenhuma execução crítica sem `/context`
+  - memória disponível não pode ser ignorada
+  - resolução normativa deve seguir `_shared/target-adapter.md`
 
 ---
 

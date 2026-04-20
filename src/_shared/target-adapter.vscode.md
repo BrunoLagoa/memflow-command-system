@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Adaptador de target (VSCode)
@@ -26,5 +26,8 @@ Aplicar este adaptador quando o target ativo for `vscode`.
 ## Precedência
 
 - Este adaptador define a resolução para `vscode`.
-- Em caso de conflito com regra específica do comando:
-  - prevalece o comando específico.
+- Comandos podem estender regras operacionais sem remover os requisitos deste adaptador.
+- Invariantes não sobrescrevíveis:
+  - `_shared/*.md` devem estar injetados no prompt
+  - `model-policy.md` deve ser interpretado no contexto do prompt
+  - ausência de base normativa necessária bloqueia execução crítica

@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Validate tag/changelog consistency
+        id: changelog
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+
+          if ! grep -Eq "^## \\[${VERSION}\\]" CHANGELOG.md; then
+            echo "Versão ${VERSION} não encontrada no CHANGELOG.md"
+            exit 1
+          fi
+
+          if ! grep -Eq "^\\[${VERSION}\\]:" CHANGELOG.md; then
+            echo "Link de comparação da versão ${VERSION} ausente no CHANGELOG.md"
+            exit 1
+          fi
+
+          awk -v version="$VERSION" '
+            BEGIN { in_section=0 }
+            $0 ~ "^## \\[" version "\\]" { in_section=1; next }
+            in_section && $0 ~ "^## \\[" { exit }
+            in_section { print }
+          ' CHANGELOG.md > release-notes.md
+
+          if [[ ! -s release-notes.md ]]; then
+            echo "Notas da release ${VERSION} vazias no CHANGELOG.md"
+            exit 1
+          fi
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: release-notes.md

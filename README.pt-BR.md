@@ -62,6 +62,8 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
    ↓
 /review
    ↓
+/review-code (quando aplicável)
+   ↓
 /review-enforce-rules (Opcional)
 ```
 
@@ -73,6 +75,7 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 - `/workflow`: classifica tarefa, decide estratégia, nível, modelo principal e opções de fallback
 - `/execute`: aplica a decisão com fallback controlado
 - `/review`: valida aderência técnica e arquitetural
+- `/review-code`: validação técnica profunda antes de produção
 - `/review-enforce-rules`: validação rígida final (recomendada/opcional)
 - `model-policy.md`: estratégia de seleção e escalada de modelos
 
@@ -142,6 +145,19 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 No **`update`**, se você já instalou antes, o instalador usa o manifest (`.memflow-install.json`) para localizar a instalação existente.
 
 No runtime dos comandos em **`opencode`**, os arquivos normativos são resolvidos primeiro pela raiz do comando ativo (com detecção automática de escopo `global` vs `local`) e só depois por descoberta dos caminhos oficiais (`global -> local`) quando necessário.
+
+### Bootstrap remoto vs versão instalada
+
+- O bootstrap remoto (`curl .../main/scripts/install.sh` ou `install.ps1` remoto) baixa módulos do instalador da branch `main` por padrão.
+- O payload instalado dos comandos (`src/*`) usa por padrão a release tag mais recente.
+- Para bootstrap reproduzível, fixe `MEMFLOW_REF` antes de executar o instalador.
+
+Exemplo (macOS/Linux):
+
+```bash
+export MEMFLOW_REF=v1.1.24
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/${MEMFLOW_REF}/scripts/install.sh | bash -s -- install --non-interactive
+```
 
 ### Instalação não interativa
 
@@ -289,6 +305,7 @@ Se a tarefa for simples, o próximo passo normalmente é:
 ```bash
 /execute
 /review
+/review-code
 /review-enforce-rules  # recomendado para validação rígida final
 ```
 
@@ -317,7 +334,10 @@ Exemplo: implementar uma feature de média complexidade com memória ativa.
 6. /review
    - Verifica qualidade, segurança e arquitetura
 
-7. /review-enforce-rules (opcional/recomendado)
+7. /review-code
+   - Executa validação técnica profunda antes de produção
+
+8. /review-enforce-rules (opcional/recomendado)
    - Aplica validação rígida adicional (OK ou BLOQUEADO)
 ```
 
@@ -341,6 +361,7 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 - Comando de contexto: [`src/context.md`](src/context.md)
 - Comando de decisão: [`src/workflow.md`](src/workflow.md)
 - Comando de execução: [`src/execute.md`](src/execute.md)
+- Comando de revisão técnica profunda: [`src/review-code.md`](src/review-code.md)
 - Validação rígida opcional: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
 
 ## Filosofia do sistema

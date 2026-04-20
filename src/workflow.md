@@ -1,10 +1,21 @@
 ---
 name: workflow
-description: Orquestrador central — decide execução, validação e adapta comportamento com base em decisões, métricas, insights e sugestões assistidas, com controle de previsibilidade e evolução.
+description: Orquestrador central — decide execução, validação e adapta comportamento com base em decisões, métricas, insights e sugestões assistidas, com controle de previsibilidade e evolução. É a única fonte de decisão de estratégia para /execute.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.1.0"
+  version: "9.2.0"
+---
+
+## Referência normativa comum
+
+Aplicar obrigatoriamente:
+
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
+
 ---
 
 ## Objetivo
@@ -44,6 +55,7 @@ Ordem obrigatória:
 - insights apenas ajustam comportamento  
 - sugestões NUNCA executam automaticamente  
 - em caso de conflito → respeitar ordem acima  
+- `/workflow` é a única origem de decisão de estratégia (`/execute` vs `/plan`)
 
 ---
 
@@ -283,6 +295,7 @@ Obrigatório quando:
 - NÃO implementar  
 - NÃO permitir bypass  
 - NÃO ignorar risco  
+- exigir retorno ao `/workflow` se decisão estiver ausente
 
 ---
 

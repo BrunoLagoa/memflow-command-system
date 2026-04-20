@@ -7,6 +7,8 @@ INSTALL_SCRIPT="${SCRIPT_DIR}/../install.sh"
 
 pass_count=0
 fail_count=0
+STDOUT_FILE=""
+STDERR_FILE=""
 
 run_expect_exit() {
   local test_name="$1"
@@ -14,7 +16,7 @@ run_expect_exit() {
   shift 2
 
   set +e
-  "$@" >/tmp/memflow-test.stdout 2>/tmp/memflow-test.stderr
+  "$@" >"$STDOUT_FILE" 2>"$STDERR_FILE"
   local exit_code=$?
   set -e
 
@@ -30,7 +32,7 @@ run_expect_exit() {
 run_expect_success() {
   local test_name="$1"
   shift
-  if "$@" >/tmp/memflow-test.stdout 2>/tmp/memflow-test.stderr; then
+  if "$@" >"$STDOUT_FILE" 2>"$STDERR_FILE"; then
     printf "[PASS] %s\n" "$test_name"
     pass_count=$((pass_count + 1))
   else
@@ -40,6 +42,8 @@ run_expect_success() {
 }
 
 tmp_root="$(mktemp -d "${SCRIPT_DIR}/.tmp-install-regression.XXXXXX")"
+STDOUT_FILE="${tmp_root}/stdout.log"
+STDERR_FILE="${tmp_root}/stderr.log"
 cleanup() {
   rm -rf "$tmp_root"
 }
@@ -68,6 +72,11 @@ run_expect_exit \
   "update global sem instalação deve falhar com código 2" \
   2 \
   env HOME="$home_global" bash "$INSTALL_SCRIPT" update --scope global --non-interactive --version local
+
+run_expect_exit \
+  "update local sem --project-dir deve falhar" \
+  1 \
+  env HOME="$home_global" bash "$INSTALL_SCRIPT" update --scope local --non-interactive --version local
 
 run_expect_exit \
   "uninstall local sem instalação deve falhar com código 2" \
@@ -134,6 +143,18 @@ run_expect_success \
 run_expect_success \
   "uninstall sem escopo com apenas global instalado deve funcionar" \
   env HOME="$home_global" bash "$INSTALL_SCRIPT" uninstall --non-interactive
+
+run_expect_success \
+  "check sem instalação deve ser silencioso e passar" \
+  env HOME="$home_global" bash "$INSTALL_SCRIPT" check --non-interactive
+
+if [[ -s "$STDOUT_FILE" || -s "$STDERR_FILE" ]]; then
+  printf "[FAIL] check sem instalação deveria ser silencioso\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] check sem instalação mantém saída silenciosa\n"
+  pass_count=$((pass_count + 1))
+fi
 
 if [[ -d "${project_local}/.opencode/commands/memflow" ]]; then
   printf "[FAIL] cenário global-only criou instalação local indevida\n"
@@ -217,7 +238,7 @@ run_expect_success \
   env HOME="$home_vscode" bash "$INSTALL_SCRIPT" check --target vscode --non-interactive --project-dir "$project_vscode"
 
 run_expect_success \
-  "uninstall vscode sem escopo deve remover global e local existentes" \
+  "uninstall vscode sem escopo deve remover instalação existente" \
   env HOME="$home_vscode" bash "$INSTALL_SCRIPT" uninstall --target vscode --non-interactive --project-dir "$project_vscode"
 
 if [[ -d "${project_vscode}/.vscode/commands/memflow" ]]; then

@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Base de saída (referência normativa)
@@ -18,7 +18,13 @@ Aplicar obrigatoriamente este formato base de resposta em comandos do sistema:
 ## Regras de uso
 
 - Se um comando tiver formato próprio mais específico, ele pode estender este padrão.
-- Em caso de conflito entre este arquivo e um comando específico, prevalece o comando específico.
+- Campos que podem ser especializados por comando:
+  - vocabulário de `Status`
+  - subseções internas de `Análise` e `Problemas`
+- Invariantes não sobrescrevíveis:
+  - resposta em pt-BR
+  - seção `## Próximos passos` como último `##`
+  - continuidade do fluxo somente em `## Próximos passos`
 - **`## Próximos passos` é sempre o último `##` da resposta:** não incluir nenhuma outra seção com título `##` depois de `## Próximos passos`.
 - **Continuidade do fluxo só em `## Próximos passos`:** não usar bullets ou linhas do tipo `Próximo passo:` fora dessa seção (inclui modos compacto, ultra-light ou qualquer resumo intermediário).
 

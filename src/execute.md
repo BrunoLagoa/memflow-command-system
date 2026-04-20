@@ -1,10 +1,10 @@
 ---
 name: execute
-description: Implementa código com base na decisão do /workflow respeitando `model-policy.md` do target ativo — executa direto ou bloqueia e exige /plan. Inclui integração com persistência inteligente e métricas de qualidade.
+description: Implementa código com base na decisão do /workflow respeitando `model-policy.md` do target ativo. Sem decisão explícita do /workflow, bloqueia e retorna para orquestração. Inclui integração com persistência inteligente e métricas de qualidade.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.1.0"
+  version: "3.2.0"
 ---
 
 ## Referência normativa comum
@@ -57,41 +57,16 @@ Evitar:
 ### Existe decisão do `/workflow`?
 
 - SIM → seguir decisão  
-- NÃO → aplicar fallback controlado  
+- NÃO → BLOQUEAR e retornar ao `/workflow`
 
 ---
 
-## Fallback controlado
+## Sem decisão do `/workflow`
 
-Classificar:
-
-- Complexidade  
-- Impacto  
-- Risco  
-
----
-
-### EXECUTAR DIRETO se:
-
-- baixa complexidade  
-- baixo impacto  
-- baixo risco  
-
----
-
-### EXIGIR `/plan` se:
-
-- média ou alta complexidade  
-- médio ou alto impacto  
-- médio ou alto risco  
-
----
-
-### Se exigir plano:
-
-- Status: Parcial  
-- Motivo: ausência de planejamento  
-- Próximos passos: `/plan`  
+- Status: Parcial
+- Motivo: decisão de estratégia ausente
+- Ação obrigatória: executar `/workflow`
+- NÃO classificar complexidade/impacto/risco dentro de `/execute`
 
 E PARAR.
 

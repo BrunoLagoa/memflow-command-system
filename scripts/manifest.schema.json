@@ -10,6 +10,7 @@
     "target",
     "channel",
     "repo",
+    "os",
     "installDir",
     "commandsRoot",
     "installedAt"
@@ -51,8 +52,9 @@
       "type": "string"
     },
     "installedAt": {
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

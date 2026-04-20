@@ -237,6 +237,24 @@ commands_root_for_scope() {
 parse_manifest_value() {
   local file="$1"
   local key="$2"
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$file" "$key" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+key = sys.argv[2]
+try:
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    value = data.get(key, "")
+    if isinstance(value, str):
+        print(value)
+except Exception:
+    pass
+PY
+    return 0
+  fi
   sed -n "s/.*\"${key}\":[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$file" | head -n 1
 }
 
@@ -344,7 +362,7 @@ version_cache_file_for_os() {
 parse_json_value() {
   local file="$1"
   local key="$2"
-  sed -n "s/.*\"${key}\":[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$file" | head -n 1
+  parse_manifest_value "$file" "$key"
 }
 
 
@@ -441,11 +459,11 @@ print_version_update_notice() {
   local scope_value="$3"
   local os_name="$4"
   local target_value="$5"
-  local update_command="memflowctl update --scope ${scope_value} --non-interactive"
+  local update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --scope ${scope_value} --non-interactive"
   if [[ "$target_value" == "vscode" ]]; then
-    update_command="memflowctl update --target vscode --project-dir . --non-interactive"
+    update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --target vscode --project-dir . --non-interactive"
   elif [[ "$os_name" == "windows" ]]; then
-    update_command="memflowctl.ps1 update -Scope ${scope_value} -NonInteractive"
+    update_command="powershell -ExecutionPolicy Bypass -Command \"iwr https://raw.githubusercontent.com/${REPO}/main/scripts/install.ps1 -OutFile \$env:TEMP\\install.ps1; & \$env:TEMP\\install.ps1 update -Scope ${scope_value} -NonInteractive\""
   fi
 
   log_info "Nova versão do MEMFLOW encontrada. Atual: ${installed_version} | Disponível: ${latest_version}"

@@ -4,7 +4,18 @@ description: Primeiro comando do fluxo — carrega memória (decisões, estado e
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.0.0"
+  version: "8.1.0"
+---
+
+## Referência normativa comum
+
+Aplicar obrigatoriamente:
+
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
+
 ---
 
 ## Carregar contexto
@@ -250,6 +261,6 @@ Se memória ausente:
 
 ---
 
-# Próximos passos
+## Próximos passos
 
 - Executar /workflow

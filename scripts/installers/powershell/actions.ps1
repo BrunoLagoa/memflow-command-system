@@ -78,6 +78,17 @@ function Invoke-Update {
   if ([string]::IsNullOrEmpty($ResolvedScope)) {
     $manifestPaths = @(Find-ExistingManifests -ResolvedOs $ResolvedOs -ResolvedProjectDir $ProjectDir -TargetFilter $targetFilter)
     if ($manifestPaths.Count -eq 0) {
+      if (-not $NonInteractive) {
+        $missingMessage = Get-MissingInstallationMessage -ActionName "update" -ResolvedScope $ResolvedScope -HasExplicitScope $false
+        Write-WarnLog $missingMessage
+        $confirmInstall = Read-Host "Deseja iniciar uma nova instalação agora? [y/N]"
+        if ($confirmInstall.ToLower() -eq "y" -or $confirmInstall.ToLower() -eq "yes") {
+          $bootstrapScope = if ($ResolvedTarget -eq "vscode") { "local" } else { "global" }
+          Write-Info "Iniciando nova instalação no escopo $bootstrapScope."
+          Invoke-Install -ResolvedScope $bootstrapScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedVersion $nextVersion
+          return
+        }
+      }
       Stop-NotFound (Get-MissingInstallationMessage -ActionName "update" -ResolvedScope $ResolvedScope -HasExplicitScope $false)
     }
 

@@ -4,7 +4,7 @@ description: Validação inteligente de qualidade do sistema antes da validaçã
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 ## Referência normativa comum
@@ -103,6 +103,7 @@ Utilizar obrigatoriamente:
 - `/workflow` foi seguido corretamente?
 - `/plan` foi utilizado quando necessário?
 - `/execute` respeitou o plano?
+- `/execute` foi iniciado somente após decisão explícita do `/workflow`?
 - Houve bypass do sistema?
 
 ---

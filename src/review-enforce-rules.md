@@ -4,7 +4,7 @@ description: Validação rígida adicional (opcional/recomendada) para cenários
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 Valide rigorosamente qualquer código, plano, decisão ou execução contra as regras do projeto.
@@ -107,6 +107,7 @@ Complementar:
 
 - `/workflow` foi utilizado?
 - A decisão foi respeitada?
+- `/execute` só iniciou após decisão explícita do `/workflow`?
 - `/plan` foi usado quando necessário?
 - `/execute` seguiu corretamente o fluxo?
 - Houve bypass do sistema?

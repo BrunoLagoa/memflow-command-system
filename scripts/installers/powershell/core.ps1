@@ -257,11 +257,11 @@ function Show-VersionUpdateNotice {
     [string]$ResolvedOs,
     [string]$ResolvedTarget
   )
-  $updateCommand = "memflowctl update --scope $ResolvedScope --non-interactive"
+  $updateCommand = "curl -fsSL https://raw.githubusercontent.com/$Repo/main/scripts/install.sh | bash -s -- update --non-interactive --scope $ResolvedScope"
   if ($ResolvedTarget -eq "vscode") {
-    $updateCommand = "memflowctl update --target vscode --project-dir . --non-interactive"
+    $updateCommand = "curl -fsSL https://raw.githubusercontent.com/$Repo/main/scripts/install.sh | bash -s -- update --target vscode --project-dir . --non-interactive"
   } elseif ($ResolvedOs -eq "windows") {
-    $updateCommand = "memflowctl.ps1 update -Scope $ResolvedScope -NonInteractive"
+    $updateCommand = "powershell -ExecutionPolicy Bypass -Command `"iwr https://raw.githubusercontent.com/$Repo/main/scripts/install.ps1 -OutFile `$env:TEMP\install.ps1; & `$env:TEMP\install.ps1 update -Scope $ResolvedScope -NonInteractive`""
   }
   Write-Info "Nova versão do MEMFLOW encontrada. Atual: $InstalledVersion | Disponível: $LatestVersion"
   Write-Host "  Próximo passo: $updateCommand"
@@ -374,7 +374,7 @@ function Resolve-WizardValues {
       }
     }
   } else {
-    if (-not $resolvedOs) { $resolvedOs = "windows" }
+    if (-not $resolvedOs) { $resolvedOs = if ($IsWindows) { "windows" } elseif ($IsMacOS) { "macos" } else { "linux" } }
     if (-not $resolvedScope) {
       if (($Action -eq "update" -or $Action -eq "uninstall") -and -not $script:MemflowScopeProvided) {
         $resolvedScope = $null

@@ -62,6 +62,8 @@ In practice, it acts as an SDLC control layer for teams that want speed with qua
    ↓
 /review
    ↓
+/review-code (when applicable)
+   ↓
 /review-enforce-rules (Optional)
 ```
 
@@ -73,6 +75,7 @@ In practice, it acts as an SDLC control layer for teams that want speed with qua
 - `/workflow`: classifies task, decides strategy, level, primary model, and fallback options
 - `/execute`: applies the decision with controlled fallback
 - `/review`: validates technical and architectural adherence
+- `/review-code`: deep technical validation before production readiness
 - `/review-enforce-rules`: strict final validation (recommended/optional)
 - `model-policy.md`: model selection and escalation strategy
 
@@ -142,6 +145,19 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 For **`update`**, if MEMFLOW was installed previously, the installer uses the manifest (`.memflow-install.json`) to locate existing installations.
 
 For command runtime on **`opencode`**, normative files are resolved from the active command root first (auto-detecting `global` vs `local`), and only then fallback to official path discovery (`global -> local`) when needed.
+
+### Bootstrap source vs installed version
+
+- The bootstrap command (`curl .../main/scripts/install.sh` or remote `install.ps1`) downloads the installer modules from branch `main` by default.
+- The installed command payload (`src/*`) is resolved from the latest release tag by default.
+- For reproducible bootstrap behavior, pin `MEMFLOW_REF` before running the installer script.
+
+Example (macOS/Linux):
+
+```bash
+export MEMFLOW_REF=v1.1.24
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/${MEMFLOW_REF}/scripts/install.sh | bash -s -- install --non-interactive
+```
 
 ### Non-interactive installation
 
@@ -289,6 +305,7 @@ If the task is simple, the next step is usually:
 ```bash
 /execute
 /review
+/review-code
 /review-enforce-rules  # recommended for strict final validation
 ```
 
@@ -317,7 +334,10 @@ Example: implementing a medium-complexity feature with active memory.
 6. /review
    - Checks quality, security, and architecture
 
-7. /review-enforce-rules (optional/recommended)
+7. /review-code
+   - Performs deep technical validation before production readiness
+
+8. /review-enforce-rules (optional/recommended)
    - Applies additional strict validation (OK or BLOCKED)
 ```
 
@@ -341,6 +361,7 @@ This section is continuously updated as new environments are validated.
 - Context command: [`src/context.md`](src/context.md)
 - Decision command: [`src/workflow.md`](src/workflow.md)
 - Execution command: [`src/execute.md`](src/execute.md)
+- Deep code review command: [`src/review-code.md`](src/review-code.md)
 - Optional strict validation: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
 
 ## System philosophy

@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Adaptador de target (OpenCode)
@@ -41,5 +41,8 @@ Aplicar este adaptador quando o target ativo for `opencode`.
 ## Precedência
 
 - Este adaptador define a resolução para `opencode`.
-- Em caso de conflito com regra específica do comando:
-  - prevalece o comando específico.
+- Comandos podem estender apenas regras operacionais de leitura.
+- Invariantes não sobrescrevíveis:
+  - detecção automática de escopo quando houver comando ativo
+  - resolução normativa relativa à raiz detectada
+  - ausência em caminho oficial sem fallback fora do adaptador
