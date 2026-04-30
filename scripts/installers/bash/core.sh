@@ -176,7 +176,7 @@ wizard_select() {
   fi
 
   if [[ -z "$TARGET" ]]; then
-    TARGET="$(choose_option_tty "2 - Selecione o local de instalação" "opencode" "vscode")"
+    TARGET="$(choose_option_tty "2 - Selecione o local de instalação" "opencode" "vscode" "cursor")"
   else
     printf "2 - Selecione o local de instalação\n  > %s\n" "$TARGET"
   fi
