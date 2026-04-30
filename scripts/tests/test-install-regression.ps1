@@ -65,6 +65,44 @@ try {
 
   Invoke-ExpectSuccess "install local inicial deve funcionar" @("install", "-Scope", "local", "-ProjectDir", $ProjectLocal, "-NonInteractive", "-Version", "local")
 
+  Invoke-ExpectExit "update cursor sem instalação deve falhar com código 2" 2 @("update", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive", "-Version", "local")
+
+  Invoke-ExpectExit "uninstall cursor sem instalação deve falhar com código 2" 2 @("uninstall", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive")
+
+  Invoke-ExpectSuccess "install cursor inicial deve funcionar" @("install", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive", "-Version", "local")
+
+  $cursorInstallDir = Join-Path $ProjectLocal ".cursor\commands\memflow"
+  if (Test-Path $cursorInstallDir) {
+    Write-Host "[PASS] install cursor cria comandos em .cursor\commands\memflow"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install cursor não criou comandos em .cursor\commands\memflow"
+    $FailCount += 1
+  }
+
+  Invoke-ExpectSuccess "update cursor com instalação existente deve funcionar" @("update", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive", "-Version", "local")
+
+  Invoke-ExpectSuccess "check cursor com instalação existente deve funcionar" @("check", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive")
+
+  Invoke-ExpectSuccess "uninstall cursor remove instalação existente" @("uninstall", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive")
+
+  if (-not (Test-Path $cursorInstallDir)) {
+    Write-Host "[PASS] uninstall cursor remove instalação local"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] uninstall cursor manteve instalação local"
+    $FailCount += 1
+  }
+
+  $cursorGlobalDir = Join-Path $HomeRoot ".config\cursor\commands\memflow"
+  if (-not (Test-Path $cursorGlobalDir)) {
+    Write-Host "[PASS] cursor não usa instalação global"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] cursor criou instalação global indevida"
+    $FailCount += 1
+  }
+
   Invoke-ExpectSuccess "install vscode deve gerar prompts" @("install", "-Target", "vscode", "-ProjectDir", $ProjectVscode, "-NonInteractive", "-Version", "local")
 
   $promptFiles = @(Get-ChildItem -Path (Join-Path $ProjectVscode ".github\prompts") -Filter "memflow.*.prompt.md" -ErrorAction SilentlyContinue)

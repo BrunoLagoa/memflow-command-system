@@ -31,8 +31,8 @@ function Normalize-ScopeForTarget {
     [string]$RequestedScope,
     [string]$ResolvedTarget
   )
-  if ($ResolvedTarget -eq "vscode") {
-    # VS Code usa instalação única por projeto.
+  if ($ResolvedTarget -eq "vscode" -or $ResolvedTarget -eq "cursor") {
+    # VSCode e Cursor usam instalação única por projeto.
     return "local"
   }
   return $RequestedScope
@@ -61,6 +61,9 @@ function Resolve-CommandsRoot {
 
   if ($ResolvedTarget -eq "vscode") {
     return (Join-Path $ResolvedProjectDir ".github")
+  }
+  if ($ResolvedTarget -eq "cursor") {
+    return (Join-Path $ResolvedProjectDir ".cursor\commands")
   }
 
   if ($ResolvedScope -eq "global") {
@@ -204,7 +207,7 @@ function Find-ExistingManifest {
     if ($TargetFilter -and $candidateTarget -ne $TargetFilter) {
       continue
     }
-    if ($candidateTarget -eq "vscode") {
+    if ($candidateTarget -eq "vscode" -or $candidateTarget -eq "cursor") {
       $singleRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedTarget $candidateTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
       $singleManifest = Join-Path $singleRoot ".memflow-install.json"
       if (Test-Path $singleManifest) { return $singleManifest }
@@ -232,7 +235,7 @@ function Find-ExistingManifests {
     if ($TargetFilter -and $candidateTarget -ne $TargetFilter) {
       continue
     }
-    if ($candidateTarget -eq "vscode") {
+    if ($candidateTarget -eq "vscode" -or $candidateTarget -eq "cursor") {
       $singleRoot = Resolve-CommandsRoot -ResolvedScope "local" -ResolvedTarget $candidateTarget -ResolvedOs $ResolvedOs -ResolvedProjectDir $ResolvedProjectDir
       $singleManifest = Join-Path $singleRoot ".memflow-install.json"
       if (Test-Path $singleManifest) { $manifests += $singleManifest }
@@ -260,6 +263,8 @@ function Show-VersionUpdateNotice {
   $updateCommand = "curl -fsSL https://raw.githubusercontent.com/$Repo/main/scripts/install.sh | bash -s -- update --non-interactive --scope $ResolvedScope"
   if ($ResolvedTarget -eq "vscode") {
     $updateCommand = "curl -fsSL https://raw.githubusercontent.com/$Repo/main/scripts/install.sh | bash -s -- update --target vscode --project-dir . --non-interactive"
+  } elseif ($ResolvedTarget -eq "cursor") {
+    $updateCommand = "curl -fsSL https://raw.githubusercontent.com/$Repo/main/scripts/install.sh | bash -s -- update --target cursor --project-dir . --non-interactive"
   } elseif ($ResolvedOs -eq "windows") {
     $updateCommand = "powershell -ExecutionPolicy Bypass -Command `"iwr https://raw.githubusercontent.com/$Repo/main/scripts/install.ps1 -OutFile `$env:TEMP\install.ps1; & `$env:TEMP\install.ps1 update -Scope $ResolvedScope -NonInteractive`""
   }
@@ -385,10 +390,10 @@ function Resolve-WizardValues {
       Write-Host "  > $resolvedTarget"
     }
     if (-not $resolvedScope) {
-      if ($resolvedTarget -eq "vscode") {
+      if ($resolvedTarget -eq "vscode" -or $resolvedTarget -eq "cursor") {
         $resolvedScope = "local"
         Write-Host "3 - Escopo"
-        Write-Host "  > local (único para vscode)"
+        Write-Host "  > local (único para $resolvedTarget)"
       } else {
         $resolvedScope = Select-Option -Prompt "3 - Essa instalação vai ser local ou global?" -Options @("local", "global")
       }

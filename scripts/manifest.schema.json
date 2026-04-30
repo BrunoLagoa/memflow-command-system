@@ -32,7 +32,7 @@
     },
     "target": {
       "type": "string",
-      "enum": ["opencode", "vscode"]
+      "enum": ["opencode", "vscode", "cursor"]
     },
     "channel": {
       "type": "string",

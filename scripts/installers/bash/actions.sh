@@ -12,6 +12,9 @@ dispatch_install_for_target() {
     opencode)
       opencode_install_from_source "$commands_root" "$install_dir" "$manifest_file" "$version" "$source_dir"
       ;;
+    cursor)
+      cursor_install_from_source "$commands_root" "$install_dir" "$manifest_file" "$version" "$source_dir"
+      ;;
     vscode)
       vscode_install_from_source "$commands_root" "$manifest_file" "$version" "$source_dir"
       ;;
@@ -30,6 +33,9 @@ dispatch_uninstall_for_target() {
   case "$target" in
     opencode)
       opencode_uninstall_installation "$install_dir" "$manifest_file"
+      ;;
+    cursor)
+      cursor_uninstall_installation "$install_dir" "$manifest_file"
       ;;
     vscode)
       vscode_uninstall_installation "$commands_root" "$manifest_file"

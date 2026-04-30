@@ -3,8 +3,8 @@
 normalize_scope_for_target() {
   local requested_scope="$1"
   local target="$2"
-  if [[ "$target" == "vscode" ]]; then
-    # VS Code usa instalação única por projeto.
+  if [[ "$target" == "vscode" || "$target" == "cursor" ]]; then
+    # VSCode e Cursor usam instalação única por projeto.
     printf "local"
     return 0
   fi
@@ -53,7 +53,7 @@ Uso:
 Opções:
   --non-interactive       Executa sem perguntas interativas
   --scope <global|local>  Escopo de instalação
-  --target <opencode|vscode>  Plataforma de comandos
+  --target <opencode|vscode|cursor>  Plataforma de comandos
   --os <linux|macos|windows>
   --version <tag|local>   Versão alvo (tag de release)
   --project-dir <dir>     Diretório do projeto para escopo local
@@ -146,14 +146,14 @@ validate_inputs() {
 
 
 supported_targets() {
-  printf "%s\n" "opencode" "vscode"
+  printf "%s\n" "opencode" "vscode" "cursor"
 }
 
 
 is_supported_target() {
   local target="$1"
   case "$target" in
-    opencode|vscode) return 0 ;;
+    opencode|vscode|cursor) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -182,9 +182,9 @@ wizard_select() {
   fi
 
   if [[ -z "$SCOPE" ]]; then
-    if [[ "$TARGET" == "vscode" ]]; then
+    if [[ "$TARGET" == "vscode" || "$TARGET" == "cursor" ]]; then
       SCOPE="local"
-      printf "3 - Escopo\n  > local (único para vscode)\n"
+      printf "3 - Escopo\n  > local (único para %s)\n" "$TARGET"
     else
       SCOPE="$(choose_option_tty "3 - Essa instalação vai ser local ou global?" "local" "global")"
     fi
@@ -217,6 +217,10 @@ commands_root_for_scope() {
 
   if [[ "$target" == "vscode" ]]; then
     printf "%s" "${project_dir}/.github"
+    return 0
+  fi
+  if [[ "$target" == "cursor" ]]; then
+    printf "%s" "${project_dir}/.cursor/commands"
     return 0
   fi
 
@@ -266,7 +270,7 @@ find_existing_manifest() {
   local target global_root local_root
   while IFS= read -r target; do
     [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
-    if [[ "$target" == "vscode" ]]; then
+    if [[ "$target" == "vscode" || "$target" == "cursor" ]]; then
       local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
       if [[ -f "${local_root}/.memflow-install.json" ]]; then
         printf "%s" "${local_root}/.memflow-install.json"
@@ -303,7 +307,7 @@ collect_existing_manifests() {
   local target global_root local_root
   while IFS= read -r target; do
     [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
-    if [[ "$target" == "vscode" ]]; then
+    if [[ "$target" == "vscode" || "$target" == "cursor" ]]; then
       local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
       if [[ -f "${local_root}/.memflow-install.json" ]]; then
         printf "%s\n" "${local_root}/.memflow-install.json"
@@ -462,6 +466,8 @@ print_version_update_notice() {
   local update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --scope ${scope_value} --non-interactive"
   if [[ "$target_value" == "vscode" ]]; then
     update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --target vscode --project-dir . --non-interactive"
+  elif [[ "$target_value" == "cursor" ]]; then
+    update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --target cursor --project-dir . --non-interactive"
   elif [[ "$os_name" == "windows" ]]; then
     update_command="powershell -ExecutionPolicy Bypass -Command \"iwr https://raw.githubusercontent.com/${REPO}/main/scripts/install.ps1 -OutFile \$env:TEMP\\install.ps1; & \$env:TEMP\\install.ps1 update -Scope ${scope_value} -NonInteractive\""
   fi

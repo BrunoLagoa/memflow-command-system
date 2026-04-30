@@ -323,6 +323,56 @@ else
   pass_count=$((pass_count + 1))
 fi
 
+project_cursor="${tmp_root}/cursor-project"
+mkdir -p "$project_cursor"
+
+home_cursor="${tmp_root}/home-cursor"
+mkdir -p "$home_cursor"
+
+run_expect_exit \
+  "update cursor sem instalação deve falhar com código 2" \
+  2 \
+  env HOME="$home_cursor" bash "$INSTALL_SCRIPT" update --project-dir "$project_cursor" --target cursor --non-interactive --version local
+
+run_expect_exit \
+  "uninstall cursor sem instalação deve falhar com código 2" \
+  2 \
+  env HOME="$home_cursor" bash "$INSTALL_SCRIPT" uninstall --target cursor --non-interactive --project-dir "$project_cursor"
+
+run_expect_success \
+  "install cursor inicial deve funcionar com instalação local única" \
+  env HOME="$home_cursor" bash "$INSTALL_SCRIPT" install --project-dir "$project_cursor" --target cursor --non-interactive --version local
+
+assert_opencode_install_is_bundled "${project_cursor}/.cursor/commands/memflow" "install cursor"
+
+run_expect_success \
+  "update cursor deve funcionar com instalação existente" \
+  env HOME="$home_cursor" bash "$INSTALL_SCRIPT" update --target cursor --non-interactive --project-dir "$project_cursor" --version local
+
+run_expect_success \
+  "check cursor deve funcionar com instalação existente" \
+  env HOME="$home_cursor" bash "$INSTALL_SCRIPT" check --target cursor --non-interactive --project-dir "$project_cursor"
+
+run_expect_success \
+  "uninstall cursor deve remover instalação existente" \
+  env HOME="$home_cursor" bash "$INSTALL_SCRIPT" uninstall --target cursor --non-interactive --project-dir "$project_cursor"
+
+if [[ -d "${project_cursor}/.cursor/commands/memflow" ]]; then
+  printf "[FAIL] uninstall cursor manteve instalação local\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] uninstall cursor remove instalação local\n"
+  pass_count=$((pass_count + 1))
+fi
+
+if [[ -d "${home_cursor}/.config/cursor/commands/memflow" ]]; then
+  printf "[FAIL] cursor criou instalação global indevida\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] cursor não usa instalação global\n"
+  pass_count=$((pass_count + 1))
+fi
+
 printf "\nResultado: %d passou, %d falhou\n" "$pass_count" "$fail_count"
 if [[ "$fail_count" -gt 0 ]]; then
   exit 1

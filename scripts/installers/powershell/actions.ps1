@@ -17,6 +17,9 @@ function Invoke-TargetInstallFromSource {
     "opencode" {
       Install-OpencodeTargetFromSource -CommandsRoot $CommandsRoot -InstallDir $InstallDir -ManifestPath $ManifestPath -ResolvedVersion $ResolvedVersion -SourceDir $SourceDir -NormalizedScope $NormalizedScope -ResolvedTarget $Target -ResolvedOs $ResolvedOs
     }
+    "cursor" {
+      Install-CursorTargetFromSource -CommandsRoot $CommandsRoot -InstallDir $InstallDir -ManifestPath $ManifestPath -ResolvedVersion $ResolvedVersion -SourceDir $SourceDir -NormalizedScope $NormalizedScope -ResolvedTarget $Target -ResolvedOs $ResolvedOs
+    }
     "vscode" {
       Install-VscodeTargetFromSource -CommandsRoot $CommandsRoot -ManifestPath $ManifestPath -ResolvedVersion $ResolvedVersion -SourceDir $SourceDir -NormalizedScope $NormalizedScope -ResolvedTarget $Target -ResolvedOs $ResolvedOs
     }
@@ -37,6 +40,9 @@ function Invoke-TargetUninstall {
   switch ($Target) {
     "opencode" {
       Uninstall-OpencodeTargetInstallation -InstallDir $InstallDir -ManifestPath $ManifestPath
+    }
+    "cursor" {
+      Uninstall-CursorTargetInstallation -InstallDir $InstallDir -ManifestPath $ManifestPath
     }
     "vscode" {
       Uninstall-VscodeTargetInstallation -CommandsRoot $CommandsRoot -ManifestPath $ManifestPath
@@ -83,7 +89,7 @@ function Invoke-Update {
         Write-WarnLog $missingMessage
         $confirmInstall = Read-Host "Deseja iniciar uma nova instalação agora? [y/N]"
         if ($confirmInstall.ToLower() -eq "y" -or $confirmInstall.ToLower() -eq "yes") {
-          $bootstrapScope = if ($ResolvedTarget -eq "vscode") { "local" } else { "global" }
+          $bootstrapScope = if ($ResolvedTarget -eq "vscode" -or $ResolvedTarget -eq "cursor") { "local" } else { "global" }
           Write-Info "Iniciando nova instalação no escopo $bootstrapScope."
           Invoke-Install -ResolvedScope $bootstrapScope -ResolvedTarget $ResolvedTarget -ResolvedOs $ResolvedOs -ResolvedVersion $nextVersion
           return

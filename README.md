@@ -144,6 +144,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
   - `model-policy.md` is inlined the same way into each command prompt that lists it; no separate `memflow.model-policy.prompt.md` is generated.
   - `target-adapter.md` references are resolved to `target-adapter.vscode.md` in generated prompts.
   - OpenCode-only path rules are not carried into VSCode prompts.
+- **`cursor`**: uses a **single project installation** in `.cursor/commands/memflow` (no global/local split).
+  - During installation, references to `_shared/*.md` and `model-policy.md` are inlined in each generated command file.
+  - Installed Cursor payload contains only executable command files (`*.md`) in `.cursor/commands/memflow` (no standalone `_shared/` or `model-policy.md`).
 
 For **`update`**, if MEMFLOW was installed previously, the installer uses the manifest (`.memflow-install.json`) to locate existing installations.
 
@@ -208,6 +211,20 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
 ```
 
+#### Cursor - Single project installation
+
+##### macOS/Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --target cursor --project-dir .
+```
+
+##### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target cursor -ProjectDir .
+```
+
 ### Update to a new version
 
 By default, update uses the latest tagged release.
@@ -219,12 +236,13 @@ If there is no previous installation in the requested target:
 Without `--scope`, `update` keeps manifest auto-discovery:
 - on `opencode`, it updates detected scopes (`global` and/or `local`);
 - on `vscode`, it updates the generated files in `<project>/.github/prompts`.
+- on `cursor`, it updates generated command files in `<project>/.cursor/commands/memflow`.
 
 #### General command
 
 Use `install.sh` / `install.ps1` directly from the repository (does not require `memflowctl` in PATH).
 
-Run from the **same directory** where you usually work. For `vscode`, pass `--target vscode --project-dir .` (or `-Target vscode -ProjectDir .` in PowerShell).
+Run from the **same directory** where you usually work. For `vscode` and `cursor`, pass `--target <target> --project-dir .` (or `-Target <target> -ProjectDir .` in PowerShell).
 
 ##### macOS/Linux
 
@@ -245,6 +263,7 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 Without `--scope`, `check` uses manifest auto-discovery:
 - on `opencode`, it checks installed scopes;
 - on `vscode`, it checks the single project installation from the manifest in `<project>/.github/.memflow-install.json`.
+- on `cursor`, it checks the single project installation from the manifest in `<project>/.cursor/commands/.memflow-install.json`.
 
 #### General command
 
@@ -269,6 +288,7 @@ If no installation exists in the informed target, `uninstall` returns an explici
 Without `--scope`, `uninstall` also uses manifest auto-discovery:
 - on `opencode`, it removes detected scopes;
 - on `vscode`, it removes generated `memflow.*` files from `.github/prompts`.
+- on `cursor`, it removes generated command files from `.cursor/commands/memflow`.
 
 #### General command
 
@@ -291,6 +311,7 @@ These match the modes described in [Scope by target](#scope-by-target):
 - `opencode` global: `~/.config/opencode/commands/memflow`
 - `opencode` local: `<project>/.opencode/commands/memflow`
 - `vscode` prompts: `<project>/.github/prompts/memflow.<command>.prompt.md`
+- `cursor` local: `<project>/.cursor/commands/memflow/<command>.md`
 
 ### First use
 
@@ -348,8 +369,8 @@ This section is continuously updated as new environments are validated.
 | ---------- | ------- | ----------- |
 | `OpenCode` | ✅ | Main project platform, with full support for slash commands and SDLC flow. |
 | `VSCode` | ✅ | Supported by installer target (`--target vscode`) generating prompt files in `.github/prompts`. |
+| `Cursor` | ✅ | Supported by installer target (`--target cursor`) generating commands in `.cursor/commands/memflow`. |
 | `Antigravity` | ⏳ | Support pending validation; we still need to test this environment. |
-| `Cursor` | ⏳ | Support pending validation; we still need to test this environment. |
 
 ## Documentation (doc links)
 

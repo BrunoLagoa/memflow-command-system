@@ -144,6 +144,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
   - `model-policy.md` é injetado da mesma forma nos prompts de comando que o listam; não é gerado `memflow.model-policy.prompt.md` separado.
   - Referências a `target-adapter.md` são resolvidas para `target-adapter.vscode.md` nos prompts gerados.
   - Regras de caminho exclusivas do OpenCode não são carregadas para prompts VSCode.
+- **`cursor`**: usa instalação **única por projeto** em `.cursor/commands/memflow` (sem separação global/local).
+  - Durante a instalação, referências a `_shared/*.md` e `model-policy.md` são injetadas no próprio arquivo de comando gerado.
+  - O payload Cursor instalado passa a conter apenas arquivos de comandos executáveis (`*.md`) em `.cursor/commands/memflow` (sem `_shared/` ou `model-policy.md` standalone).
 
 No **`update`**, se você já instalou antes, o instalador usa o manifest (`.memflow-install.json`) para localizar a instalação existente.
 
@@ -208,6 +211,20 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
 ```
 
+#### Cursor — Instalação única por projeto
+
+##### macOS/Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --target cursor --project-dir .
+```
+
+##### PowerShell
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target cursor -ProjectDir .
+```
+
 ### Atualizar para nova versão
 
 Por padrão, o update usa a release tagueada mais recente.
@@ -219,12 +236,13 @@ Se não existir instalação prévia no alvo solicitado:
 Sem `--scope`, o `update` mantém autodiscovery por manifest:
 - em `opencode`, atualiza os escopos detectados (`global` e/ou `local`);
 - em `vscode`, atualiza os arquivos gerados em `<projeto>/.github/prompts`.
+- em `cursor`, atualiza os comandos gerados em `<projeto>/.cursor/commands/memflow`.
 
 #### Comando geral
 
 Use o `install.sh` / `install.ps1` direto do repositório (não depende de `memflowctl` estar no PATH).
 
-Execute no **mesmo diretório** em que você costuma trabalhar. Para `vscode`, informe `--target vscode --project-dir .` (ou `-Target vscode -ProjectDir .` no PowerShell).
+Execute no **mesmo diretório** em que você costuma trabalhar. Para `vscode` e `cursor`, informe `--target <target> --project-dir .` (ou `-Target <target> -ProjectDir .` no PowerShell).
 
 ##### macOS/Linux
 
@@ -245,6 +263,7 @@ O `check` verifica se existe versão mais recente sem alterar a instalação.
 Sem `--scope`, o `check` usa autodiscovery por manifest:
 - em `opencode`, verifica os escopos instalados;
 - em `vscode`, verifica a instalação única do projeto via manifest em `<projeto>/.github/.memflow-install.json`.
+- em `cursor`, verifica a instalação única do projeto via manifest em `<projeto>/.cursor/commands/.memflow-install.json`.
 
 #### Comando geral
 
@@ -269,6 +288,7 @@ Se não existir instalação no alvo informado, o `uninstall` retorna erro expl�
 Sem `--scope`, o `uninstall` também usa descoberta automática por manifest:
 - em `opencode`, remove os escopos detectados;
 - em `vscode`, remove arquivos `memflow.*` gerados em `.github/prompts`.
+- em `cursor`, remove comandos gerados em `.cursor/commands/memflow`.
 
 #### Comando geral
 
@@ -291,6 +311,7 @@ Correspondem aos modos descritos em [Escopo por target](#escopo-por-target):
 - `opencode` global: `~/.config/opencode/commands/memflow`
 - `opencode` local: `<projeto>/.opencode/commands/memflow`
 - `vscode` prompts: `<projeto>/.github/prompts/memflow.<comando>.prompt.md`
+- `cursor` local: `<projeto>/.cursor/commands/memflow/<comando>.md`
 
 ### Primeiro uso
 
@@ -348,8 +369,8 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 | ---------- | ------- | ----------- |
 | `OpenCode` | ✅ | Plataforma principal do projeto, com suporte completo a comandos slash e fluxo SDLC. |
 | `VSCode` | ✅ | Suporte via target do instalador (`--target vscode`) gerando arquivos de prompt em `.github/prompts`. |
+| `Cursor` | ✅ | Suporte via target do instalador (`--target cursor`) gerando comandos em `.cursor/commands/memflow`. |
 | `Antigravity` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
-| `Cursor` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
 
 ## Documentação (links para docs)
 

@@ -4,6 +4,15 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.27] - 2026-04-30
+
+### Alterado
+- `scripts/install.sh`, `scripts/install.ps1`, `scripts/installers/bash/*` e `scripts/installers/powershell/*`: novo target `cursor` adicionado ao instalador com suporte local-only em `.cursor/commands/memflow`, incluindo fluxo de `install`, `update`, `check` e `uninstall`.
+- `scripts/installers/bash/targets/cursor.sh` e `scripts/installers/powershell/targets/cursor.ps1`: geração de comandos Cursor alinhada ao padrão OpenCode, com injeção de `_shared/*.md` e `model-policy.md` diretamente nos arquivos finais.
+- `scripts/manifest.schema.json`: enum de `target` ampliado para aceitar `cursor`.
+- `scripts/tests/test-install-regression.sh` e `scripts/tests/test-install-regression.ps1`: regressão expandida para cobrir cenários `cursor` (ausência de instalação, instalação local, update/check e remoção).
+- `README.md` e `README.pt-BR.md`: documentação atualizada com `cursor` no escopo por target, exemplos de instalação e destinos, além de reordenação da seção de suporte deixando `Antigravity` por último.
+
 ## [1.1.26] - 2026-04-29
 
 ### Alterado
@@ -253,6 +262,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.27]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.26...v1.1.27
 [1.1.26]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.25...v1.1.26
 [1.1.25]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.24...v1.1.25
 [1.1.24]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.23...v1.1.24
