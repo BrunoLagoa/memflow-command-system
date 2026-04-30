@@ -1,5 +1,68 @@
 #!/usr/bin/env bash
 
+strip_cursor_frontmatter() {
+  local target_file="$1"
+  local tmp_file
+  tmp_file="$(mktemp)"
+
+  awk '
+    function ltrim(value) { sub(/^[[:space:]]+/, "", value); return value }
+    function rtrim(value) { sub(/[[:space:]]+$/, "", value); return value }
+    function trim(value) { return rtrim(ltrim(value)) }
+    function unquote(value) {
+      if (value ~ /^".*"$/ || value ~ /^'\''.*'\''$/) {
+        return substr(value, 2, length(value) - 2)
+      }
+      return value
+    }
+    BEGIN {
+      in_frontmatter = 0
+      frontmatter_closed = 0
+      frontmatter_detected = 0
+      description = ""
+      line_index = 0
+    }
+    {
+      line_index++
+      if (line_index == 1 && $0 == "---") {
+        in_frontmatter = 1
+        frontmatter_detected = 1
+        next
+      }
+
+      if (in_frontmatter == 1) {
+        if ($0 == "---") {
+          in_frontmatter = 0
+          frontmatter_closed = 1
+          if (description != "") {
+            print "> " description
+            print ""
+          }
+          next
+        }
+
+        if ($0 ~ /^description:[[:space:]]*/) {
+          raw = $0
+          sub(/^description:[[:space:]]*/, "", raw)
+          raw = trim(raw)
+          raw = unquote(raw)
+          description = raw
+        }
+        next
+      }
+
+      print
+    }
+    END {
+      if (frontmatter_detected == 1 && frontmatter_closed == 0) {
+        # Frontmatter inválido: manter comportamento sem falhar.
+      }
+    }
+  ' "$target_file" > "$tmp_file"
+
+  mv "$tmp_file" "$target_file"
+}
+
 render_cursor_command_with_shared() {
   local src_file="$1"
   local dest_file="$2"
@@ -11,6 +74,8 @@ render_cursor_command_with_shared() {
     "$source_dir" \
     "target-adapter.md" \
     "### Conteúdo injetado: _shared/target-adapter.md"
+
+  strip_cursor_frontmatter "$dest_file"
 }
 
 cursor_install_from_source() {

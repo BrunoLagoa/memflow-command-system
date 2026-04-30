@@ -1,6 +1,52 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+function Remove-CursorFrontmatter {
+  param(
+    [string]$TargetFile
+  )
+
+  $lines = @(Get-Content -Path $TargetFile -Encoding UTF8)
+  if ($lines.Count -eq 0 -or $lines[0] -ne "---") {
+    return
+  }
+
+  $endIdx = -1
+  for ($i = 1; $i -lt $lines.Count; $i++) {
+    if ($lines[$i] -eq "---") {
+      $endIdx = $i
+      break
+    }
+  }
+
+  if ($endIdx -lt 0) {
+    return
+  }
+
+  $description = $null
+  for ($i = 1; $i -lt $endIdx; $i++) {
+    if ($lines[$i] -match '^\s*description:\s*(.+?)\s*$') {
+      $description = $Matches[1].Trim()
+      if (($description.StartsWith('"') -and $description.EndsWith('"')) -or ($description.StartsWith("'") -and $description.EndsWith("'"))) {
+        $description = $description.Substring(1, $description.Length - 2)
+      }
+      break
+    }
+  }
+
+  $newLines = @()
+  if ($description) {
+    $newLines += "> $description"
+    $newLines += ""
+  }
+
+  if ($endIdx + 1 -lt $lines.Count) {
+    $newLines += $lines[($endIdx + 1)..($lines.Count - 1)]
+  }
+
+  Set-Content -Path $TargetFile -Value $newLines -Encoding UTF8
+}
+
 function Render-CursorCommandWithShared {
   param(
     [string]$SourceFile,
@@ -13,6 +59,8 @@ function Render-CursorCommandWithShared {
     -SourceDir $SourceDir `
     -TargetAdapterRelativePath "target-adapter.md" `
     -TargetAdapterInjectedTitle "### Conteúdo injetado: _shared/target-adapter.md"
+
+  Remove-CursorFrontmatter -TargetFile $DestinationFile
 }
 
 function Install-CursorTargetFromSource {

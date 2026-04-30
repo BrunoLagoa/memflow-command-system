@@ -117,6 +117,8 @@ The `MEMFLOW` wizard guides choices for:
 2. Installation platform (`OpenCode` or `VSCode`)
 3. Scope (`local` or `global`)
 
+During interactive execution, the wizard header shows the installer version in use (for example: `MEMFLOW v1.1.28`).
+
 #### Option B - local script execution (macOS/Linux)
 
 ```bash
@@ -147,6 +149,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 - **`cursor`**: uses a **single project installation** in `.cursor/commands/memflow` (no global/local split).
   - During installation, references to `_shared/*.md` and `model-policy.md` are inlined in each generated command file.
   - Installed Cursor payload contains only executable command files (`*.md`) in `.cursor/commands/memflow` (no standalone `_shared/` or `model-policy.md`).
+  - Generated command files strip top-level frontmatter and promote `description` as the first visible line to improve Cursor command list descriptions.
 
 For **`update`**, if MEMFLOW was installed previously, the installer uses the manifest (`.memflow-install.json`) to locate existing installations.
 

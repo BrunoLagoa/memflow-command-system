@@ -4,6 +4,13 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.29] - 2026-04-30
+
+### Alterado
+- `scripts/install.sh`: fallback interno de bootstrap alinhado para exibir título do banner com versão no wizard, mantendo consistência com o fluxo que carrega `lib/common.sh`.
+- `scripts/installers/bash/targets/cursor.sh` e `scripts/installers/powershell/targets/cursor.ps1`: geração de comandos Cursor ajustada para remover frontmatter de topo e promover `description` como primeira linha visível, evitando `---` como descrição na lista de comandos do Cursor.
+- `README.md` e `README.pt-BR.md`: documentação sincronizada com os comportamentos atuais do wizard (versão exibida) e da geração de comandos Cursor sem frontmatter no topo.
+
 ## [1.1.28] - 2026-04-30
 
 ### Alterado
@@ -269,6 +276,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.29]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.28...v1.1.29
 [1.1.28]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.27...v1.1.28
 [1.1.27]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.26...v1.1.27
 [1.1.26]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.25...v1.1.26
