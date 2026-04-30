@@ -3,6 +3,7 @@ $ErrorActionPreference = "Stop"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $InstallScript = Join-Path $ScriptDir "..\install.ps1"
+$PowerShellHost = if (Get-Command pwsh -ErrorAction SilentlyContinue) { "pwsh" } else { "powershell" }
 
 $PassCount = 0
 $FailCount = 0
@@ -15,7 +16,7 @@ function Invoke-ExpectExit {
   )
 
   $pwshArgs = @("-ExecutionPolicy", "Bypass", "-File", $InstallScript) + $CommandArgs
-  & powershell @pwshArgs *> $null
+  & $PowerShellHost @pwshArgs *> $null
   $exitCode = if ($LASTEXITCODE) { [int]$LASTEXITCODE } else { 0 }
 
   if ($exitCode -eq $ExpectedExit) {
@@ -34,7 +35,7 @@ function Invoke-ExpectSuccess {
   )
 
   $pwshArgs = @("-ExecutionPolicy", "Bypass", "-File", $InstallScript) + $CommandArgs
-  & powershell @pwshArgs *> $null
+  & $PowerShellHost @pwshArgs *> $null
   $ok = (-not $LASTEXITCODE -or $LASTEXITCODE -eq 0)
 
   if ($ok) {
@@ -42,6 +43,7 @@ function Invoke-ExpectSuccess {
     $script:PassCount += 1
   } else {
     Write-Host "[FAIL] $TestName (comando deveria passar)"
+    & $PowerShellHost @pwshArgs
     $script:FailCount += 1
   }
 }
