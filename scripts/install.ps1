@@ -66,35 +66,33 @@ if (-not (Get-Variable -Name MemflowSchemaVersion -Scope Script -ErrorAction Sil
   $script:MemflowSchemaVersion = "1"
 }
 
-function Import-InstallerModule {
+$script:MemflowDownloadedModules = @()
+
+function Resolve-InstallerModulePath {
   param(
     [string]$LocalRelativePath,
     [string]$RemoteRelativePath
   )
   $modulePath = Join-Path $ScriptDir $LocalRelativePath
   if (Test-Path $modulePath) {
-    . $modulePath
-    return
+    return $modulePath
   }
 
   $moduleUrl = "https://raw.githubusercontent.com/$Repo/$($script:MemflowRef)/$RemoteRelativePath"
   $tmpModule = Join-Path ([System.IO.Path]::GetTempPath()) ("memflow-module-" + [Guid]::NewGuid().ToString("N") + ".ps1")
   try {
     Invoke-WebRequest -Uri $moduleUrl -OutFile $tmpModule
-    . $tmpModule
+    $script:MemflowDownloadedModules += $tmpModule
+    return $tmpModule
   } catch {
     Stop-WithError "Não foi possível carregar módulo remoto: $moduleUrl"
-  } finally {
-    if (Test-Path $tmpModule) {
-      Remove-Item -Path $tmpModule -Force
-    }
   }
 }
 
-Import-InstallerModule -LocalRelativePath "installers/powershell/core.ps1" -RemoteRelativePath "scripts/installers/powershell/core.ps1"
-Import-InstallerModule -LocalRelativePath "installers/powershell/targets/opencode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/opencode.ps1"
-Import-InstallerModule -LocalRelativePath "installers/powershell/targets/vscode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/vscode.ps1"
-Import-InstallerModule -LocalRelativePath "installers/powershell/actions.ps1" -RemoteRelativePath "scripts/installers/powershell/actions.ps1"
+. (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/core.ps1" -RemoteRelativePath "scripts/installers/powershell/core.ps1")
+. (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/opencode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/opencode.ps1")
+. (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/vscode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/vscode.ps1")
+. (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/actions.ps1" -RemoteRelativePath "scripts/installers/powershell/actions.ps1")
 
 $resolved = Resolve-WizardValues
 $resolvedOs = [string]$resolved.Os
