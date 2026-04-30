@@ -139,6 +139,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 - **`opencode`**: mantém escopos `global` e `local`.
 - **`vscode`**: usa instalação **única por projeto** em `.github/prompts` (sem separação global/local).
   - Durante a instalação, referências a `.../_shared/...` são injetadas no próprio prompt gerado.
+  - `model-policy.md` é injetado da mesma forma nos prompts de comando que o listam; não é gerado `memflow.model-policy.prompt.md` separado.
   - Referências a `target-adapter.md` são resolvidas para `target-adapter.vscode.md` nos prompts gerados.
   - Regras de path exclusivas do OpenCode não são carregadas para prompts VSCode.
 

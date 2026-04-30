@@ -13,17 +13,22 @@ function Render-VscodePromptWithShared {
   $sharedPreconditions = Join-Path $sharedDir "base-preconditions.md"
   $sharedDegraded = Join-Path $sharedDir "base-degraded-mode.md"
   $sharedTargetAdapterVscode = Join-Path $sharedDir "target-adapter.vscode.md"
+  $modelPolicyFile = Join-Path $SourceDir "model-policy.md"
 
   foreach ($required in @($sharedOutput, $sharedPreconditions, $sharedDegraded, $sharedTargetAdapterVscode)) {
     if (-not (Test-Path $required)) {
       Stop-WithError "Arquivo compartilhado não encontrado: $required"
     }
   }
+  if (-not (Test-Path $modelPolicyFile)) {
+    Stop-WithError "Arquivo não encontrado: $modelPolicyFile"
+  }
 
   $sharedOutputLines = Get-Content -Path $sharedOutput
   $sharedPreconditionsLines = Get-Content -Path $sharedPreconditions
   $sharedDegradedLines = Get-Content -Path $sharedDegraded
   $sharedTargetAdapterVscodeLines = Get-Content -Path $sharedTargetAdapterVscode
+  $modelPolicyLines = Get-Content -Path $modelPolicyFile
   $result = New-Object System.Collections.Generic.List[string]
 
   foreach ($line in (Get-Content -Path $SourceFile)) {
@@ -45,6 +50,11 @@ function Render-VscodePromptWithShared {
     if ($line -match "^\s*-\s+`?_shared/target-adapter\.md`?\s*$") {
       $result.Add("### Conteúdo injetado: _shared/target-adapter.vscode.md")
       foreach ($sharedLine in $sharedTargetAdapterVscodeLines) { $result.Add($sharedLine) }
+      continue
+    }
+    if ($line -match "^\s*-\s+`?model-policy\.md`?\s*$") {
+      $result.Add("### Conteúdo injetado: model-policy.md")
+      foreach ($sharedLine in $modelPolicyLines) { $result.Add($sharedLine) }
       continue
     }
     $result.Add($line)
@@ -92,6 +102,9 @@ function Install-VscodeTargetFromSource {
   }
   foreach ($srcFile in $sourceFiles) {
     $stem = [System.IO.Path]::GetFileNameWithoutExtension($srcFile.Name)
+    if ($stem -eq "model-policy") {
+      continue
+    }
     $promptFile = Join-Path $promptsDir ("memflow.$stem.prompt.md")
     Render-VscodePromptWithShared -SourceFile $srcFile.FullName -DestinationFile $promptFile -SourceDir $SourceDir
   }

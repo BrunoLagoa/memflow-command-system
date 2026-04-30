@@ -19,6 +19,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/target-adapter.md`
+- `model-policy.md`
 
 ---
 

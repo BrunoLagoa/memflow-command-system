@@ -7,9 +7,23 @@ metadata:
   version: "4.1.0"
 ---
 
+## Referência normativa comum
+
+Aplicar obrigatoriamente:
+
+- `_shared/base-output.md`
+- `_shared/base-preconditions.md`
+- `_shared/base-degraded-mode.md`
+- `_shared/target-adapter.md`
+- `model-policy.md`
+
+---
+
 ## Referências normativas (LAZY LOAD)
 
-Referências normativas resolvidas pelo target ativo (via `_shared/target-adapter.md`).
+Em execução operacional: não carregar o texto completo dessas bases a cada rodada — assumir regras como conhecidas e expandir só quando necessário. Em prompts VS Code gerados pelo instalador Memflow, o conteúdo completo das bases `_shared` e de `model-policy.md` já vem embutido no arquivo do prompt.
+
+Referências resolvidas pelo target ativo (via `_shared/target-adapter.md`).
 
 ### Regras:
 
@@ -17,7 +31,7 @@ Referências normativas resolvidas pelo target ativo (via `_shared/target-adapte
 - Assumir como conhecidos
 - Carregar apenas se necessário
 
-Inclui:
+Inclui (mesmo escopo da referência normativa comum):
 
 - base-output
 - base-preconditions

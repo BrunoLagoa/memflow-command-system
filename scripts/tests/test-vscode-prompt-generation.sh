@@ -41,4 +41,24 @@ if [[ "$injected_shared" -ne 1 ]]; then
   exit 1
 fi
 
+if [[ -f "${project_dir}/.github/prompts/memflow.model-policy.prompt.md" ]]; then
+  echo "[FAIL] geração vscode não deve criar memflow.model-policy.prompt.md (conteúdo vem injetado nos comandos)"
+  exit 1
+fi
+
+context_prompt="${project_dir}/.github/prompts/memflow.context.prompt.md"
+if [[ ! -f "$context_prompt" ]]; then
+  echo "[FAIL] prompt memflow.context.prompt.md ausente"
+  exit 1
+fi
+ctx="$(<"$context_prompt")"
+if [[ "$ctx" != *"### Conteúdo injetado: model-policy.md"* ]]; then
+  echo "[FAIL] memflow.context.prompt.md não contém injeção de model-policy.md"
+  exit 1
+fi
+if [[ "$ctx" != *"# Model Policy — Orquestração de Modelos"* ]]; then
+  echo "[FAIL] memflow.context.prompt.md não contém corpo esperado de model-policy.md"
+  exit 1
+fi
+
 echo "[PASS] geração vscode funciona sem erro e com injeção correta"

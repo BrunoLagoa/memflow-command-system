@@ -9,17 +9,20 @@ render_vscode_prompt_with_shared() {
   local shared_preconditions="${shared_dir}/base-preconditions.md"
   local shared_degraded="${shared_dir}/base-degraded-mode.md"
   local shared_target_adapter_vscode="${shared_dir}/target-adapter.vscode.md"
+  local model_policy_file="${source_dir}/model-policy.md"
 
   [[ -f "$shared_output" ]] || die "Arquivo compartilhado não encontrado: ${shared_output}"
   [[ -f "$shared_preconditions" ]] || die "Arquivo compartilhado não encontrado: ${shared_preconditions}"
   [[ -f "$shared_degraded" ]] || die "Arquivo compartilhado não encontrado: ${shared_degraded}"
   [[ -f "$shared_target_adapter_vscode" ]] || die "Arquivo compartilhado não encontrado: ${shared_target_adapter_vscode}"
+  [[ -f "$model_policy_file" ]] || die "Arquivo não encontrado: ${model_policy_file}"
 
   awk \
     -v shared_output_file="$shared_output" \
     -v shared_preconditions_file="$shared_preconditions" \
     -v shared_degraded_file="$shared_degraded" \
-    -v shared_target_adapter_vscode_file="$shared_target_adapter_vscode" '
+    -v shared_target_adapter_vscode_file="$shared_target_adapter_vscode" \
+    -v model_policy_file="$model_policy_file" '
       function inject_file(path, title,   line) {
         print title
         while ((getline line < path) > 0) {
@@ -42,6 +45,10 @@ render_vscode_prompt_with_shared() {
         }
         if ($0 ~ /^[[:space:]]*-[[:space:]]+`?_shared\/target-adapter\.md`?[[:space:]]*$/) {
           inject_file(shared_target_adapter_vscode_file, "### Conteúdo injetado: _shared/target-adapter.vscode.md")
+          next
+        }
+        if ($0 ~ /^[[:space:]]*-[[:space:]]+`?model-policy\.md`?[[:space:]]*$/) {
+          inject_file(model_policy_file, "### Conteúdo injetado: model-policy.md")
           next
         }
         print
@@ -77,6 +84,9 @@ vscode_install_from_source() {
   shopt -s nullglob
   for src_file in "${source_dir}"/*.md; do
     stem="$(basename "$src_file" .md)"
+    if [[ "$stem" == "model-policy" ]]; then
+      continue
+    fi
     prompt_file="${prompts_dir}/memflow.${stem}.prompt.md"
     render_vscode_prompt_with_shared "$src_file" "$prompt_file" "$source_dir"
     generated_count=$((generated_count + 1))

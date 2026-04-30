@@ -7,6 +7,10 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 ## [1.1.25] - 2026-04-20
 
 ### Alterado
+- `scripts/installers/bash/targets/vscode.sh`, `scripts/installers/powershell/targets/vscode.ps1`: geração de prompts VS Code passa a injetar `model-policy.md` no mesmo mecanismo das bases `_shared`; o arquivo fonte `model-policy.md` deixa de gerar `memflow.model-policy.prompt.md` separado.
+- `src/*.md` (comandos com referência normativa comum), `src/memory-init.md` e `src/_shared/target-adapter.vscode.md`: linha injetável `model-policy.md` e documentação alinhada ao comportamento do instalador VS Code.
+- `scripts/tests/test-vscode-prompt-generation.sh`: valida ausência de `memflow.model-policy.prompt.md` e presença do bloco injetado em `memflow.context.prompt.md`.
+- `README.md` e `README.pt-BR.md`: escopo `vscode` documentado com injeção de `model-policy.md`.
 - `src/workflow.md`, `src/execute.md`, `src/review.md` e `src/review-enforce-rules.md`: fluxo unificado para exigir decisão explícita do `/workflow` antes de `/execute`, removendo fallback local de estratégia e reforçando validação anti-bypass.
 - `src/context.md`, `src/memory-init.md` e `src/_shared/base-preconditions.md`: contrato de memória harmonizado com `quality-metrics.md`, ordem canônica de inicialização (`/memory-init` -> `/context` -> comandos operacionais) e continuidade de bootstrap via `/context`.
 - `src/_shared/base-output.md`, `src/_shared/base-degraded-mode.md`, `src/_shared/target-adapter.md` e `src/_shared/target-adapter.vscode.md`: precedência refinada com invariantes não sobrescrevíveis para reduzir ambiguidade entre bases compartilhadas e comandos específicos.

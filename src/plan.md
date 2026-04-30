@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/target-adapter.md`
+- `model-policy.md`
 - Resolver essas referências conforme `_shared/target-adapter.md` (sem fallback fora do target ativo).
 
 ---
