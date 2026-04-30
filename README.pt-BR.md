@@ -41,9 +41,9 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 
 ## Principais diferenciais
 
-- Workflow stateful com reaproveitamento de decisões por score (`0-100`)
+- Fluxo com estado e reaproveitamento de decisões por score (`0-100`)
 - Gate final estrito com saída binária (`OK` ou `BLOQUEADO`)
-- Política de modelos orientada a custo/qualidade com modelo principal e fallbacks no mesmo nível
+- Política de modelos orientada a custo/qualidade com modelo principal e alternativas de fallback no mesmo nível
 - Modo degradado funcional quando `.agents` não existe
 - Persistência inteligente de memória com versionamento de decisões (`(update)`)
 - Estrutura modular por comando, com regras compartilhadas em `_shared`
@@ -143,11 +143,11 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
   - Durante a instalação, referências a `.../_shared/...` são injetadas no próprio prompt gerado.
   - `model-policy.md` é injetado da mesma forma nos prompts de comando que o listam; não é gerado `memflow.model-policy.prompt.md` separado.
   - Referências a `target-adapter.md` são resolvidas para `target-adapter.vscode.md` nos prompts gerados.
-  - Regras de path exclusivas do OpenCode não são carregadas para prompts VSCode.
+  - Regras de caminho exclusivas do OpenCode não são carregadas para prompts VSCode.
 
 No **`update`**, se você já instalou antes, o instalador usa o manifest (`.memflow-install.json`) para localizar a instalação existente.
 
-No runtime dos comandos em **`opencode`**, os arquivos normativos são resolvidos primeiro pela raiz do comando ativo (com detecção automática de escopo `global` vs `local`) e só depois por descoberta dos caminhos oficiais (`global -> local`) quando necessário.
+Na execução dos comandos em **`opencode`**, os arquivos normativos são resolvidos primeiro pela raiz do comando ativo (com detecção automática de escopo `global` vs `local`) e só depois por descoberta dos caminhos oficiais (`global -> local`) quando necessário.
 
 ### Bootstrap remoto vs versão instalada
 
@@ -192,10 +192,6 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target opencode
-```
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
 ```
 
 #### VSCode — Instalação única por projeto
@@ -351,7 +347,7 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 | Ferramenta | Suporte | Observações |
 | ---------- | ------- | ----------- |
 | `OpenCode` | ✅ | Plataforma principal do projeto, com suporte completo a comandos slash e fluxo SDLC. |
-| `VSCode` | ✅ | Suporte via target do instalador (`--target vscode`) gerando prompt files em `.github/prompts`. |
+| `VSCode` | ✅ | Suporte via target do instalador (`--target vscode`) gerando arquivos de prompt em `.github/prompts`. |
 | `Antigravity` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
 | `Cursor` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
 
