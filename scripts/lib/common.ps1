@@ -26,6 +26,9 @@ function Stop-WithError {
 }
 
 function Show-MemflowBanner {
+  param(
+    [string]$Title = "MEMFLOW"
+  )
   @"
  __  __ _____ __  __ _____ _     _____        __
 |  \/  | ____|  \/  |  ___| |   / _ \ \      / /
@@ -33,6 +36,8 @@ function Show-MemflowBanner {
 | |  | | |___| |  | |  _| | |__| |_| |\ V  V /
 |_|  |_|_____|_|  |_|_|   |_____\___/  \_/\_/
 "@
+  Write-Host ""
+  Write-Host $Title
 }
 
 function Get-IsoTimestamp {

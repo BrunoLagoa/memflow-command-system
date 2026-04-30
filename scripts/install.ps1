@@ -34,6 +34,9 @@ if (Test-Path $CommonScript) {
   function Write-ErrorLog { param([string]$Message) Write-Host "[ERROR] $Message" -ForegroundColor Red }
   function Stop-WithError { param([string]$Message) Write-ErrorLog $Message; exit 1 }
   function Show-MemflowBanner {
+    param(
+      [string]$Title = "MEMFLOW"
+    )
 @"
  __  __ _____ __  __ _____ _     _____        __
 |  \/  | ____|  \/  |  ___| |   / _ \ \      / /
@@ -41,6 +44,8 @@ if (Test-Path $CommonScript) {
 | |  | | |___| |  | |  _| | |__| |_| |\ V  V /
 |_|  |_|_____|_|  |_|_|   |_____\___/  \_/\_/
 "@
+    Write-Host ""
+    Write-Host $Title
   }
   function Get-IsoTimestamp { return (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") }
   function Select-Option {

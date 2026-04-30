@@ -4,6 +4,13 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.28] - 2026-04-30
+
+### Alterado
+- `scripts/lib/common.sh` e `scripts/lib/common.ps1`: banner do wizard atualizado para aceitar título customizado e exibir a versão do instalador no topo.
+- `scripts/installers/bash/core.sh` e `scripts/installers/powershell/core.ps1`: detecção de versão para o wizard adicionada com fallback seguro (`MEMFLOW_REF` tag -> `CHANGELOG.md` local -> latest release -> `MEMFLOW`) e exibição em formato `MEMFLOW vX.Y.Z`.
+- `scripts/install.ps1`: fallback interno de `Show-MemflowBanner` alinhado ao novo formato com título customizado.
+
 ## [1.1.27] - 2026-04-30
 
 ### Alterado
@@ -262,6 +269,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.28]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.27...v1.1.28
 [1.1.27]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.26...v1.1.27
 [1.1.26]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.25...v1.1.26
 [1.1.25]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.24...v1.1.25

@@ -360,6 +360,39 @@ function Write-Manifest {
 }
 
 
+function Get-InstallerBannerTitle {
+  $configuredRef = $script:MemflowRef
+  if ($configuredRef -and $configuredRef -match '^v\d+\.\d+\.\d+') {
+    return "MEMFLOW $configuredRef"
+  }
+
+  if ($ScriptDir) {
+    $repoRoot = Split-Path -Parent $ScriptDir
+    $changelogPath = Join-Path $repoRoot "CHANGELOG.md"
+    if (Test-Path $changelogPath) {
+      try {
+        $match = Select-String -Path $changelogPath -Pattern '^## \[(\d+\.\d+\.\d+)\]' | Select-Object -First 1
+        if ($match -and $match.Matches.Count -gt 0) {
+          $version = $match.Matches[0].Groups[1].Value
+          if ($version) {
+            return "MEMFLOW v$version"
+          }
+        }
+      } catch {
+        # fallback below
+      }
+    }
+  }
+
+  $latest = Try-GetLatestReleaseTag -RepoName $Repo
+  if ($latest) {
+    return "MEMFLOW $latest"
+  }
+
+  return "MEMFLOW"
+}
+
+
 function Resolve-WizardValues {
   $resolvedOs = $Os
   $resolvedScope = $Scope
@@ -374,7 +407,8 @@ function Resolve-WizardValues {
     }
     if (-not $resolvedTarget) { $resolvedTarget = "opencode" }
   } elseif (-not $NonInteractive) {
-    Show-MemflowBanner
+    $bannerTitle = Get-InstallerBannerTitle
+    Show-MemflowBanner -Title $bannerTitle
     Write-Host ""
     Write-Host "MEMFLOW - sistema open source de engenharia com IA para SDLC (Software Development Life Cycle) completo e automação de comandos em múltiplas plataformas."
     Write-Host "Um conjunto de ferramentas de código aberto para focar em cenários de produto e resultados previsíveis, em vez de desenvolver cada parte do zero com base em intuição."

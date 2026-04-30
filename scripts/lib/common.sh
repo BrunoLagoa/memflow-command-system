@@ -43,6 +43,7 @@ die() {
 }
 
 print_memflow_banner() {
+  local banner_title="${1:-MEMFLOW}"
   cat <<'EOF'
  __  __ _____ __  __ _____ _     _____        __
 |  \/  | ____|  \/  |  ___| |   / _ \ \      / /
@@ -50,6 +51,7 @@ print_memflow_banner() {
 | |  | | |___| |  | |  _| | |__| |_| |\ V  V /
 |_|  |_|_____|_|  |_|_|   |_____\___/  \_/\_/
 EOF
+  printf "\n%s\n" "$banner_title"
 }
 
 read_tty() {

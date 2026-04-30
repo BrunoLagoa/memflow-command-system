@@ -159,11 +159,43 @@ is_supported_target() {
 }
 
 
+resolve_installer_banner_title() {
+  local configured_ref="${MEMFLOW_REF:-}"
+  if [[ "$configured_ref" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+    printf "MEMFLOW %s" "$configured_ref"
+    return 0
+  fi
+
+  if [[ -n "${SCRIPT_DIR:-}" ]]; then
+    local changelog_file="${SCRIPT_DIR}/../CHANGELOG.md"
+    if [[ -f "$changelog_file" ]]; then
+      local local_version=""
+      local_version="$(sed -n 's/^## \[\([0-9][0-9.]*\)\].*/v\1/p' "$changelog_file" | head -n 1)"
+      if [[ -n "$local_version" ]]; then
+        printf "MEMFLOW %s" "$local_version"
+        return 0
+      fi
+    fi
+  fi
+
+  local latest_release=""
+  latest_release="$(fetch_latest_release_tag_safe "$REPO" || true)"
+  if [[ -n "$latest_release" ]]; then
+    printf "MEMFLOW %s" "$latest_release"
+    return 0
+  fi
+
+  printf "MEMFLOW"
+}
+
+
 wizard_select() {
   local detected_os
+  local banner_title
   detected_os="$(detect_os)"
+  banner_title="$(resolve_installer_banner_title)"
 
-  print_memflow_banner
+  print_memflow_banner "$banner_title"
   printf "\nMEMFLOW - Sistema open source de engenharia com IA para SDLC (Software Development Life Cycle) completo e automação de comandos em múltiplas plataformas.\nUm conjunto de ferramentas de código aberto para focar em cenários de produto e resultados previsíveis, em vez de desenvolver cada parte do zero com base em intuição.\n\n"
 
   if [[ -z "$SELECTED_OS" ]]; then
