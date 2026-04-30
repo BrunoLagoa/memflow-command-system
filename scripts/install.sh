@@ -19,6 +19,7 @@ else
   log_error() { printf "[ERROR] %s\n" "$*" 1>&2; }
   die() { log_error "$*"; exit 1; }
   print_memflow_banner() {
+    local banner_title="${1:-MEMFLOW}"
     cat <<'EOF'
  __  __ _____ __  __ _____ _     _____        __
 |  \/  | ____|  \/  |  ___| |   / _ \ \      / /
@@ -26,6 +27,7 @@ else
 | |  | | |___| |  | |  _| | |__| |_| |\ V  V /
 |_|  |_|_____|_|  |_|_|   |_____\___/  \_/\_/
 EOF
+    printf "\n%s\n" "$banner_title"
   }
   read_tty() {
     local prompt="$1"
