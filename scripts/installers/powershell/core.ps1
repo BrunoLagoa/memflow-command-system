@@ -305,6 +305,26 @@ function Resolve-SourceDir {
 }
 
 
+function Resolve-DefaultOsName {
+  if (Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) {
+    if ($IsWindows) { return "windows" }
+    if ($IsMacOS) { return "macos" }
+    return "linux"
+  }
+
+  if ($env:OS -eq "Windows_NT") {
+    return "windows"
+  }
+
+  $platform = [System.Environment]::OSVersion.Platform
+  if ($platform -eq [System.PlatformID]::MacOSX) {
+    return "macos"
+  }
+
+  return "linux"
+}
+
+
 function Write-Manifest {
   param(
     [string]$ManifestPath,
@@ -341,7 +361,7 @@ function Resolve-WizardValues {
   $resolvedTarget = $Target
 
   if ($Action -eq "check") {
-    if (-not $resolvedOs) { $resolvedOs = if ($IsWindows) { "windows" } elseif ($IsMacOS) { "macos" } else { "linux" } }
+    if (-not $resolvedOs) { $resolvedOs = Resolve-DefaultOsName }
     if (-not $script:MemflowScopeProvided) {
       $resolvedScope = $null
     } elseif (-not $resolvedScope) {
@@ -374,7 +394,7 @@ function Resolve-WizardValues {
       }
     }
   } else {
-    if (-not $resolvedOs) { $resolvedOs = if ($IsWindows) { "windows" } elseif ($IsMacOS) { "macos" } else { "linux" } }
+    if (-not $resolvedOs) { $resolvedOs = Resolve-DefaultOsName }
     if (-not $resolvedScope) {
       if (($Action -eq "update" -or $Action -eq "uninstall") -and -not $script:MemflowScopeProvided) {
         $resolvedScope = $null
