@@ -41,6 +41,52 @@ run_expect_success() {
   fi
 }
 
+assert_opencode_install_is_bundled() {
+  local install_dir="$1"
+  local label="$2"
+  local command_file="${install_dir}/context.md"
+  local command_content=""
+
+  if [[ -d "${install_dir}/_shared" ]]; then
+    printf "[FAIL] %s manteve diretório _shared no destino\n" "$label"
+    fail_count=$((fail_count + 1))
+  else
+    printf "[PASS] %s não mantém diretório _shared no destino\n" "$label"
+    pass_count=$((pass_count + 1))
+  fi
+
+  if [[ -f "${install_dir}/model-policy.md" ]]; then
+    printf "[FAIL] %s manteve model-policy.md como arquivo separado\n" "$label"
+    fail_count=$((fail_count + 1))
+  else
+    printf "[PASS] %s não mantém model-policy.md separado\n" "$label"
+    pass_count=$((pass_count + 1))
+  fi
+
+  if [[ ! -f "$command_file" ]]; then
+    printf "[FAIL] %s não gerou context.md no destino\n" "$label"
+    fail_count=$((fail_count + 1))
+    return
+  fi
+
+  command_content="$(<"$command_file")"
+  if [[ "$command_content" == *"Conteúdo injetado: _shared/base-output.md"* ]]; then
+    printf "[PASS] %s injeta base-output em context.md\n" "$label"
+    pass_count=$((pass_count + 1))
+  else
+    printf "[FAIL] %s não injeta base-output em context.md\n" "$label"
+    fail_count=$((fail_count + 1))
+  fi
+
+  if [[ "$command_content" == *"Conteúdo injetado: model-policy.md"* ]]; then
+    printf "[PASS] %s injeta model-policy em context.md\n" "$label"
+    pass_count=$((pass_count + 1))
+  else
+    printf "[FAIL] %s não injeta model-policy em context.md\n" "$label"
+    fail_count=$((fail_count + 1))
+  fi
+}
+
 tmp_root="$(mktemp -d "${SCRIPT_DIR}/.tmp-install-regression.XXXXXX")"
 STDOUT_FILE="${tmp_root}/stdout.log"
 STDERR_FILE="${tmp_root}/stderr.log"
@@ -92,6 +138,8 @@ run_expect_success \
   "install local inicial deve funcionar" \
   env HOME="$home_global" bash "$INSTALL_SCRIPT" install --scope local --project-dir "$project_local" --non-interactive --version local
 
+assert_opencode_install_is_bundled "${project_local}/.opencode/commands/memflow" "install local"
+
 run_expect_success \
   "update local com instalação existente deve funcionar" \
   env HOME="$home_global" bash "$INSTALL_SCRIPT" update --scope local --project-dir "$project_local" --non-interactive --version local
@@ -99,6 +147,8 @@ run_expect_success \
 run_expect_success \
   "install global inicial deve funcionar" \
   env HOME="$home_global" bash "$INSTALL_SCRIPT" install --scope global --non-interactive --version local
+
+assert_opencode_install_is_bundled "${home_global}/.config/opencode/commands/memflow" "install global"
 
 run_expect_success \
   "update sem escopo deve funcionar quando global e local existem" \

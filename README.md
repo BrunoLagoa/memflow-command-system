@@ -137,6 +137,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 #### Scope by target
 
 - **`opencode`**: keeps both `global` and `local` scopes.
+  - During installation, references to `_shared/*.md` and `model-policy.md` are inlined in each generated command file.
+  - Installed OpenCode payload contains only executable command files (`*.md`) in `commands/memflow` (no standalone `_shared/` or `model-policy.md`).
 - **`vscode`**: uses a **single project installation** in `.github/prompts` (no global/local split).
   - During installation, references to `.../_shared/...` are inlined in each generated prompt.
   - `model-policy.md` is inlined the same way into each command prompt that lists it; no separate `memflow.model-policy.prompt.md` is generated.

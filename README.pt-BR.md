@@ -137,6 +137,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
 #### Escopo por target
 
 - **`opencode`**: mantém escopos `global` e `local`.
+  - Durante a instalação, referências a `_shared/*.md` e `model-policy.md` são injetadas no próprio arquivo de comando gerado.
+  - O payload OpenCode instalado passa a conter apenas arquivos de comandos executáveis (`*.md`) em `commands/memflow` (sem `_shared/` ou `model-policy.md` standalone).
 - **`vscode`**: usa instalação **única por projeto** em `.github/prompts` (sem separação global/local).
   - Durante a instalação, referências a `.../_shared/...` são injetadas no próprio prompt gerado.
   - `model-policy.md` é injetado da mesma forma nos prompts de comando que o listam; não é gerado `memflow.model-policy.prompt.md` separado.

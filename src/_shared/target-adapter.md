@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Adaptador de target (OpenCode)
@@ -16,6 +16,8 @@ Aplicar este adaptador quando o target ativo for `opencode`.
 - Para arquivos normativos do sistema, usar os caminhos oficiais por escopo:
   - `~/.config/opencode/commands/memflow/...` (global)
   - `.opencode/commands/memflow/...` (local)
+- Em instalações OpenCode geradas pelo instalador Memflow, comandos executáveis podem conter blocos normativos injetados (`_shared/*.md` e `model-policy.md`) no próprio arquivo.
+- Nesses artefatos gerados, `_shared/` e `model-policy.md` podem não existir como arquivos separados no destino.
 - Nunca resolver:
   - `model-policy.md`
   - `_shared/*.md`
@@ -44,5 +46,5 @@ Aplicar este adaptador quando o target ativo for `opencode`.
 - Comandos podem estender apenas regras operacionais de leitura.
 - Invariantes não sobrescrevíveis:
   - detecção automática de escopo quando houver comando ativo
-  - resolução normativa relativa à raiz detectada
+  - resolução normativa relativa à raiz detectada ou por bloco injetado no comando instalado
   - ausência em caminho oficial sem fallback fora do adaptador

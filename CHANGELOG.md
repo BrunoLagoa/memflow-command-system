@@ -4,13 +4,18 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.26] - 2026-04-29
+
+### Alterado
+- `scripts/installers/bash/targets/vscode.sh`, `scripts/installers/powershell/targets/vscode.ps1`, `scripts/tests/test-vscode-prompt-generation.sh`, `src/_shared/target-adapter.vscode.md` e comandos em `src/*.md`: geração VSCode atualizada para injetar `model-policy.md` no mesmo mecanismo das bases `_shared`, removendo a geração do arquivo dedicado `memflow.model-policy.prompt.md`.
+- `scripts/installers/bash/targets/opencode.sh` e `scripts/installers/powershell/targets/opencode.ps1`: instalação OpenCode (`global` e `local`) passa a gerar apenas comandos executáveis com injeção de `_shared/*.md` e `model-policy.md`, sem copiar arquivos de referência standalone para o destino.
+- `scripts/tests/test-install-regression.sh`: cobertura ampliada para validar no OpenCode a ausência de `_shared/` e `model-policy.md` no destino instalado e a presença dos blocos injetados nos comandos.
+- `src/_shared/target-adapter.md`: contrato normativo atualizado para aceitar bases injetadas no próprio comando nos artefatos OpenCode gerados pelo instalador.
+- `README.md` e `README.pt-BR.md`: documentação de `vscode` e `opencode` atualizada para refletir distribuição de comandos finais com conteúdo normativo injetado.
+
 ## [1.1.25] - 2026-04-20
 
 ### Alterado
-- `scripts/installers/bash/targets/vscode.sh`, `scripts/installers/powershell/targets/vscode.ps1`: geração de prompts VS Code passa a injetar `model-policy.md` no mesmo mecanismo das bases `_shared`; o arquivo fonte `model-policy.md` deixa de gerar `memflow.model-policy.prompt.md` separado.
-- `src/*.md` (comandos com referência normativa comum), `src/memory-init.md` e `src/_shared/target-adapter.vscode.md`: linha injetável `model-policy.md` e documentação alinhada ao comportamento do instalador VS Code.
-- `scripts/tests/test-vscode-prompt-generation.sh`: valida ausência de `memflow.model-policy.prompt.md` e presença do bloco injetado em `memflow.context.prompt.md`.
-- `README.md` e `README.pt-BR.md`: escopo `vscode` documentado com injeção de `model-policy.md`.
 - `src/workflow.md`, `src/execute.md`, `src/review.md` e `src/review-enforce-rules.md`: fluxo unificado para exigir decisão explícita do `/workflow` antes de `/execute`, removendo fallback local de estratégia e reforçando validação anti-bypass.
 - `src/context.md`, `src/memory-init.md` e `src/_shared/base-preconditions.md`: contrato de memória harmonizado com `quality-metrics.md`, ordem canônica de inicialização (`/memory-init` -> `/context` -> comandos operacionais) e continuidade de bootstrap via `/context`.
 - `src/_shared/base-output.md`, `src/_shared/base-degraded-mode.md`, `src/_shared/target-adapter.md` e `src/_shared/target-adapter.vscode.md`: precedência refinada com invariantes não sobrescrevíveis para reduzir ambiguidade entre bases compartilhadas e comandos específicos.
@@ -245,6 +250,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.26]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.25...v1.1.26
 [1.1.25]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.24...v1.1.25
 [1.1.24]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.23...v1.1.24
 [1.1.23]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.22...v1.1.23
