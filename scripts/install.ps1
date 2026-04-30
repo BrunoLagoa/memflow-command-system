@@ -90,6 +90,7 @@ function Resolve-InstallerModulePath {
 }
 
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/core.ps1" -RemoteRelativePath "scripts/installers/powershell/core.ps1")
+. (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/shared.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/shared.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/opencode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/opencode.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/vscode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/vscode.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/actions.ps1" -RemoteRelativePath "scripts/installers/powershell/actions.ps1")

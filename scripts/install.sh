@@ -140,6 +140,7 @@ load_install_module() {
 }
 
 load_install_module "installers/bash/core.sh" "scripts/installers/bash/core.sh"
+load_install_module "installers/bash/targets/shared.sh" "scripts/installers/bash/targets/shared.sh"
 load_install_module "installers/bash/targets/opencode.sh" "scripts/installers/bash/targets/opencode.sh"
 load_install_module "installers/bash/targets/vscode.sh" "scripts/installers/bash/targets/vscode.sh"
 load_install_module "installers/bash/actions.sh" "scripts/installers/bash/actions.sh"
