@@ -91,6 +91,13 @@ Para comandos que geram documentação (`/prd`, `/spec`, `/plan`), o fluxo agora
 - `Sim, salvar o documento`
 - `Não, apenas mostrar no chat`
 
+Quando o usuário escolher salvar o `/plan`, o markdown gerado deve ser tratado como um **plano vivo**:
+
+- dimensionamento dinâmico de tarefas por complexidade (`3-5`, `6-10`, `10+` com subtarefas em alta complexidade)
+- rastreamento de execução com checkpoints para retomada
+- marcadores padronizados de status (`[ ]`, `[-]`, `[x]`, `[!]`)
+- marcadores de modo de execução por tarefa (`[P]` paralelizável, `[S]` sequencial)
+
 ### 3) Regras compartilhadas
 
 Arquivos em `src/_shared` centralizam normas transversais:

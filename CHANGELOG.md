@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.33] - 2026-05-08
+
+### Alterado
+- `README.pt-BR.md`: documentação sincronizada com o comportamento de plano vivo para `/plan` salvo, incluindo sizing dinâmico, checkpoints e marcadores `[P]/[S]`.
+
 ## [1.1.32] - 2026-05-08
 
 ### Alterado
@@ -303,6 +308,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.33]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.32...v1.1.33
 [1.1.32]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.31...v1.1.32
 [1.1.31]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.30...v1.1.31
 [1.1.30]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.29...v1.1.30
