@@ -4,7 +4,7 @@ description: Avalia qualidade técnica da implementação comparando código com
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 ## Referência normativa comum
@@ -51,6 +51,7 @@ Se incompleto:
 2. NÃO corrigir automaticamente
 3. NÃO assumir comportamento não definido no spec
 4. Apenas analisar
+5. BLOQUEAR se invariantes anti-compaction (pt-BR + Memflow) estiverem ausentes no contexto
 
 ---
 
@@ -144,6 +145,7 @@ Se incompleto:
 - Este comando NÃO valida fluxo do memflow (isso é papel do `/review`)
 - Este comando NÃO substitui `/review`
 - Este comando valida a implementação real
+- NÃO autoexecutar qualquer próximo passo sem confirmação explícita do usuário
 
 ---
 
@@ -197,12 +199,15 @@ Reasoning:
 Se APROVADO:
 
 - pronto para produção
+- Aguardar confirmação explícita do usuário antes de qualquer novo comando
 
 Se COM RESSALVAS:
 
 - corrigir itens importantes antes de merge
+- Aguardar confirmação explícita do usuário antes de qualquer novo comando
 
 Se REPROVADO:
 
 - corrigir críticos
 - reexecutar `/review-code`
+- Aguardar confirmação explícita do usuário antes de qualquer novo comando

@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Base comum de pré-condições (referência normativa)
@@ -24,6 +24,21 @@ Se NÃO:
 - BLOQUEAR execução
 - Solicitar execução de `/context`
 - NÃO continuar
+
+---
+
+## Invariantes anti-compaction (OBRIGATÓRIO)
+
+Antes de qualquer comando operacional (exceto `/context`), validar se o `/context` confirmou:
+
+- idioma obrigatório: pt-BR
+- identidade e escopo do projeto: Memflow Command System
+
+Se invariantes estiverem ausentes ou com falha:
+
+- BLOQUEAR execução
+- exigir nova execução de `/context`
+- NÃO continuar em modo parcial silencioso
 
 ---
 
@@ -90,6 +105,7 @@ Se memória NÃO existir:
 - Nenhum comando pode executar sem contexto válido
 - Nenhum comando pode ignorar memória disponível
 - Evitar execução com contexto parcial ou inconsistente
+- Nenhum comando crítico pode executar sem invariantes anti-compaction válidos
 
 ---
 
@@ -114,6 +130,7 @@ Se memória NÃO existir:
   - nenhuma execução crítica sem `/context`
   - memória disponível não pode ser ignorada
   - resolução normativa deve seguir `_shared/target-adapter.md`
+  - invariantes anti-compaction (pt-BR + Memflow) devem estar válidos antes de execução crítica
 
 ---
 

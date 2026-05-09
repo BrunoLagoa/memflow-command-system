@@ -4,7 +4,7 @@ description: Primeiro comando do fluxo — carrega memória (decisões, estado e
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.2.0"
+  version: "8.3.0"
 ---
 
 ## Referência normativa comum
@@ -31,6 +31,22 @@ Se existir:
 - .agents/memory/session-memory.md
 - .agents/memory/decisions.md
 - .agents/memory/quality-metrics.md
+
+---
+
+# Re-hidratação de invariantes (ANTI-COMPACTION)
+
+Antes de concluir o `/context`, revalidar explicitamente:
+
+- idioma obrigatório do sistema: pt-BR
+- identidade do projeto: Memflow Command System
+- escopo ativo: comandos normativos em `src/` e bases em `_shared`
+
+Se algum item estiver ausente no contexto ativo:
+
+- recarregar referências normativas
+- registrar que houve re-hidratação pós-compaction
+- NÃO marcar contexto como completo sem revalidar os 3 itens
 
 ---
 
@@ -220,6 +236,7 @@ Se não existirem:
 - evitar leitura desnecessária
 - NÃO ignorar skills disponíveis no projeto
 - incluir status de skills no contexto entregue ao `/workflow`
+- SEMPRE revalidar invariantes anti-compaction (pt-BR + Memflow) antes de finalizar
 
 ---
 
@@ -235,6 +252,7 @@ Se não existirem:
 - Qualidade: alta/media/baixa
 - Sinais: nenhum / detectados
 - Skills no projeto: SIM / NÃO
+- Invariantes anti-compaction: OK / Reidratados
 
 ---
 
@@ -244,6 +262,7 @@ Se não existirem:
 - Memória: SIM / NÃO
 - Métricas: SIM / NÃO
 - Skills: SIM / NÃO
+- Invariantes anti-compaction: OK / Reidratados / Falhou
 - Modo: Normal / Degradado / Otimizado
 
 ---
@@ -254,6 +273,7 @@ Se não existirem:
 - uso de métricas
 - sinais detectados
 - skills disponíveis (quando houver)
+- status de invariantes anti-compaction (pt-BR + Memflow)
 
 ---
 

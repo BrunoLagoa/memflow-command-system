@@ -48,6 +48,7 @@ In practice, it acts as an SDLC control layer for teams that want speed with qua
 - Smart memory persistence with decision versioning (`(update)`)
 - Modular command structure with shared rules in `_shared`
 - MCP integration for code, contextual memory, and external docs
+- Anti-compaction invariant rehydration (pt-BR + Memflow identity) via `/context` and `/workflow`
 
 ## How it works (simplified flow)
 
@@ -402,6 +403,7 @@ Operational principles:
 
 - Start cheap, escalate model only when needed
 - Do not execute without context and workflow decision
+- Do not continue to next commands without explicit user confirmation
 - Do not lose learning: important decisions become structured memory
 - Do not "approve by feeling": validation must be explicit and traceable
 

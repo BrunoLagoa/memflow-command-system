@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.3.0"
 ---
 
 # Base de saída (referência normativa)
@@ -14,6 +14,14 @@ Aplicar obrigatoriamente este formato base de resposta em comandos do sistema:
 ## Idioma obrigatório
 
 - Todas as respostas e comunicações devem ser em **Português do Brasil (pt-BR)**.
+
+## Invariantes de identidade do sistema (anti-compaction)
+
+- Preservar o contexto operacional do projeto **Memflow Command System** em todas as respostas.
+- Tratar as regras normativas compartilhadas como invariantes recarregáveis em qualquer retomada de contexto.
+- Em caso de resumo/compactação de contexto pela LLM, revalidar explicitamente:
+  - idioma obrigatório (pt-BR)
+  - identidade e escopo do projeto (Memflow)
 
 ## Regras de uso
 
@@ -25,6 +33,7 @@ Aplicar obrigatoriamente este formato base de resposta em comandos do sistema:
   - resposta em pt-BR
   - seção `## Próximos passos` como último `##`
   - continuidade do fluxo somente em `## Próximos passos`
+- Nunca executar automaticamente o próximo comando do fluxo sem confirmação explícita do usuário.
 - **`## Próximos passos` é sempre o último `##` da resposta:** não incluir nenhuma outra seção com título `##` depois de `## Próximos passos`.
 - **Continuidade do fluxo só em `## Próximos passos`:** não usar bullets ou linhas do tipo `Próximo passo:` fora dessa seção (inclui modos compacto, ultra-light ou qualquer resumo intermediário).
 

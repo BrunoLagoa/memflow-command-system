@@ -4,7 +4,7 @@ description: Implementa código com base na decisão do /workflow respeitando `m
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.2.0"
+  version: "3.3.0"
 ---
 
 ## Referência normativa comum
@@ -68,6 +68,24 @@ Evitar:
 - Motivo: decisão de estratégia ausente
 - Ação obrigatória: executar `/workflow`
 - NÃO classificar complexidade/impacto/risco dentro de `/execute`
+
+E PARAR.
+
+---
+
+## Gate anti-compaction (OBRIGATÓRIO)
+
+Antes de executar implementação, validar no contexto ativo:
+
+- idioma pt-BR confirmado
+- identidade Memflow confirmada
+
+Se qualquer um estiver ausente ou falhar:
+
+- Status: Parcial
+- Motivo: invariantes anti-compaction inválidos
+- Ação obrigatória: reexecutar `/context`
+- NÃO implementar até revalidação
 
 E PARAR.
 
@@ -152,6 +170,7 @@ Se erro → corrigir automaticamente
 - NÃO sobrescrever sem análise  
 - NÃO duplicar código  
 - NÃO alterar múltiplos arquivos sem necessidade  
+- NÃO autoexecutar próximos comandos do fluxo sem confirmação do usuário
 
 ---
 
@@ -299,6 +318,7 @@ Se não houver:
 - Plano necessário → PARAR  
 - Conflito com `.agents` → PARAR  
 - Falta de contexto → PARAR  
+- Falha de invariantes anti-compaction → PARAR
 
 ---
 
@@ -309,3 +329,4 @@ Se não houver:
 - `/memory-save` (recomendado após validação)  
 - `/review-enforce-rules` (opcional)  
 - `/test-plan` (se aplicável)  
+- Aguardar confirmação explícita do usuário antes de executar qualquer próximo comando

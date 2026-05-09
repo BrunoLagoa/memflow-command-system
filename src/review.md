@@ -4,7 +4,7 @@ description: Validação inteligente de qualidade do sistema antes da validaçã
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 ## Referência normativa comum
@@ -61,6 +61,7 @@ Utilizar obrigatoriamente:
 2. NÃO sugerir execução direta  
 3. NÃO corrigir automaticamente  
 4. Apenas analisar e validar  
+5. NÃO continuar sem invariantes anti-compaction válidos no contexto
 
 ---
 
@@ -106,6 +107,7 @@ Utilizar obrigatoriamente:
 - `/execute` respeitou o plano?
 - `/execute` foi iniciado somente após decisão explícita do `/workflow`?
 - Houve bypass do sistema?
+- invariantes anti-compaction (pt-BR + Memflow) estavam válidos antes da execução?
 
 ---
 
@@ -163,6 +165,7 @@ Reprovar se houver:
 - ausência de planejamento quando necessário
 - inconsistência crítica com docs
 - uso inadequado de modelo
+- falha de invariantes anti-compaction (pt-BR + Memflow)
 
 Observação:
 
@@ -237,6 +240,7 @@ Se APROVADO:
 
 - Opcional executar `/review-enforce-rules`
 - Executar `/review-code` antes de produção
+- Aguardar confirmação explícita do usuário antes de qualquer novo comando
 
 ---
 
@@ -245,6 +249,7 @@ Se APROVADO COM RESSALVAS:
 - Pode seguir fluxo
 - Corrigir itens importantes antes de produção
 - Executar `/review-code`
+- Aguardar confirmação explícita do usuário antes de qualquer novo comando
 
 ---
 
@@ -253,3 +258,4 @@ Se REPROVADO:
 - Corrigir problemas críticos
 - Reexecutar `/review`
 - Após aprovação, executar `/review-code`
+- Aguardar confirmação explícita do usuário antes de qualquer novo comando

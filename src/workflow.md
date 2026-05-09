@@ -4,7 +4,7 @@ description: Orquestrador central — decide execução, validação e adapta co
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.4.0"
+  version: "9.5.0"
 ---
 
 ## Referência normativa comum
@@ -60,6 +60,7 @@ Ordem obrigatória:
 - sugestões NUNCA executam automaticamente  
 - em caso de conflito → respeitar ordem acima  
 - `/workflow` é a única origem de decisão de estratégia (`/execute` vs `/plan`)
+- NÃO prosseguir sem invariantes anti-compaction validados pelo `/context`
 
 ---
 
@@ -146,6 +147,25 @@ Se houver skill claramente aplicável:
 Se a aplicabilidade estiver ambígua:
 
 - solicitar confirmação objetiva ao usuário antes de seguir
+
+---
+
+# Etapa 0.9 — Gate de invariantes anti-compaction (OBRIGATÓRIO)
+
+Validar se o `/context` confirmou invariantes:
+
+- idioma pt-BR validado
+- identidade Memflow validada
+
+Se status vier como `Reidratados`:
+
+- permitir continuidade normal
+- registrar no output que houve recuperação pós-compaction
+
+Se status vier como `Falhou` ou ausente:
+
+- BLOQUEAR decisão do workflow
+- exigir nova execução de `/context`
 
 ---
 
@@ -398,6 +418,14 @@ Obrigatório quando:
 
 ---
 
+### Invariantes anti-compaction
+
+- idioma pt-BR: OK / Falhou
+- identidade Memflow: OK / Falhou
+- re-hidratação necessária: SIM / NÃO
+
+---
+
 ### Estratégia
 
 - Execução: Direta / Planejada  
@@ -410,6 +438,7 @@ Obrigatório quando:
 
 - ambiguidades  
 - riscos  
+- falha de invariantes anti-compaction (quando houver)
 
 Se não houver:
 → Nenhum  
@@ -424,3 +453,4 @@ Se não houver:
 4. /memory-save  
 5. Se houver `/prd`, `/spec` ou `/plan`: confirmar salvamento antes de gerar documento
 6. Se houver skill aplicável: usar a skill antes de continuar
+7. Se invariantes anti-compaction falharem: reexecutar `/context`

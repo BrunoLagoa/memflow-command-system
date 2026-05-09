@@ -4,7 +4,7 @@ description: Validação rígida adicional (opcional/recomendada) para cenários
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 Valide rigorosamente qualquer código, plano, decisão ou execução contra as regras do projeto.
@@ -70,8 +70,8 @@ Complementar:
 1. NÃO aceitar violações
 2. NÃO flexibilizar regras
 3. NÃO assumir comportamento implícito
-
-4. Se houver **qualquer dúvida ou ambiguidade**:
+4. NÃO validar como OK se invariantes anti-compaction (pt-BR + Memflow) estiverem ausentes/falhos
+5. Se houver **qualquer dúvida ou ambiguidade**:
 
 → considerar como violação
 → status = **BLOQUEADO**
@@ -112,6 +112,7 @@ Complementar:
 - `/plan` foi usado quando necessário?
 - `/execute` seguiu corretamente o fluxo?
 - Houve bypass do sistema?
+- invariantes anti-compaction (pt-BR + Memflow) estavam válidos?
 
 ---
 
@@ -152,6 +153,7 @@ Status = **BLOQUEADO** se houver:
 - ausência de planejamento quando necessário
 - uso incorreto de modelo (contra `model-policy.md` do target ativo via `_shared/target-adapter.md`)
 - ambiguidade não resolvida
+- falha de invariantes anti-compaction (pt-BR + Memflow)
 
 Observação:
 
@@ -175,3 +177,4 @@ Não usar outros `##` principais
 Em **Problemas**, listar cada violação encontrada, cada dúvida não resolvida e limitações de validação em modo degradado; se não houver → **Nenhum**.
 
 Em **Próximos passos**: se **BLOQUEADO**, listar correções obrigatórias e indicar ações como `/plan`, `/execute`, `/debug`, `/refactor` ou esclarecimento do usuário; se **OK** → pode continuar.
+Sempre incluir que qualquer novo comando depende de confirmação explícita do usuário.

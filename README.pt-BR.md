@@ -48,6 +48,7 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 - Persistência inteligente de memória com versionamento de decisões (`(update)`)
 - Estrutura modular por comando, com regras compartilhadas em `_shared`
 - Integração com MCPs para código, memória contextual e documentação externa
+- Re-hidratação de invariantes anti-compaction (pt-BR + identidade Memflow) via `/context` e `/workflow`
 
 ## Como funciona (visão simplificada do fluxo)
 
@@ -402,6 +403,7 @@ Princípios operacionais:
 
 - Começar barato, escalar modelo apenas quando necessário
 - Não executar sem contexto e sem decisão de fluxo
+- Não continuar para próximos comandos sem confirmação explícita do usuário
 - Não perder aprendizado: decisão importante vira memória estruturada
 - Não "aprovar no feeling": validação é explícita e rastreável
 

@@ -10,6 +10,9 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - `src/plan.md`, `src/spec.md` e `src/prd.md`: inclusão de etapa obrigatória de confirmação de salvamento antes de gerar o documento, com opções explícitas ao usuário (salvar ou apenas mostrar no chat), bloqueio por resposta ambígua e registro da decisão na saída.
 - `src/workflow.md`: orquestração atualizada para exigir e sinalizar a confirmação de salvamento como pré-requisito quando o próximo passo envolver `/prd`, `/spec` ou `/plan`.
 - `src/context.md` e `src/workflow.md`: fluxo reforçado para detectar skills disponíveis no projeto, sinalizar skills aplicáveis no contexto e exigir seu uso quando necessário antes da continuidade.
+- `src/_shared/base-output.md`, `src/context.md` e `src/workflow.md`: adicionado gate anti-compaction com re-hidratação obrigatória de invariantes (idioma pt-BR + identidade Memflow) e bloqueio do workflow quando invariantes falharem.
+- `src/_shared/base-preconditions.md`: pré-condições globais endurecidas para bloquear comandos críticos quando invariantes anti-compaction (pt-BR + Memflow) não estiverem válidos.
+- `src/execute.md`, `src/review.md`, `src/review-code.md` e `src/review-enforce-rules.md`: validações anti-bypass reforçadas para impedir continuidade sem invariantes válidos e exigir confirmação explícita do usuário antes de qualquer próximo comando.
 - `README.md` e `README.pt-BR.md`: documentação sincronizada com a nova política de confirmação prévia para geração de artefatos documentais.
 
 ## [1.1.29] - 2026-04-30
