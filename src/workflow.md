@@ -4,7 +4,7 @@ description: Orquestrador central — decide execução, validação e adapta co
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.5.0"
+  version: "9.6.0"
 ---
 
 ## Referência normativa comum
@@ -61,6 +61,20 @@ Ordem obrigatória:
 - em caso de conflito → respeitar ordem acima  
 - `/workflow` é a única origem de decisão de estratégia (`/execute` vs `/plan`)
 - NÃO prosseguir sem invariantes anti-compaction validados pelo `/context`
+- quando houver decisão pendente no `## Próximos passos`, usar diálogo estruturado com opções selecionáveis
+
+---
+
+## Decisões pendentes no `## Próximos passos` (OBRIGATÓRIO)
+
+Quando o `/workflow` depender de uma escolha do usuário para seguir (ex.: definir escopo, priorizar fase, escolher direção de implementação):
+
+- apresentar opções em diálogo estruturado e selecionável
+- evitar solicitação aberta de digitação quando houver opções concretas
+- permitir opção `Outra` quando fizer sentido para não limitar o usuário
+- se o usuário escolher `Outra`, solicitar detalhe em seguida (texto livre apenas nessa etapa)
+- se a resposta vier ambígua, repetir o mesmo diálogo estruturado até haver seleção explícita
+- registrar na análise/problemas que existe decisão pendente e qual escolha foi feita quando respondido
 
 ---
 
@@ -438,3 +452,4 @@ Se não houver:
 4. /memory-save  
 5. Se houver skill aplicável: usar a skill antes de continuar
 6. Se invariantes anti-compaction falharem: reexecutar `/context`
+7. Se houver decisão pendente para continuidade: abrir diálogo de opções selecionáveis antes de avançar

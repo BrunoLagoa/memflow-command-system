@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.37] - 2026-05-09
+
+### Alterado
+- `src/workflow.md`: adicionada regra para tratar decisões pendentes em `Próximos passos` com diálogo estruturado de opções selecionáveis, incluindo repetição em caso de ambiguidade e opção `Outra` com detalhamento complementar.
+
 ## [1.1.36] - 2026-05-09
 
 ### Alterado
@@ -331,6 +336,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.37]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.36...v1.1.37
 [1.1.36]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.35...v1.1.36
 [1.1.35]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.34...v1.1.35
 [1.1.34]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.33...v1.1.34
