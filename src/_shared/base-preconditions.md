@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Base comum de pré-condições (referência normativa)
@@ -39,6 +39,22 @@ Se invariantes estiverem ausentes ou com falha:
 - BLOQUEAR execução
 - exigir nova execução de `/context`
 - NÃO continuar em modo parcial silencioso
+
+---
+
+## Checklist de continuidade segura (anti-bypass)
+
+Antes de seguir para qualquer etapa crítica, confirmar:
+
+- decisão explícita do `/workflow` disponível (quando aplicável)
+- invariantes anti-compaction válidos (pt-BR + Memflow)
+- confirmação explícita do usuário antes de executar o próximo comando do fluxo
+
+Se qualquer item falhar:
+
+- BLOQUEAR continuidade
+- registrar problema no output
+- solicitar ação corretiva antes de prosseguir
 
 ---
 

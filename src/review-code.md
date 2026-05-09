@@ -4,7 +4,7 @@ description: Avalia qualidade técnica da implementação comparando código com
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 ## Referência normativa comum
@@ -52,6 +52,7 @@ Se incompleto:
 3. NÃO assumir comportamento não definido no spec
 4. Apenas analisar
 5. BLOQUEAR se invariantes anti-compaction (pt-BR + Memflow) estiverem ausentes no contexto
+6. Aplicar checklist de continuidade segura definido em `_shared/base-preconditions.md`
 
 ---
 
@@ -157,13 +158,18 @@ Se incompleto:
 
 ---
 
-## Strengths
+## Análise
 
-- Pontos positivos claros
+- Avaliação técnica geral da implementação
+- Pontos positivos relevantes
+- Aderência ao `/spec` e `/plan`
+- Qualidade de código e arquitetura
+- Cobertura e qualidade de testes
+- Readiness para produção (riscos e previsibilidade)
 
 ---
 
-## Issues
+## Problemas
 
 ### Critical
 - ...
@@ -176,21 +182,6 @@ Se incompleto:
 
 Se não houver:
 → Nenhum
-
----
-
-## Recommendations
-
-- melhorias sugeridas
-
----
-
-## Assessment
-
-Ready to merge: Yes / No / With fixes
-
-Reasoning:
-- avaliação técnica objetiva
 
 ---
 

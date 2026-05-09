@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.31] - 2026-05-08
+
+### Alterado
+- `src/_shared/base-preconditions.md`: adicionado checklist compartilhado de continuidade segura (decisão do `/workflow`, invariantes válidos e confirmação explícita do usuário).
+- `src/review-code.md`: formato de saída normalizado para pt-BR e alinhado ao padrão base (`Status`, `Análise`, `Problemas`, `Próximos passos`).
+
 ## [1.1.30] - 2026-05-08
 
 ### Alterado
@@ -287,6 +293,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.31]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.30...v1.1.31
 [1.1.30]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.29...v1.1.30
 [1.1.29]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.28...v1.1.29
 [1.1.28]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.27...v1.1.28
