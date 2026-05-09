@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.36] - 2026-05-09
+
+### Alterado
+- `src/workflow.md`: removida a responsabilidade de conduzir confirmação de salvamento para `/prd`, `/spec` e `/plan`, mantendo o workflow focado na decisão de estratégia e validação.
+
 ## [1.1.35] - 2026-05-09
 
 ### Alterado
@@ -326,6 +331,8 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.36]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.35...v1.1.36
+[1.1.35]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.34...v1.1.35
 [1.1.34]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.33...v1.1.34
 [1.1.33]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.32...v1.1.33
 [1.1.32]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.31...v1.1.32
