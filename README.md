@@ -85,6 +85,11 @@ In practice, it acts as an SDLC control layer for teams that want speed with qua
 - Implementation and quality: `/execute`, `/debug`, `/refactor`, `/test-plan`
 - Memory: `/memory-init`, `/memory-save`
 
+For documentation-generation commands (`/prd`, `/spec`, `/plan`), the flow now requires an explicit user confirmation before generation starts:
+
+- `Yes, save the document`
+- `No, show in chat only`
+
 ### 3) Shared rules
 
 Files in `src/_shared` centralize cross-cutting standards:

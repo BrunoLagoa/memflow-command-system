@@ -4,7 +4,7 @@ description: Orquestrador central — decide execução, validação e adapta co
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.2.0"
+  version: "9.3.0"
 ---
 
 ## Referência normativa comum
@@ -213,6 +213,26 @@ Adicionar no output:
 
 ---
 
+## Confirmação de salvamento para comandos de documentação (OBRIGATÓRIO)
+
+Quando a estratégia ou o próximo passo envolver criação de artefato documental via `/prd`, `/spec` ou `/plan`, o workflow deve orientar explicitamente:
+
+- Antes de iniciar o comando, perguntar ao usuário se deseja salvar o documento que será criado
+- Exigir resposta com opções claras de decisão
+
+Opções padrão esperadas:
+
+- Sim, salvar o documento
+- Não, apenas mostrar no chat
+
+Regras:
+
+- Não avançar para geração documental sem essa confirmação
+- Se a resposta for ambígua, repetir a pergunta com as mesmas opções
+- Registrar no output que a confirmação de salvamento é pré-requisito para `/prd`, `/spec` e `/plan`
+
+---
+
 # Etapa 3 — Estratégia de validação
 
 ---
@@ -352,6 +372,7 @@ Obrigatório quando:
 
 - Execução: Direta / Planejada  
 - Validação:
+- Confirmação de salvamento para `/prd` `/spec` `/plan`: Obrigatória
 
 ---
 
@@ -371,3 +392,4 @@ Se não houver:
 2. /review  
 3. /review-code  
 4. /memory-save  
+5. Se houver `/prd`, `/spec` ou `/plan`: confirmar salvamento antes de gerar documento

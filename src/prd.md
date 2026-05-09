@@ -4,7 +4,7 @@ description: Transforma ideia ou problema em um PRD estruturado, mensurável e p
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.1.0"
+  version: "2.2.0"
 ---
 
 ## Referência normativa comum
@@ -77,6 +77,24 @@ Antes de gerar o PRD, validar:
 
 Se qualquer resposta estiver indefinida:
 → BLOQUEAR geração do PRD
+
+## Confirmação obrigatória de salvamento (ANTES de qualquer geração de PRD)
+
+Antes de iniciar a análise e criação do PRD, PERGUNTAR ao usuário:
+
+- Deseja salvar o PRD que será criado para manter os dados documentados?
+
+Apresentar obrigatoriamente opções claras:
+
+- Sim, salvar o PRD
+- Não, apenas mostrar no chat
+
+Regras:
+
+- NÃO iniciar a geração do PRD antes da resposta do usuário
+- Se a resposta estiver ambígua, perguntar novamente usando as mesmas opções
+- Registrar na saída a preferência escolhida (salvar ou não salvar)
+- Se o usuário escolher salvar, definir e registrar o destino de documentação antes de continuar
 
 ### Ambiguidade, trade-offs e escolha do usuário
 
@@ -279,6 +297,13 @@ Antes de finalizar, responder:
 ---
 
 ## Análise
+
+### Preferência de salvamento
+
+- Decisão do usuário: Salvar / Não salvar
+- Quando salvar: destino de documentação definido
+
+---
 
 ### Clareza do problema
 

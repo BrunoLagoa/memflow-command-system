@@ -85,6 +85,11 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 - Implementação e qualidade: `/execute`, `/debug`, `/refactor`, `/test-plan`
 - Memória: `/memory-init`, `/memory-save`
 
+Para comandos que geram documentação (`/prd`, `/spec`, `/plan`), o fluxo agora exige confirmação explícita do usuário antes de iniciar a geração:
+
+- `Sim, salvar o documento`
+- `Não, apenas mostrar no chat`
+
 ### 3) Regras compartilhadas
 
 Arquivos em `src/_shared` centralizam normas transversais:

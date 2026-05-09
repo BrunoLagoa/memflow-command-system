@@ -4,7 +4,7 @@ description: Cria plano de implementação detalhado quando /workflow decide PLA
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 ## Referência normativa comum
@@ -113,6 +113,26 @@ Se NÃO:
 
 ---
 
+## Confirmação obrigatória de salvamento (ANTES de qualquer planejamento)
+
+Antes de iniciar a análise e criação do plano, PERGUNTAR ao usuário:
+
+- Deseja salvar o plano que será criado para manter os dados documentados?
+
+Apresentar obrigatoriamente opções claras:
+
+- Sim, salvar o plano
+- Não, apenas mostrar no chat
+
+Regras:
+
+- NÃO iniciar o planejamento antes da resposta do usuário
+- Se a resposta estiver ambígua, perguntar novamente usando as mesmas opções
+- Registrar no plano a preferência escolhida (salvar ou não salvar)
+- Se o usuário escolher salvar, incluir no plano onde o conteúdo será documentado
+
+---
+
 ## Regras específicas
 
 - NÃO planejar com base em suposição
@@ -168,6 +188,13 @@ Se `.agents` NÃO estiver disponível:
 ### Entendimento
 
 - O que precisa ser feito
+
+---
+
+### Preferência de salvamento
+
+- Decisão do usuário: Salvar / Não salvar
+- Quando salvar: destino de documentação definido
 
 ---
 

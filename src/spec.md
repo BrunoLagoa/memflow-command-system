@@ -4,7 +4,7 @@ description: Transforma PRD em especificação técnica detalhada, determinísti
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.1.1"
+  version: "2.2.0"
 ---
 
 ## Referência normativa comum
@@ -62,6 +62,24 @@ Este comando:
 
 - PRD deve estar completo
 - Se PRD estiver incompleto → BLOQUEAR
+
+## Confirmação obrigatória de salvamento (ANTES de qualquer geração de spec)
+
+Antes de iniciar a análise e criação da especificação, PERGUNTAR ao usuário:
+
+- Deseja salvar a especificação que será criada para manter os dados documentados?
+
+Apresentar obrigatoriamente opções claras:
+
+- Sim, salvar a especificação
+- Não, apenas mostrar no chat
+
+Regras:
+
+- NÃO iniciar a geração da spec antes da resposta do usuário
+- Se a resposta estiver ambígua, perguntar novamente usando as mesmas opções
+- Registrar na saída a preferência escolhida (salvar ou não salvar)
+- Se o usuário escolher salvar, definir e registrar o destino de documentação antes de continuar
 
 ### Ambiguidade técnica, trade-offs e escolha do usuário
 
@@ -238,6 +256,13 @@ Antes de finalizar, responder:
 ---
 
 ## Análise
+
+### Preferência de salvamento
+
+- Decisão do usuário: Salvar / Não salvar
+- Quando salvar: destino de documentação definido
+
+---
 
 ### Estrutura da solução
 
