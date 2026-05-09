@@ -121,7 +121,13 @@ Para cada sugestão:
 
 ## 🆕 Limite de uso (CRÍTICO)
 
-- considerar no máximo **2 sugestões por execução**
+- aplicar limite dinâmico por execução:
+  - baixa complexidade e baixo risco: no máximo **2 sugestões**
+  - média complexidade ou risco médio: no máximo **3 sugestões**
+  - alta complexidade ou alto risco: no máximo **4 sugestões**
+- quando houver mais sugestões elegíveis que o limite, priorizar por:
+  - maior impacto
+  - maior confiança
 
 ---
 

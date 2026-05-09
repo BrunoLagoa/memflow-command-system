@@ -138,7 +138,11 @@ Regras:
 - NÃO planejar com base em suposição
 - NÃO criar arquivos sem validar necessidade
 - NÃO ignorar padrões existentes
-- Sugestão: se a atividade envolver muitas áreas, arquivos ou dependências, quebrar em tarefas menores/subtarefas para facilitar desenvolvimento, validação e acompanhamento
+- DEVE dimensionar a quantidade de tarefas conforme complexidade e escopo real, sem reutilizar quantidade fixa entre planos
+- DEVE aplicar sizing dinâmico para passos de implementação:
+  - baixa complexidade: 3-5 tarefas
+  - média complexidade: 6-10 tarefas
+  - alta complexidade: 10+ tarefas com subtarefas obrigatórias
 
 ---
 
@@ -216,7 +220,9 @@ Se `.agents` NÃO estiver disponível:
 
 - sequência clara e executável
 - baseada em estrutura real (quando possível)
-- quando a atividade for grande, sugerir divisão em tarefas menores/subtarefas para facilitar execução
+- quantidade de tarefas definida por sizing dinâmico (complexidade + escopo real), sem quantidade fixa reutilizada entre planos
+- para alta complexidade, incluir obrigatoriamente subtarefas
+- checklist final obrigatório de granularidade: cada item pode ser executado sem ambiguidades?
 
 ---
 
