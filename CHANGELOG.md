@@ -4,6 +4,16 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.32] - 2026-05-08
+
+### Alterado
+- `src/workflow.md`: limite de sugestões em modo assistido evoluído de fixo para dinâmico por complexidade/risco (`2`, `3` ou `4`) com priorização por impacto e confiança.
+- `src/plan.md`: planejamento reforçado com sizing dinâmico obrigatório de tarefas, regra de não reutilizar quantidade fixa entre planos e checklist de granularidade executável.
+- `src/plan.md` e `src/execute.md`: integração de **plano vivo** para planos salvos em `.md`, com atualização obrigatória de checklist/checkpoint durante execução e retomada segura após interrupção.
+- `src/plan.md` e `src/execute.md`: padronização de status (`[ ]`, `[-]`, `[x]`, `[!]`), consistência pai/subtarefas, ordem de atualização top-down e protocolo de desbloqueio para itens bloqueados.
+- `src/plan.md` e `src/execute.md`: adição de marcador de modo de execução por tarefa (`[P]` paralelizável, `[S]` sequencial) com critérios explícitos para paralelização.
+- `README.md`: documentação sincronizada com o comportamento de plano vivo para `/plan` salvo, incluindo sizing dinâmico, checkpoints e marcadores `[P]/[S]`.
+
 ## [1.1.31] - 2026-05-08
 
 ### Alterado
@@ -293,6 +303,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.32]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.31...v1.1.32
 [1.1.31]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.30...v1.1.31
 [1.1.30]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.29...v1.1.30
 [1.1.29]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.28...v1.1.29

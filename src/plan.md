@@ -225,6 +225,9 @@ Se `.agents` NÃO estiver disponível:
 - quantidade de tarefas definida por sizing dinâmico (complexidade + escopo real), sem quantidade fixa reutilizada entre planos
 - para alta complexidade, incluir obrigatoriamente subtarefas
 - checklist final obrigatório de granularidade: cada item pode ser executado sem ambiguidades?
+- classificar cada tarefa como:
+  - `[P]` paralelizável (pode executar em paralelo)
+  - `[S]` sequencial (depende de ordem)
 
 ---
 
@@ -261,11 +264,20 @@ Se `.agents` NÃO estiver disponível:
 - obrigatório quando a preferência for salvar o plano
 - incluir checklist por tarefa/subtarefa com status: pendente / em andamento / concluída / bloqueada
 - incluir último checkpoint de execução e próximo passo objetivo para retomada
+- incluir marcador de modo de execução por tarefa/subtarefa:
+  - `[P]` paralelizável
+  - `[S]` sequencial
 - usar template padrão de checklist para consistência:
   - `[ ]` pendente
   - `[-]` em andamento
   - `[x]` concluída
   - `[!]` bloqueada
+- critérios obrigatórios para marcar `[P]`:
+  - sem dependência de saída de outra tarefa
+  - sem conflito previsível de arquivos/áreas críticas
+  - sem bloqueio por estado compartilhado sensível
+  - com merge e rollback isoláveis
+- se qualquer critério falhar, classificar como `[S]`
 - aplicar consistência de status entre tarefa pai e subtarefas:
   - tarefa pai só pode ser `[x]` quando todas as subtarefas estiverem `[x]`
   - se existir subtarefa `[-]`, a tarefa pai deve ficar `[-]`
@@ -282,10 +294,10 @@ Template base recomendado:
 ```md
 ### Progresso de execução
 
-- [ ] Tarefa 1
-  - [-] Subtarefa 1.1
-  - [x] Subtarefa 1.2
-- [!] Tarefa 2 (motivo do bloqueio)
+- [P][ ] Tarefa 1
+  - [S][-] Subtarefa 1.1
+  - [P][x] Subtarefa 1.2
+- [S][!] Tarefa 2 (motivo do bloqueio)
   - Ação de desbloqueio: <ação objetiva>
   - Responsável: <usuário | agente | sistema externo>
   - Critério de saída: <condição para voltar a [ ] ou [-]>

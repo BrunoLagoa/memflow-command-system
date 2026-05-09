@@ -91,6 +91,13 @@ For documentation-generation commands (`/prd`, `/spec`, `/plan`), the flow now r
 - `Yes, save the document`
 - `No, show in chat only`
 
+When the user chooses to save `/plan`, the generated markdown should be treated as a **live plan**:
+
+- dynamic task sizing by complexity (`3-5`, `6-10`, `10+` with subtasks for high complexity)
+- execution tracking with checkpoints for resume
+- standardized status markers (`[ ]`, `[-]`, `[x]`, `[!]`)
+- execution mode markers per task (`[P]` parallelizable, `[S]` sequential)
+
 ### 3) Shared rules
 
 Files in `src/_shared` centralize cross-cutting standards:

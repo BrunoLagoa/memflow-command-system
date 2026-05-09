@@ -128,11 +128,15 @@ Quando houver plano salvo em `.md`:
 
 - ler o plano salvo antes de iniciar a implementação
 - mapear tarefas/subtarefas planejadas para a execução atual
+- respeitar o modo de execução definido no plano:
+  - `[P]` paralelizável: pode executar em paralelo com outras `[P]` quando não houver conflito
+  - `[S]` sequencial: executar na ordem planejada
 - atualizar o checklist de progresso no plano salvo durante a execução usando a legenda padrão:
   - `[ ]` pendente
   - `[-]` em andamento
   - `[x]` concluída
   - `[!]` bloqueada
+- preservar os marcadores de modo `[P]` e `[S]` durante as atualizações de status
 - manter consistência entre tarefa pai e subtarefas ao atualizar status:
   - só marcar tarefa pai como `[x]` quando todas as subtarefas estiverem `[x]`
   - quando houver subtarefa `[-]`, refletir tarefa pai como `[-]`
