@@ -128,8 +128,10 @@ Regras:
 
 - NÃO iniciar o planejamento antes da resposta do usuário
 - Se a resposta estiver ambígua, perguntar novamente usando as mesmas opções
+- Se já existir preferência explícita de salvamento na sessão atual, reutilizar essa preferência por padrão e apenas confirmar quando houver mudança solicitada
 - Registrar no plano a preferência escolhida (salvar ou não salvar)
 - Se o usuário escolher salvar, incluir no plano onde o conteúdo será documentado
+- Se o usuário escolher salvar, estruturar o documento como plano vivo com checklist de progresso por tarefa/subtarefa para atualização durante `/execute`
 
 ---
 
@@ -254,6 +256,46 @@ Se `.agents` NÃO estiver disponível:
 
 ---
 
+### Rastreamento de execução (Plano vivo)
+
+- obrigatório quando a preferência for salvar o plano
+- incluir checklist por tarefa/subtarefa com status: pendente / em andamento / concluída / bloqueada
+- incluir último checkpoint de execução e próximo passo objetivo para retomada
+- usar template padrão de checklist para consistência:
+  - `[ ]` pendente
+  - `[-]` em andamento
+  - `[x]` concluída
+  - `[!]` bloqueada
+- aplicar consistência de status entre tarefa pai e subtarefas:
+  - tarefa pai só pode ser `[x]` quando todas as subtarefas estiverem `[x]`
+  - se existir subtarefa `[-]`, a tarefa pai deve ficar `[-]`
+  - se existir subtarefa `[!]`, a tarefa pai não pode ficar `[x]`
+  - manter atualização em ordem top-down (tarefa pai -> subtarefa) para evitar divergência
+- para itens `[!]` (bloqueada), registrar obrigatoriamente:
+  - motivo objetivo do bloqueio
+  - ação necessária para desbloqueio
+  - responsável esperado pela ação (usuário, agente ou sistema externo)
+  - critério de saída do bloqueio para retornar a `[ ]` ou `[-]`
+
+Template base recomendado:
+
+```md
+### Progresso de execução
+
+- [ ] Tarefa 1
+  - [-] Subtarefa 1.1
+  - [x] Subtarefa 1.2
+- [!] Tarefa 2 (motivo do bloqueio)
+  - Ação de desbloqueio: <ação objetiva>
+  - Responsável: <usuário | agente | sistema externo>
+  - Critério de saída: <condição para voltar a [ ] ou [-]>
+
+Último checkpoint: <resumo objetivo do último ponto executado>
+Próximo passo: <ação objetiva para retomada>
+```
+
+---
+
 ### Fora de escopo
 
 - o que NÃO será feito
@@ -300,3 +342,4 @@ Se não houver:
 - Aguardar confirmação
 - Ajustar plano (se necessário)
 - Seguir para `/execute`
+- Quando houver plano salvo: manter o checklist e checkpoint atualizados durante a execução

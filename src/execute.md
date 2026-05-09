@@ -122,6 +122,36 @@ E PARAR.
 
 ---
 
+## Integração com plano salvo (Plano vivo)
+
+Quando houver plano salvo em `.md`:
+
+- ler o plano salvo antes de iniciar a implementação
+- mapear tarefas/subtarefas planejadas para a execução atual
+- atualizar o checklist de progresso no plano salvo durante a execução usando a legenda padrão:
+  - `[ ]` pendente
+  - `[-]` em andamento
+  - `[x]` concluída
+  - `[!]` bloqueada
+- manter consistência entre tarefa pai e subtarefas ao atualizar status:
+  - só marcar tarefa pai como `[x]` quando todas as subtarefas estiverem `[x]`
+  - quando houver subtarefa `[-]`, refletir tarefa pai como `[-]`
+  - quando houver subtarefa `[!]`, não marcar tarefa pai como `[x]`
+- atualizar em ordem top-down (tarefa pai -> subtarefa) para evitar estado contraditório
+- quando houver item `[!]`, registrar no plano salvo:
+  - motivo objetivo do bloqueio
+  - ação necessária para desbloqueio
+  - responsável esperado pela ação (usuário, agente ou sistema externo)
+  - critério de saída para retornar a `[ ]` ou `[-]`
+- atualizar o último checkpoint e o próximo passo ao final da execução
+- se a execução parar no meio, registrar claramente onde parou e o que falta para retomar
+
+Se não houver plano salvo:
+
+- executar normalmente com base na decisão do `/workflow`
+
+---
+
 ## Segurança
 
 - respeitar `.agents`  
@@ -171,6 +201,7 @@ Se erro → corrigir automaticamente
 - NÃO duplicar código  
 - NÃO alterar múltiplos arquivos sem necessidade  
 - NÃO autoexecutar próximos comandos do fluxo sem confirmação do usuário
+- NÃO encerrar execução com plano salvo desatualizado quando houve avanço em tarefas/subtarefas
 
 ---
 
@@ -288,6 +319,8 @@ Objetivo:
 - Uso de fallback  
 - Aderência ao workflow  
 - Modo: Normal / Degradado  
+- Plano salvo atualizado: SIM / NÃO / N/A
+- Checkpoint de retomada registrado: SIM / NÃO / N/A
 
 ---
 
