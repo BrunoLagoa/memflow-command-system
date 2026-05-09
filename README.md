@@ -71,8 +71,8 @@ In practice, it acts as an SDLC control layer for teams that want speed with qua
 
 ### 1) Orchestration (decision and control)
 
-- `/context`: loads context, memory, and operating mode
-- `/workflow`: classifies task, decides strategy, level, primary model, and fallback options
+- `/context`: loads context, memory, operating mode, and available project skills (when present)
+- `/workflow`: classifies task, decides strategy, level, primary model, fallback options, and enforces applicable skills usage
 - `/execute`: applies the decision with controlled fallback
 - `/review`: validates technical and architectural adherence
 - `/review-code`: deep technical validation before production readiness

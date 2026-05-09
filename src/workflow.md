@@ -4,7 +4,7 @@ description: Orquestrador central — decide execução, validação e adapta co
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.3.0"
+  version: "9.4.0"
 ---
 
 ## Referência normativa comum
@@ -35,6 +35,7 @@ Decidir:
 - decisions.md
 - quality-metrics.md
 - decision-suggestions.md
+- skills disponíveis no projeto (quando existirem)
 - model-policy
 
 ---
@@ -44,15 +45,17 @@ Decidir:
 Ordem obrigatória:
 
 1. **decisions.md (sempre prevalece)**
-2. **regras do workflow**
-3. **insights (ajuste leve)**
-4. **decision-suggestions (modo assistido)**
+2. **skills aplicáveis (quando existirem)**
+3. **regras do workflow**
+4. **insights (ajuste leve)**
+5. **decision-suggestions (modo assistido)**
 
 ---
 
 ## Regras
 
 - decisões explícitas NUNCA podem ser sobrescritas  
+- skills disponíveis e aplicáveis NÃO podem ser ignoradas
 - insights apenas ajustam comportamento  
 - sugestões NUNCA executam automaticamente  
 - em caso de conflito → respeitar ordem acima  
@@ -125,6 +128,24 @@ Para cada sugestão:
 
 - NÃO aplicar automaticamente  
 - apenas sugerir  
+
+---
+
+# Etapa 0.8 — Skills do projeto (OBRIGATÓRIO)
+
+Se o `/context` indicar skills disponíveis no projeto:
+
+- identificar skills relevantes para a tarefa atual
+- registrar quais skills devem ser usadas antes da continuidade
+- orientar uso explícito das skills aplicáveis
+
+Se houver skill claramente aplicável:
+
+- NÃO avançar para execução direta sem orientar uso da skill
+
+Se a aplicabilidade estiver ambígua:
+
+- solicitar confirmação objetiva ao usuário antes de seguir
 
 ---
 
@@ -298,6 +319,7 @@ Obrigatório quando:
 - NÃO ignorar métricas  
 - NÃO ignorar insights  
 - NÃO ignorar sugestões  
+- NÃO ignorar skills aplicáveis
 - limitar influência de sugestões  
 
 ---
@@ -368,6 +390,14 @@ Obrigatório quando:
 
 ---
 
+### Skills
+
+- disponíveis no projeto: SIM / NÃO
+- skills aplicáveis para a tarefa:
+- ação: usar skill agora / não aplicável (justificar)
+
+---
+
 ### Estratégia
 
 - Execução: Direta / Planejada  
@@ -393,3 +423,4 @@ Se não houver:
 3. /review-code  
 4. /memory-save  
 5. Se houver `/prd`, `/spec` ou `/plan`: confirmar salvamento antes de gerar documento
+6. Se houver skill aplicável: usar a skill antes de continuar

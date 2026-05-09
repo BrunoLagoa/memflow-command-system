@@ -71,8 +71,8 @@ Na prática, ele funciona como uma camada de controle SDLC para times que querem
 
 ### 1) Orquestração (decisão e controle)
 
-- `/context`: carrega contexto, memória e modo de operação
-- `/workflow`: classifica tarefa, decide estratégia, nível, modelo principal e opções de fallback
+- `/context`: carrega contexto, memória, modo de operação e skills disponíveis no projeto (quando existirem)
+- `/workflow`: classifica tarefa, decide estratégia, nível, modelo principal, opções de fallback e garante uso de skills aplicáveis
 - `/execute`: aplica a decisão com fallback controlado
 - `/review`: valida aderência técnica e arquitetural
 - `/review-code`: validação técnica profunda antes de produção

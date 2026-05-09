@@ -4,7 +4,7 @@ description: Primeiro comando do fluxo — carrega memória (decisões, estado e
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.1.0"
+  version: "8.2.0"
 ---
 
 ## Referência normativa comum
@@ -162,6 +162,27 @@ Se memória ausente:
 
 - .agents/**
 - AGENTS.md
+- skills do projeto (quando existirem)
+
+---
+
+# Skills do projeto (OBRIGATÓRIO quando disponíveis)
+
+Verificar existência de skills no projeto (exemplos comuns):
+
+- `.cursor/skills/**`
+- `.cursor/skills-cursor/**`
+- `.agents/skills/**`
+
+Se existirem:
+
+- carregar inventário de skills disponíveis
+- registrar nomes e finalidade resumida de cada skill relevante
+- sinalizar ao `/workflow` que existem skills potencialmente aplicáveis
+
+Se não existirem:
+
+- registrar ausência explicitamente (sem bloquear)
 
 ---
 
@@ -197,6 +218,8 @@ Se memória ausente:
 - métricas são suporte
 - sinais NÃO substituem regras
 - evitar leitura desnecessária
+- NÃO ignorar skills disponíveis no projeto
+- incluir status de skills no contexto entregue ao `/workflow`
 
 ---
 
@@ -211,6 +234,7 @@ Se memória ausente:
 - Métricas: SIM/NÃO
 - Qualidade: alta/media/baixa
 - Sinais: nenhum / detectados
+- Skills no projeto: SIM / NÃO
 
 ---
 
@@ -219,6 +243,7 @@ Se memória ausente:
 - Contexto: OK / Falhou
 - Memória: SIM / NÃO
 - Métricas: SIM / NÃO
+- Skills: SIM / NÃO
 - Modo: Normal / Degradado / Otimizado
 
 ---
@@ -228,6 +253,7 @@ Se memória ausente:
 - uso da memória
 - uso de métricas
 - sinais detectados
+- skills disponíveis (quando houver)
 
 ---
 
@@ -242,6 +268,7 @@ Se memória ausente:
 - NÃO decidir execução
 - NÃO aplicar métricas diretamente
 - NÃO aplicar sinais diretamente
+- NÃO decidir sozinho se skill deve ser usada
 - SEMPRE delegar para /workflow
 
 ---

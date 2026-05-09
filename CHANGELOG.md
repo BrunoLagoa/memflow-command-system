@@ -9,6 +9,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 ### Alterado
 - `src/plan.md`, `src/spec.md` e `src/prd.md`: inclusão de etapa obrigatória de confirmação de salvamento antes de gerar o documento, com opções explícitas ao usuário (salvar ou apenas mostrar no chat), bloqueio por resposta ambígua e registro da decisão na saída.
 - `src/workflow.md`: orquestração atualizada para exigir e sinalizar a confirmação de salvamento como pré-requisito quando o próximo passo envolver `/prd`, `/spec` ou `/plan`.
+- `src/context.md` e `src/workflow.md`: fluxo reforçado para detectar skills disponíveis no projeto, sinalizar skills aplicáveis no contexto e exigir seu uso quando necessário antes da continuidade.
 - `README.md` e `README.pt-BR.md`: documentação sincronizada com a nova política de confirmação prévia para geração de artefatos documentais.
 
 ## [1.1.29] - 2026-04-30
