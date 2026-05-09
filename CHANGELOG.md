@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.34] - 2026-05-09
+
+### Alterado
+- `src/plan.md`: seção final de recomendação de modelos evoluída para exigir `nível recomendado`, `modelo principal`, `2-3 alternativas do mesmo nível` e critérios explícitos de fallback (indisponibilidade/cota/latência), reduzindo viés de opção única no plano.
+- `src/model-policy.md`: política de fallback ampliada para cobrir indisponibilidade e degradação operacional (cota/latência), mantendo prioridade por alternativas no mesmo nível antes de escalada.
+
 ## [1.1.33] - 2026-05-08
 
 ### Alterado

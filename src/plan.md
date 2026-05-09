@@ -339,9 +339,18 @@ Se não houver:
 
 ---
 
-## Modelo recomendado
+## Modelo principal e alternativas
 
-- Modelo: (ex: GPT-5.4)
+- Nível recomendado: (free/econômico/intermediário/avançado)
+- Modelo principal: (ex: GPT-5.4)
+- Modelos alternativos (2-3, mesmo nível):
+  - alternativa 1
+  - alternativa 2
+  - alternativa 3 (opcional)
+- Quando usar alternativas:
+  - indisponibilidade do modelo principal
+  - limite/cota atingido
+  - latência instável
 - Justificativa:
   - complexidade
   - impacto

@@ -184,12 +184,18 @@ Regra:
 
 ---
 
-## Fallback por indisponibilidade de modelo
+## Fallback por indisponibilidade ou degradação operacional
 
-Quando o modelo principal não estiver disponível:
+Acionar fallback para alternativas do mesmo nível quando houver:
+
+- indisponibilidade do modelo principal
+- limite/cota atingido
+- latência instável que comprometa continuidade
+
+Fluxo:
 
 1. tentar alternativas do mesmo nível na ordem definida
-2. se nenhuma alternativa estiver disponível, reavaliar risco e complexidade
+2. se nenhuma alternativa estiver disponível/viável, reavaliar risco e complexidade
 3. escalar para nível superior apenas se necessário
 
 Não permitido:
