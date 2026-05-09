@@ -265,7 +265,8 @@ Adicionar no output:
 Quando a estratégia ou o próximo passo envolver criação de artefato documental via `/prd`, `/spec` ou `/plan`, o workflow deve orientar explicitamente:
 
 - Antes de iniciar o comando, perguntar ao usuário se deseja salvar o documento que será criado
-- Exigir resposta com opções claras de decisão
+- Fazer a pergunta em diálogo estruturado de opções selecionáveis (não em texto livre)
+- Exigir resposta por seleção explícita de uma das opções
 
 Opções padrão esperadas:
 
@@ -276,6 +277,7 @@ Regras:
 
 - Não avançar para geração documental sem essa confirmação
 - Se a resposta for ambígua, repetir a pergunta com as mesmas opções
+- Manter o mesmo formato de diálogo estruturado em tentativas de repetição
 - Registrar no output que a confirmação de salvamento é pré-requisito para `/prd`, `/spec` e `/plan`
 
 ---
@@ -436,7 +438,7 @@ Obrigatório quando:
 
 - Execução: Direta / Planejada  
 - Validação:
-- Confirmação de salvamento para `/prd` `/spec` `/plan`: Obrigatória
+- Confirmação de salvamento para `/prd` `/spec` `/plan`: Obrigatória via diálogo de opções selecionáveis
 
 ---
 
@@ -457,6 +459,6 @@ Se não houver:
 2. /review  
 3. /review-code  
 4. /memory-save  
-5. Se houver `/prd`, `/spec` ou `/plan`: confirmar salvamento antes de gerar documento
+5. Se houver `/prd`, `/spec` ou `/plan`: confirmar salvamento via diálogo de opções antes de gerar documento
 6. Se houver skill aplicável: usar a skill antes de continuar
 7. Se invariantes anti-compaction falharem: reexecutar `/context`

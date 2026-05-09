@@ -77,7 +77,9 @@ Apresentar obrigatoriamente opções claras:
 Regras:
 
 - NÃO iniciar a geração da spec antes da resposta do usuário
+- Fazer a pergunta em diálogo estruturado de opções selecionáveis (não em texto livre)
 - Se a resposta estiver ambígua, perguntar novamente usando as mesmas opções
+- Manter o mesmo formato de diálogo estruturado em tentativas de repetição
 - Registrar na saída a preferência escolhida (salvar ou não salvar)
 - Se o usuário escolher salvar, definir e registrar o destino de documentação antes de continuar
 

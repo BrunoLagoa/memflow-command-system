@@ -4,6 +4,13 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.35] - 2026-05-09
+
+### Alterado
+- `src/workflow.md`: confirmação de salvamento para `/prd`, `/spec` e `/plan` detalhada para exigir diálogo estruturado de opções selecionáveis (sem texto livre), incluindo repetição no mesmo formato em caso de ambiguidade.
+- `src/prd.md` e `src/spec.md`: seção de confirmação de salvamento alinhada ao mesmo padrão de diálogo estruturado com opções selecionáveis e repetição consistente quando necessário.
+- `README.md` e `README.pt-BR.md`: documentação sincronizada com o comportamento de confirmação via diálogo de seleção para geração de artefatos documentais.
+
 ## [1.1.34] - 2026-05-09
 
 ### Alterado

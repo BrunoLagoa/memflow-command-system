@@ -90,6 +90,7 @@ Para comandos que geram documentação (`/prd`, `/spec`, `/plan`), o fluxo agora
 
 - `Sim, salvar o documento`
 - `Não, apenas mostrar no chat`
+- A pergunta deve ser feita em diálogo estruturado de opções selecionáveis (não em texto livre)
 
 Quando o usuário escolher salvar o `/plan`, o markdown gerado deve ser tratado como um **plano vivo**:
 

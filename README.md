@@ -90,6 +90,7 @@ For documentation-generation commands (`/prd`, `/spec`, `/plan`), the flow now r
 
 - `Yes, save the document`
 - `No, show in chat only`
+- The prompt must use a structured selectable-options dialog (not free text)
 
 When the user chooses to save `/plan`, the generated markdown should be treated as a **live plan**:
 
