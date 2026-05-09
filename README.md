@@ -400,6 +400,31 @@ This section is continuously updated as new environments are validated.
 - Deep code review command: [`src/review-code.md`](src/review-code.md)
 - Optional strict validation: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
 
+## Commit convention
+
+This repository follows [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages.
+
+Expected format:
+
+```text
+<type>(<optional-scope>): <short description>
+```
+
+Allowed types in this project:
+
+- `feat`
+- `fix`
+- `docs`
+- `style`
+- `refactor`
+- `perf`
+- `test`
+- `chore`
+- `build`
+- `ci`
+
+Commit messages are automatically validated in CI for pull requests and pushes to `main`.
+
 ## System philosophy
 
 > Workflow decides.  

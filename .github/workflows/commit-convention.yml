@@ -1,0 +1,22 @@
+name: Commit Convention
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  conventional-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          chmod +x scripts/tests/test-conventional-commits.sh
+          scripts/tests/test-conventional-commits.sh

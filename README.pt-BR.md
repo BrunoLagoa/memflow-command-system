@@ -400,6 +400,31 @@ Esta seção será atualizada continuamente conforme novos ambientes forem valid
 - Comando de revisão técnica profunda: [`src/review-code.md`](src/review-code.md)
 - Validação rígida opcional: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
 
+## Convenção de commits
+
+Este repositório segue [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) para mensagens de commit.
+
+Formato esperado:
+
+```text
+<tipo>(<escopo opcional>): <descrição curta>
+```
+
+Tipos permitidos neste projeto:
+
+- `feat`
+- `fix`
+- `docs`
+- `style`
+- `refactor`
+- `perf`
+- `test`
+- `chore`
+- `build`
+- `ci`
+
+As mensagens de commit são validadas automaticamente no CI para pull requests e pushes na branch `main`.
+
 ## Filosofia do sistema
 
 > Workflow decide.  

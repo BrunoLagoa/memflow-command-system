@@ -9,11 +9,13 @@
 - `src/_shared/*.md`: shared normative bases referenced by command specs.
 - `scripts/install.sh` and `scripts/install.ps1`: canonical installer/update/check/uninstall logic.
 - `scripts/memflowctl` and `scripts/memflowctl.ps1`: thin wrappers that download and run installer scripts from GitHub (`main` by default).
-- `.github/workflows/install-regression.yml`: only CI workflow; runs installer regression shell tests.
+- `.github/workflows/install-regression.yml`: runs installer regression shell/PowerShell tests.
+- `.github/workflows/commit-convention.yml`: validates Conventional Commits format on PRs/pushes to `main`.
 
 ## Commands you should actually run
 - Installer regression suite: `scripts/tests/test-install-regression.sh`
 - Same as CI (from repo root): `chmod +x scripts/tests/test-install-regression.sh && scripts/tests/test-install-regression.sh`
+- Commit convention check: `bash scripts/tests/test-conventional-commits.sh`
 - Show installer help quickly: `bash scripts/install.sh --help` and `pwsh ./scripts/install.ps1 -?`
 
 ## Behavior quirks that are easy to miss

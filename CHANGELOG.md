@@ -9,6 +9,11 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 ### Alterado
 - `src/plan.md`: seção final de recomendação de modelos evoluída para exigir `nível recomendado`, `modelo principal`, `2-3 alternativas do mesmo nível` e critérios explícitos de fallback (indisponibilidade/cota/latência), reduzindo viés de opção única no plano.
 - `src/model-policy.md`: política de fallback ampliada para cobrir indisponibilidade e degradação operacional (cota/latência), mantendo prioridade por alternativas no mesmo nível antes de escalada.
+- `README.md` e `README.pt-BR.md`: adicionada seção explícita de convenção de commits com referência ao Conventional Commits 1.0.0 e tipos permitidos no projeto.
+
+### Adicionado
+- `.github/workflows/commit-convention.yml`: novo workflow de CI para validar mensagens de commit em PRs e pushes na `main`.
+- `scripts/tests/test-conventional-commits.sh`: validação automatizada do padrão Conventional Commits para commits sem merge no range da execução.
 
 ## [1.1.33] - 2026-05-08
 
@@ -314,6 +319,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.34]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.33...v1.1.34
 [1.1.33]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.32...v1.1.33
 [1.1.32]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.31...v1.1.32
 [1.1.31]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.30...v1.1.31
