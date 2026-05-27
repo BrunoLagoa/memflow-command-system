@@ -1,9 +1,8 @@
 <p align="center">
-  <img src="docs/assets/logo.webp" alt="Memflow logo" width="300" />
+  <img src="docs/assets/logo.webp" alt="Memflow logo" width="240" />
 </p>
 
 <h1 align="center">Memflow Command System</h1>
-
 
 <p align="center">
   Sistema avançado de engenharia com IA para SDLC (Software Development Life Cycle) completo, com orquestração inteligente, execução disciplinada, validação rígida e memória evolutiva de decisões.
@@ -26,427 +25,176 @@
 
 <!-- README-I18N:END -->
 
-## Visão geral do sistema
+---
 
-O `memflow-command-system` é um conjunto de comandos operacionais que transforma uso ad-hoc de IA em um fluxo de engenharia previsível e auditável.
+## Quick start
 
-Em vez de "pedir código", você roda um sistema com etapas claras:
+Um comando interativo. Ele detecta seu ambiente, faz 3 perguntas e instala.
 
-- **orquestração** para decidir estratégia e modelo
-- **execução** para implementar com segurança
-- **validação** para bloquear violações antes de concluir
-- **memória** para preservar decisões e reduzir retrabalho
-
-Na prática, ele funciona como uma camada de controle SDLC para times que querem velocidade com qualidade.
-
-## Principais diferenciais
-
-- Fluxo com estado e reaproveitamento de decisões por score (`0-100`)
-- Gate final estrito com saída binária (`OK` ou `BLOQUEADO`)
-- Política de modelos orientada a custo/qualidade com modelo principal e alternativas de fallback no mesmo nível
-- Modo degradado funcional quando `.agents` não existe
-- Persistência inteligente de memória com versionamento de decisões (`(update)`)
-- Estrutura modular por comando, com regras compartilhadas em `_shared`
-- Integração com MCPs para código, memória contextual e documentação externa
-- Re-hidratação de invariantes anti-compaction (pt-BR + identidade Memflow) via `/context` e `/workflow`
-
-## Como funciona (visão simplificada do fluxo)
-
-```text
-/context
-   ↓
-/workflow
-   ↓
-/execute (ou /plan, quando necessário)
-   ↓
-(/memory-save, se recomendado)
-   ↓
-/review
-   ↓
-/review-code (quando aplicável)
-   ↓
-/review-enforce-rules (Opcional)
-```
-
-## Arquitetura (orquestração vs capacidades)
-
-### 1) Orquestração (decisão e controle)
-
-- `/context`: carrega contexto, memória, modo de operação e skills disponíveis no projeto (quando existirem)
-- `/workflow`: classifica tarefa, decide estratégia, nível, modelo principal, opções de fallback e garante uso de skills aplicáveis
-- `/execute`: aplica a decisão com fallback controlado
-- `/review`: valida aderência técnica e arquitetural
-- `/review-code`: validação técnica profunda antes de produção
-- `/review-enforce-rules`: validação rígida final (recomendada/opcional)
-- `model-policy.md`: estratégia de seleção e escalada de modelos
-
-### 2) Capacidades (resolução especializada)
-
-- Descoberta e definição: `/prd`, `/spec`, `/plan`, `/brainstorm`
-- Implementação e qualidade: `/execute`, `/debug`, `/refactor`, `/test-plan`
-- Memória: `/memory-init`, `/memory-save`
-
-Para comandos que geram documentação (`/prd`, `/spec`, `/plan`), o fluxo agora exige confirmação explícita do usuário antes de iniciar a geração:
-
-- `Sim, salvar o documento`
-- `Não, apenas mostrar no chat`
-- A pergunta deve ser feita em diálogo estruturado de opções selecionáveis (não em texto livre)
-
-Quando o usuário escolher salvar o `/plan`, o markdown gerado deve ser tratado como um **plano vivo**:
-
-- dimensionamento dinâmico de tarefas por complexidade (`3-5`, `6-10`, `10+` com subtarefas em alta complexidade)
-- rastreamento de execução com checkpoints para retomada
-- marcadores padronizados de status (`[ ]`, `[-]`, `[x]`, `[!]`)
-- marcadores de modo de execução por tarefa (`[P]` paralelizável, `[S]` sequencial)
-
-### 3) Regras compartilhadas
-
-Arquivos em `src/_shared` centralizam normas transversais:
-
-- `base-output.md`
-- `base-preconditions.md`
-- `base-degraded-mode.md`
-- `target-adapter.md` (resolvedor de target OpenCode)
-- `target-adapter.vscode.md` (resolvedor de target VSCode)
-
-## Como começar (quick start)
-
-### Pré-requisitos
-
-- Ambiente com suporte a slash commands
-- `bash` e `curl` para macOS/Linux
-- `PowerShell 7+` para Windows nativo
-
-### Instalação
-
-#### Opção A — one-liner (macOS/Linux)
+**macOS / Linux**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install
 ```
 
-O wizard `MEMFLOW` guia as escolhas de:
-
-1. Sistema operacional
-2. Plataforma de instalação (`OpenCode` ou `VSCode`)
-3. Escopo (`local` ou `global`)
-
-Durante execução interativa, o cabeçalho do wizard exibe a versão do instalador em uso (exemplo: `MEMFLOW v1.1.28`).
-
-#### Opção B — execução local do script (macOS/Linux)
-
-```bash
-git clone https://github.com/BrunoLagoa/memflow-command-system.git
-cd memflow-command-system
-chmod +x scripts/install.sh
-./scripts/install.sh install
-```
-
-#### Opção C — Windows nativo (PowerShell)
+**Windows (PowerShell)**
 
 ```powershell
-git clone https://github.com/BrunoLagoa/memflow-command-system.git
-cd memflow-command-system
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 install"
 ```
 
-#### Escopo por target
+O wizard guia você pelas escolhas:
 
-- **`opencode`**: mantém escopos `global` e `local`.
-  - Durante a instalação, referências a `_shared/*.md` e `model-policy.md` são injetadas no próprio arquivo de comando gerado.
-  - O payload OpenCode instalado passa a conter apenas arquivos de comandos executáveis (`*.md`) em `commands/memflow` (sem `_shared/` ou `model-policy.md` standalone).
-- **`vscode`**: usa instalação **única por projeto** em `.github/prompts` (sem separação global/local).
-  - Durante a instalação, referências a `.../_shared/...` são injetadas no próprio prompt gerado.
-  - `model-policy.md` é injetado da mesma forma nos prompts de comando que o listam; não é gerado `memflow.model-policy.prompt.md` separado.
-  - Referências a `target-adapter.md` são resolvidas para `target-adapter.vscode.md` nos prompts gerados.
-  - Regras de caminho exclusivas do OpenCode não são carregadas para prompts VSCode.
-- **`cursor`**: usa instalação **única por projeto** em `.cursor/commands/memflow` (sem separação global/local).
-  - Durante a instalação, referências a `_shared/*.md` e `model-policy.md` são injetadas no próprio arquivo de comando gerado.
-  - O payload Cursor instalado passa a conter apenas arquivos de comandos executáveis (`*.md`) em `.cursor/commands/memflow` (sem `_shared/` ou `model-policy.md` standalone).
-  - Os comandos gerados removem frontmatter no topo e promovem o campo `description` para a primeira linha visível, melhorando a descrição exibida na lista de comandos do Cursor.
+1. **Sistema operacional**
+2. **Plataforma** — `OpenCode`, `VSCode` ou `Cursor`
+3. **Escopo** — `global` ou `local` (quando aplicável)
 
-No **`update`**, se você já instalou antes, o instalador usa o manifest (`.memflow-install.json`) para localizar a instalação existente.
+Depois, vá direto para seus primeiros comandos:
 
-Na execução dos comandos em **`opencode`**, os arquivos normativos são resolvidos primeiro pela raiz do comando ativo (com detecção automática de escopo `global` vs `local`) e só depois por descoberta dos caminhos oficiais (`global -> local`) quando necessário.
-
-### Bootstrap remoto vs versão instalada
-
-- O bootstrap remoto (`curl .../main/scripts/install.sh` ou `install.ps1` remoto) baixa módulos do instalador da branch `main` por padrão.
-- O payload instalado dos comandos (`src/*`) usa por padrão a release tag mais recente.
-- Para bootstrap reproduzível, fixe `MEMFLOW_REF` antes de executar o instalador.
-
-Exemplo (macOS/Linux):
-
-```bash
-export MEMFLOW_REF=v1.1.24
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/${MEMFLOW_REF}/scripts/install.sh | bash -s -- install --non-interactive
-```
-
-### Instalação não interativa
-
-Os exemplos abaixo seguem a convenção da subseção [Escopo por target](#escopo-por-target) acima.
-
-#### OpenCode — Global
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope global --target opencode
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope global -Target opencode
-```
-
-#### OpenCode — Local (projeto atual)
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --scope local --project-dir . --target opencode
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Scope local -ProjectDir . -Target opencode
-```
-
-#### VSCode — Instalação única por projeto
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --target vscode --project-dir .
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target vscode -ProjectDir .
-```
-
-#### Cursor — Instalação única por projeto
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- install --non-interactive --target cursor --project-dir .
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target cursor -ProjectDir .
-```
-
-### Atualizar para nova versão
-
-Por padrão, o update usa a release tagueada mais recente.
-
-Se não existir instalação prévia no alvo solicitado:
-- no modo **interativo**, o comando informa o problema e pergunta se deve iniciar uma instalação nova;
-- no modo **não interativo**, falha com erro explícito e código de saída `2`.
-
-Sem `--scope`, o `update` mantém autodiscovery por manifest:
-- em `opencode`, atualiza os escopos detectados (`global` e/ou `local`);
-- em `vscode`, atualiza os arquivos gerados em `<projeto>/.github/prompts`.
-- em `cursor`, atualiza os comandos gerados em `<projeto>/.cursor/commands/memflow`.
-
-#### Comando geral
-
-Use o `install.sh` / `install.ps1` direto do repositório (não depende de `memflowctl` estar no PATH).
-
-Execute no **mesmo diretório** em que você costuma trabalhar. Para `vscode` e `cursor`, informe `--target <target> --project-dir .` (ou `-Target <target> -ProjectDir .` no PowerShell).
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- update --non-interactive
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 update -NonInteractive"
-```
-
-### Check de versão
-
-O `check` verifica se existe versão mais recente sem alterar a instalação.
-
-Sem `--scope`, o `check` usa autodiscovery por manifest:
-- em `opencode`, verifica os escopos instalados;
-- em `vscode`, verifica a instalação única do projeto via manifest em `<projeto>/.github/.memflow-install.json`.
-- em `cursor`, verifica a instalação única do projeto via manifest em `<projeto>/.cursor/commands/.memflow-install.json`.
-
-#### Comando geral
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- check --non-interactive
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 check -NonInteractive"
-```
-
-### Remover instalação
-
-Use os mesmos valores de **`--scope`** e **`--project-dir`** da subseção [Escopo por target](#escopo-por-target).
-
-Se não existir instalação no alvo informado, o `uninstall` retorna erro explícito com código de saída `2` para evitar falso positivo de sucesso.
-
-Sem `--scope`, o `uninstall` também usa descoberta automática por manifest:
-- em `opencode`, remove os escopos detectados;
-- em `vscode`, remove arquivos `memflow.*` gerados em `.github/prompts`.
-- em `cursor`, remove comandos gerados em `.cursor/commands/memflow`.
-
-#### Comando geral
-
-##### macOS/Linux
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh | bash -s -- uninstall --non-interactive
-```
-
-##### PowerShell
-
-```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 uninstall -NonInteractive"
-```
-
-### Destinos de instalação
-
-Correspondem aos modos descritos em [Escopo por target](#escopo-por-target):
-
-- `opencode` global: `~/.config/opencode/commands/memflow`
-- `opencode` local: `<projeto>/.opencode/commands/memflow`
-- `vscode` prompts: `<projeto>/.github/prompts/memflow.<comando>.prompt.md`
-- `cursor` local: `<projeto>/.cursor/commands/memflow/<comando>.md`
-
-### Primeiro uso
-
-```bash
+```text
 /context
 /workflow
 ```
 
-Se a tarefa for simples, o próximo passo normalmente é:
+> **Precisa de instalação scriptada, update, check ou uninstall?** Veja o [guia de instalação avançada](docs/INSTALL.pt-BR.md).
 
-```bash
-/execute
-/review
-/review-code
-/review-enforce-rules  # recomendado para validação rígida final
-```
+---
 
-## Exemplo de fluxo real
+## Por que Memflow?
 
-Exemplo: implementar uma feature de média complexidade com memória ativa.
+A maioria dos fluxos com IA é assim: abre chat, cola contexto, pede código, torce, repete. Cada sessão começa do zero. Decisões se perdem. Os mesmos erros voltam na próxima semana.
 
-```text
-1. /context
-   - Carrega .agents e memória existente
+O Memflow transforma esse fluxo em algo parecido com um time de engenharia real:
 
-2. /workflow
-   - Detecta decisão prévia em decisions.md
-   - Reaproveita decisão se score for alto
+- Um **estágio de workflow** que classifica a tarefa e escolhe estratégia e modelo certos — barato por padrão, escalando só quando precisa.
+- Um **estágio de execução** que implementa com fallbacks controlados e checkpoints explícitos.
+- Um **estágio de validação** com gate final estrito (`OK` ou `BLOQUEADO`) — sem "aprovar no feeling".
+- Uma **camada de memória** que captura decisões relevantes com categoria, impacto e score `0–100`, e reaproveita entre sessões.
 
-3. /plan
-   - Necessário por complexidade/risco
+O resultado é algo que você pode auditar, repetir e confiar.
 
-4. /execute
-   - Implementa com validações e testes
-   - Calcula score de relevância da sessão
+---
 
-5. /memory-save
-   - Registra decisão relevante com categoria, impacto e score
-
-6. /review
-   - Verifica qualidade, segurança e arquitetura
-
-7. /review-code
-   - Executa validação técnica profunda antes de produção
-
-8. /review-enforce-rules (opcional/recomendado)
-   - Aplica validação rígida adicional (OK ou BLOQUEADO)
-```
-
-## Suporte de ferramentas
-
-Esta seção será atualizada continuamente conforme novos ambientes forem validados.
-
-| Ferramenta | Suporte | Observações |
-| ---------- | ------- | ----------- |
-| `OpenCode` | ✅ | Plataforma principal do projeto, com suporte completo a comandos slash e fluxo SDLC. |
-| `VSCode` | ✅ | Suporte via target do instalador (`--target vscode`) gerando arquivos de prompt em `.github/prompts`. |
-| `Cursor` | ✅ | Suporte via target do instalador (`--target cursor`) gerando comandos em `.cursor/commands/memflow`. |
-| `Antigravity` | ⏳ | Suporte pendente de validação; ainda vamos testar neste ambiente. |
-
-## Documentação (links para docs)
-
-- Histórico de versões: [`CHANGELOG.md`](CHANGELOG.md)
-- Guia conceitual de SDLC (English): [`docs/SDLC.md`](docs/SDLC.md)
-- Guia conceitual de SDLC (Português): [`docs/SDLC.pt-BR.md`](docs/SDLC.pt-BR.md)
-- Política de modelos (operacional): [`src/model-policy.md`](src/model-policy.md)
-- Comando de contexto: [`src/context.md`](src/context.md)
-- Comando de decisão: [`src/workflow.md`](src/workflow.md)
-- Comando de execução: [`src/execute.md`](src/execute.md)
-- Comando de revisão técnica profunda: [`src/review-code.md`](src/review-code.md)
-- Validação rígida opcional: [`src/review-enforce-rules.md`](src/review-enforce-rules.md)
-
-## Convenção de commits
-
-Este repositório segue [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) para mensagens de commit.
-
-Formato esperado:
+## O fluxo
 
 ```text
-<tipo>(<escopo opcional>): <descrição curta>
+┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌────────────┐
+│  /context   │ →  │  /workflow   │ →  │  /execute   │ →  │  /review   │
+│             │    │              │    │ (ou /plan)  │    │            │
+│carrega mem. │    │decide modelo │    │ implementa  │    │   valida   │
+└─────────────┘    └──────────────┘    └─────────────┘    └────────────┘
+                                              ↓
+                                       ┌──────────────┐
+                                       │ /memory-save │
+                                       │  (opcional)  │
+                                       └──────────────┘
 ```
 
-Tipos permitidos neste projeto:
+Para trabalho de alto risco, finalize com `/review-code` (revisão técnica profunda) e `/review-enforce-rules` (gate final estrito).
 
-- `feat`
-- `fix`
-- `docs`
-- `style`
-- `refactor`
-- `perf`
-- `test`
-- `chore`
-- `build`
-- `ci`
+---
 
-As mensagens de commit são validadas automaticamente no CI para pull requests e pushes na branch `main`.
+## O que vem incluído
 
-## Filosofia do sistema
+### Comandos de orquestração
 
-> Workflow decide.  
-> Modelo executa.  
-> Regras protegem.
+A camada de controle que decide, executa e valida.
+
+| Comando                  | O que faz                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------- |
+| `/context`               | Carrega contexto do projeto, memória, modo de operação e skills disponíveis                  |
+| `/workflow`              | Classifica a tarefa e decide estratégia, nível, modelo principal e fallbacks                  |
+| `/execute`               | Aplica a decisão com fallback controlado                                                      |
+| `/review`                | Valida aderência técnica e arquitetural                                                       |
+| `/review-code`           | Validação técnica profunda antes de produção                                                  |
+| `/review-enforce-rules`  | Gate final estrito com saída binária: `OK` ou `BLOQUEADO`                                     |
+
+### Comandos de capacidade
+
+Resolução especializada para o dia a dia.
+
+| Categoria                       | Comandos                                          |
+| ------------------------------- | ------------------------------------------------- |
+| Descoberta e definição          | `/prd`, `/spec`, `/plan`, `/brainstorm`           |
+| Implementação e qualidade       | `/execute`, `/debug`, `/refactor`, `/test-plan`   |
+| Memória                         | `/memory-init`, `/memory-save`                    |
+
+### Principais diferenciais
+
+- **Reaproveitamento de decisões por score** — decisões com score alto são reaproveitadas automaticamente entre sessões.
+- **Política de modelo custo/qualidade** — modelo principal + fallbacks no mesmo nível; escala só quando justificado.
+- **Modo degradado funcional** — continua operando mesmo sem `.agents`.
+- **Persistência inteligente de memória** — versionamento de decisões com semântica `(update)`.
+- **Re-hidratação anti-compaction** — invariantes pt-BR + identidade Memflow restauradas via `/context` e `/workflow`.
+- **Integração MCP** — código, memória contextual e documentação externa.
+- **Planos vivos** — quando `/plan` é salvo, as tarefas são dimensionadas por complexidade com marcadores de status (`[ ]`, `[-]`, `[x]`, `[!]`) e modos de execução (`[P]` paralelo, `[S]` sequencial).
+
+---
+
+## Exemplo real
+
+Implementar uma feature de média complexidade com memória ativa:
+
+```text
+1. /context              → Carrega .agents e memória existente
+2. /workflow             → Detecta decisão prévia, reaproveita se score for alto
+3. /plan                 → Necessário por complexidade/risco
+4. /execute              → Implementa com validações e testes; calcula score da sessão
+5. /memory-save          → Registra decisão com categoria, impacto e score
+6. /review               → Verifica qualidade, segurança e arquitetura
+7. /review-code          → Validação técnica profunda
+8. /review-enforce-rules → Gate final estrito (OK ou BLOQUEADO) — opcional, recomendado
+```
+
+---
+
+## Ferramentas suportadas
+
+| Ferramenta  | Status | Observações                                                                      |
+| ----------- | :----: | -------------------------------------------------------------------------------- |
+| OpenCode    |   ✅   | Plataforma principal. Suporte completo a slash commands e fluxo SDLC.            |
+| VSCode      |   ✅   | Instalada via `--target vscode` como prompts em `.github/prompts`.               |
+| Cursor      |   ✅   | Instalada via `--target cursor` como comandos em `.cursor/commands/memflow`.     |
+| Antigravity |   ⏳   | Suporte pendente de validação.                                                   |
+
+---
+
+## Filosofia
+
+> **Workflow decide. Modelo executa. Regras protegem.**
 
 Princípios operacionais:
 
-- Começar barato, escalar modelo apenas quando necessário
-- Não executar sem contexto e sem decisão de fluxo
-- Não continuar para próximos comandos sem confirmação explícita do usuário
-- Não perder aprendizado: decisão importante vira memória estruturada
-- Não "aprovar no feeling": validação é explícita e rastreável
+- **Comece barato, escale quando precisar.** Não queime o modelo mais forte numa correção de uma linha.
+- **Sem execução sem decisão.** Contexto e workflow vêm primeiro, sempre.
+- **Sem progresso silencioso.** Cada passo aguarda confirmação explícita do usuário.
+- **Não perca aprendizado.** Decisões importantes viram memória estruturada.
+- **Sem "aprovar no feeling".** Validação é explícita e rastreável.
 
-## Casos de uso
+---
 
-- Times que querem padronizar SDLC assistido por IA com governança
-- Projetos que sofrem com decisões inconsistentes entre sessões
-- Ambientes que precisam equilibrar custo de modelo e qualidade técnica
+## Documentação
+
+| Doc                                                            | O que tem dentro                              |
+| -------------------------------------------------------------- | --------------------------------------------- |
+| [Instalação avançada](docs/INSTALL.pt-BR.md)                   | Instalação não-interativa, update, check, uninstall, detalhes de escopo, bootstrap pinning |
+| [Guia SDLC (English)](docs/SDLC.md)                            | Guia conceitual do SDLC do Memflow            |
+| [Guia SDLC (Português)](docs/SDLC.pt-BR.md)                    | Versão pt-BR                                  |
+| [Changelog](CHANGELOG.md)                                      | Histórico de versões                          |
+| [Política de modelos](src/model-policy.md)                     | Estratégia de seleção e escalada de modelos   |
+| Specs de comandos                                              | [`/context`](src/context.md) · [`/workflow`](src/workflow.md) · [`/execute`](src/execute.md) · [`/review-code`](src/review-code.md) · [`/review-enforce-rules`](src/review-enforce-rules.md) |
+
+---
+
+## Para quem é isso?
+
+- Times padronizando SDLC assistido por IA com governança
+- Projetos com decisões inconsistentes entre sessões
+- Ambientes que precisam balancear custo de modelo e qualidade técnica
 - Fluxos com alto requisito de conformidade arquitetural e segurança
-- Adoção de IA em engenharia sem abrir mão de previsibilidade
+- Orgs adotando IA na engenharia sem abrir mão de previsibilidade
+
+---
 
 ## Roadmap
 
@@ -455,7 +203,15 @@ Princípios operacionais:
 - Disponibilizar templates por stack para onboarding mais rápido
 - Incluir métricas de efetividade (lead time, retrabalho, custo por tarefa)
 
-## Pessoas por trás do Memflow
+---
+
+## Contribuindo
+
+Este projeto segue [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). Mensagens de commit são validadas no CI para pull requests e pushes na `main`.
+
+Tipos permitidos: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `build`, `ci`.
+
+## Pessoas
 
 Este projeto evolui com contribuições de pessoas que acreditam em engenharia de software com IA de forma disciplinada, prática e auditável.
 
@@ -469,12 +225,14 @@ Quer aparecer aqui também? Abra uma issue, sugira melhorias ou envie um PR.
 
 ## Suporte
 
-Para obter suporte, abra uma issue no GitHub. Relatos de bugs, solicitações de recursos e dúvidas de uso são bem-vindos.
+Abra uma issue no GitHub. Relatos de bugs, solicitações de recursos e dúvidas de uso são bem-vindos.
 
 ## Licença
 
-Este projeto está licenciado sob os termos da licença MIT. Consulte o arquivo [`LICENSE`](LICENSE) para os termos completos.
+MIT. Veja [`LICENSE`](LICENSE) para os termos completos.
 
 ---
 
-Se você quer IA atuando como copiloto de engenharia real, e não como gerador de snippets, este sistema foi feito para isso.
+<p align="center">
+  Se você quer IA atuando como copiloto de engenharia real — e não como gerador de snippets — este sistema foi feito pra isso.
+</p>

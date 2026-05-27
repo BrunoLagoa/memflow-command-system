@@ -4,6 +4,15 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.38] - 2026-05-27
+
+### Alterado
+- `README.md` e `README.pt-BR.md`: reestruturação completa com foco em onboarding — nova tagline, seção "Why/Por que Memflow?" narrativa, diagrama visual do fluxo, tabelas escaneáveis para comandos de orquestração e capacidades, e instalação simplificada apenas com o modo interativo (Quick start).
+- `README.md` e `README.pt-BR.md`: redução de ~480 para ~190 linhas movendo detalhes técnicos avançados para `docs/INSTALL.*.md`.
+
+### Adicionado
+- `docs/INSTALL.md` e `docs/INSTALL.pt-BR.md`: guia avançado de instalação cobrindo instalação não-interativa por target, update, check, uninstall, escopo por target, destinos de instalação e bootstrap reproduzível (`MEMFLOW_REF`).
+
 ## [1.1.37] - 2026-05-09
 
 ### Alterado
