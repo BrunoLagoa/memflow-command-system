@@ -164,6 +164,7 @@ Real scenarios with full command flows and sample outputs:
 - [Example 01 — New feature](examples/01-nova-feature.md) — dark mode with active memory
 - [Example 02 — Bug fix](examples/02-correcao-bug.md) — silent login failure
 - [Example 03 — Complex feature](examples/03-feature-complexa-com-brainstorm.md) — notification system with brainstorm
+- [Example 04 — Memory and `/memory-save`](examples/04-memoria-e-memory-save.md) — when to save, reinforce, or skip
 
 ---
 

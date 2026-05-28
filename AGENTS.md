@@ -15,11 +15,14 @@
 ## Commands you should actually run
 - Installer regression suite: `scripts/tests/test-install-regression.sh`
 - Same as CI (from repo root): `chmod +x scripts/tests/test-install-regression.sh && scripts/tests/test-install-regression.sh`
+- Command behavioral contracts: `scripts/tests/test-command-contracts.sh`
 - Commit convention check: `bash scripts/tests/test-conventional-commits.sh`
 - Show installer help quickly: `bash scripts/install.sh --help` and `pwsh ./scripts/install.ps1 -?`
 
 ## Behavior quirks that are easy to miss
 - `/workflow` may route to `/brainstorm` before `/plan`, `/spec`, or `/prd` when clarity is low or trade-offs are unresolved; `/brainstorm` handoff is explicit (`Pronto para /prd`, `/spec`, or `/plan`).
+- `/memory-save` requires explicit user confirmation before writing; score < 21 → do not save; reinforcement merges into existing decision (+5 score, version bump) instead of duplicating.
+- `/memory-init` bootstrap creates five memory files including `decision-suggestions.md`.
 - `update`, `check`, and `uninstall` without explicit scope auto-discover manifests and operate on all detected installs (global and/or local), in order `global -> local`.
 - Missing installation for `update`/`uninstall` returns exit code `2` in non-interactive mode (covered by regression tests).
 - For local scope outside current project directory, callers must pass project dir explicitly (`--project-dir` / `-ProjectDir`) or installer blocks.

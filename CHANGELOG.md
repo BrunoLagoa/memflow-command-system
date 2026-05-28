@@ -4,6 +4,16 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.41] - 2026-05-28
+
+### Alterado
+- `src/memory-save.md` (v11.0.0): spec completo — etapas 0–13 executáveis (validação de relevância, detecção de decisões, score alinhado ao `/execute`, schema de `decisions.md`, lifecycle de score com reforço/contradição/arquivamento, gate de confirmação obrigatório, limpeza de `session-memory.md`, registro de métricas pós-review, geração de insights e sugestões com controles de crescimento, formato de saída padronizado).
+- `src/memory-init.md` (v4.2.0): bootstrap passa a criar `decision-suggestions.md` junto com os demais arquivos de memória.
+
+### Adicionado
+- `scripts/tests/test-command-contracts.sh`: 13 contratos específicos para `/memory-save` (confirmação, score, anti-duplicação, integração com review, limpeza de session-memory, bootstrap de decision-suggestions).
+- `docs/examples/04-memoria-e-memory-save.md`: quatro cenários de memória (primeira sessão, decisão nova, reforço, trivial sem save) e ciclo review → métricas → próxima sessão.
+
 ## [1.1.40] - 2026-05-28
 
 ### Adicionado
@@ -372,6 +382,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.41]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.40...v1.1.41
 [1.1.40]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.39...v1.1.40
 [1.1.39]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.38...v1.1.39
 [1.1.38]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.37...v1.1.38

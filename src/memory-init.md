@@ -4,7 +4,7 @@ description: Cria ou atualiza o memory.md com o contexto base do projeto — inc
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "4.1.0"
+  version: "4.2.0"
 ---
 
 ## Referência normativa comum
@@ -70,6 +70,7 @@ Criar:
 - `.agents/memory/session-memory.md`
 - `.agents/memory/decisions.md`
 - `.agents/memory/quality-metrics.md`
+- `.agents/memory/decision-suggestions.md`
 
 ---
 
@@ -130,6 +131,16 @@ Conteúdo inicial mínimo:
 - taxa_reprovacao:
 - retrabalho_medio:
 - observacoes:
+
+---
+
+#### decision-suggestions.md
+
+Conteúdo inicial mínimo:
+
+# Sugestões de Decisão
+
+(nenhuma sugestão ativa)
 
 ---
 

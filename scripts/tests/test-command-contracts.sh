@@ -164,6 +164,29 @@ assert_contains "$DEBUG" "NÃO implementar correções|NÃO implementa" "debug: 
 assert_contains "$DEBUG" "/execute|/refactor|/plan" "debug: handoff para /execute, /refactor ou /plan"
 
 # ──────────────────────────────────────────────────────────────────
+# /memory-save — persistência e lifecycle de memória
+# ──────────────────────────────────────────────────────────────────
+
+printf "\n=== /memory-save ===\n\n"
+
+MEMORY_SAVE="${SRC_DIR}/memory-save.md"
+assert_contains "$MEMORY_SAVE" "Confirmação obrigatória antes de escrever" "memory-save: gate de confirmação antes de escrever"
+assert_contains "$MEMORY_SAVE" "Score de relevância \(0–100\)|Score de relevância" "memory-save: score de relevância definido"
+assert_contains "$MEMORY_SAVE" "0–20.*Não salvar|0–20" "memory-save: limiar mínimo para não salvar"
+assert_contains "$MEMORY_SAVE" "Reforço|reforço" "memory-save: regra de reforço de decisão existente"
+assert_contains "$MEMORY_SAVE" "session-memory\.md" "memory-save: gerencia session-memory.md"
+assert_contains "$MEMORY_SAVE" "decision-suggestions\.md" "memory-save: gerencia decision-suggestions.md"
+assert_contains "$MEMORY_SAVE" "quality-metrics\.md" "memory-save: gerencia quality-metrics.md"
+assert_contains "$MEMORY_SAVE" "review_result|/review" "memory-save: integração com /review"
+assert_contains "$MEMORY_SAVE" "NÃO salvar sem confirmação|NÃO salvar sem confirmação explícita" "memory-save: proíbe salvar sem confirmação"
+assert_contains "$MEMORY_SAVE" "NÃO duplicar|mesclar" "memory-save: regra anti-duplicação"
+assert_contains "$MEMORY_SAVE" "Session-memory limpo|session-memory limpo" "memory-save: limpeza de session-memory após save"
+assert_contains "$MEMORY_SAVE" "Salvo|Não necessário|Bloqueado" "memory-save: status de saída definidos"
+
+MEMORY_INIT="${SRC_DIR}/memory-init.md"
+assert_contains "$MEMORY_INIT" "decision-suggestions\.md" "memory-init: bootstrap inclui decision-suggestions.md"
+
+# ──────────────────────────────────────────────────────────────────
 # Gates de confirmação de salvamento (prd, spec, brainstorm, plan)
 # ──────────────────────────────────────────────────────────────────
 

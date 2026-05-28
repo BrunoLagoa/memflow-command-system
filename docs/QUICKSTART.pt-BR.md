@@ -164,6 +164,7 @@ Cenários reais com fluxo completo de comandos e saídas esperadas:
 - [Exemplo 01 — Nova feature](examples/01-nova-feature.md) — dark mode com memória ativa
 - [Exemplo 02 — Correção de bug](examples/02-correcao-bug.md) — falha silenciosa no login
 - [Exemplo 03 — Feature complexa](examples/03-feature-complexa-com-brainstorm.md) — sistema de notificações com brainstorm
+- [Exemplo 04 — Memória e `/memory-save`](examples/04-memoria-e-memory-save.md) — quando salvar, reforçar ou ignorar
 
 ---
 
