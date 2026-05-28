@@ -25,6 +25,7 @@ Ele garante:
 Padronizar como os modelos são utilizados em cada etapa do workflow:
 
 - `/workflow`
+- `/brainstorm`
 - `/plan`
 - `/execute`
 - `/review`
@@ -123,6 +124,8 @@ Características:
 
 ```
 /workflow → decide
+   ↓
+/brainstorm (opcional — exploração e trade-offs)
    ↓
 /plan (modelo inteligente)
    ↓
@@ -240,6 +243,14 @@ Free/Econômico → Intermediário → Avançado
 ### `/workflow`
 
 - decide nível recomendado, modelo principal e alternativas do mesmo nível
+
+---
+
+### `/brainstorm`
+
+- fases 1–2: modelo econômico por padrão
+- validação no código e comparação de trade-offs: intermediário quando complexidade ≥ média
+- recomendação final e DoD: modelo mais forte quando complexidade ≥ média ou risco ≥ médio
 
 ---
 

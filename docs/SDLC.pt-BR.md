@@ -30,6 +30,24 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 
 # 🏗️ Etapas do SDLC
 
+## 0. 💡 Exploração (opcional)
+
+* Comparar abordagens antes de fechar direção
+* Trade-offs técnicos e de produto
+* Validação de premissas no código existente
+
+👉 No sistema:
+
+```
+/brainstorm
+```
+
+Quando usar: clareza insuficiente, múltiplas abordagens plausíveis ou trade-offs não resolvidos.
+
+Handoff típico: `/brainstorm` → `/prd`, `/spec` ou `/plan` (conforme gate).
+
+---
+
 ## 1. 📌 Descoberta / Ideia
 
 * Definição do problema
@@ -143,6 +161,7 @@ O sistema implementa um SDLC completo com comandos:
 ```text
 /context
 /workflow
+/brainstorm
 /prd
 /spec
 /plan

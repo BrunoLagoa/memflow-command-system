@@ -66,7 +66,7 @@ A maioria dos fluxos com IA é assim: abre chat, cola contexto, pede código, to
 
 O Memflow transforma esse fluxo em algo parecido com um time de engenharia real:
 
-- Um **estágio de workflow** que classifica a tarefa e escolhe estratégia e modelo certos — barato por padrão, escalando só quando precisa.
+- Um **estágio de workflow** que classifica a tarefa, encaminha exploração quando necessário (`/brainstorm`) e escolhe estratégia e modelo certos — barato por padrão, escalando só quando precisa.
 - Um **estágio de execução** que implementa com fallbacks controlados e checkpoints explícitos.
 - Um **estágio de validação** com gate final estrito (`OK` ou `BLOQUEADO`) — sem "aprovar no feeling".
 - Uma **camada de memória** que captura decisões relevantes com categoria, impacto e score `0–100`, e reaproveita entre sessões.
@@ -82,13 +82,19 @@ O resultado é algo que você pode auditar, repetir e confiar.
 │  /context   │ →  │  /workflow   │ →  │  /execute   │ →  │  /review   │
 │             │    │              │    │ (ou /plan)  │    │            │
 │carrega mem. │    │decide modelo │    │ implementa  │    │   valida   │
-└─────────────┘    └──────────────┘    └─────────────┘    └────────────┘
+└─────────────┘    └──────┬───────┘    └─────────────┘    └────────────┘
+                          │
+                    ┌─────▼──────┐
+                    │ /brainstorm│  opcional — quando clareza é baixa ou há trade-offs
+                    └────────────┘
                                               ↓
                                        ┌──────────────┐
                                        │ /memory-save │
                                        │  (opcional)  │
                                        └──────────────┘
 ```
+
+Quando `/workflow` detecta clareza insuficiente ou trade-offs não resolvidos, encaminha para `/brainstorm` primeiro. Handoff após aprovação: `/prd`, `/spec` ou `/plan`.
 
 Para trabalho de alto risco, finalize com `/review-code` (revisão técnica profunda) e `/review-enforce-rules` (gate final estrito).
 
@@ -103,7 +109,7 @@ A camada de controle que decide, executa e valida.
 | Comando                  | O que faz                                                                                     |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
 | `/context`               | Carrega contexto do projeto, memória, modo de operação e skills disponíveis                  |
-| `/workflow`              | Classifica a tarefa e decide estratégia, nível, modelo principal e fallbacks                  |
+| `/workflow`              | Classifica a tarefa; decide exploração (`/brainstorm`), estratégia de execução, nível, modelo principal e fallbacks |
 | `/execute`               | Aplica a decisão com fallback controlado                                                      |
 | `/review`                | Valida aderência técnica e arquitetural                                                       |
 | `/review-code`           | Validação técnica profunda antes de produção                                                  |
@@ -115,12 +121,13 @@ Resolução especializada para o dia a dia.
 
 | Categoria                       | Comandos                                          |
 | ------------------------------- | ------------------------------------------------- |
-| Descoberta e definição          | `/prd`, `/spec`, `/plan`, `/brainstorm`           |
+| Descoberta e definição          | `/brainstorm`, `/prd`, `/spec`, `/plan`           |
 | Implementação e qualidade       | `/execute`, `/debug`, `/refactor`, `/test-plan`   |
 | Memória                         | `/memory-init`, `/memory-save`                    |
 
 ### Principais diferenciais
 
+- **Exploração estruturada** — `/brainstorm` compara 2–5 abordagens em diálogo por fases, com HARD-GATE, auto-revisão, salvamento opcional de artefato e handoff para `/prd`, `/spec` ou `/plan`.
 - **Reaproveitamento de decisões por score** — decisões com score alto são reaproveitadas automaticamente entre sessões.
 - **Política de modelo custo/qualidade** — modelo principal + fallbacks no mesmo nível; escala só quando justificado.
 - **Modo degradado funcional** — continua operando mesmo sem `.agents`.
@@ -145,6 +152,8 @@ Implementar uma feature de média complexidade com memória ativa:
 7. /review-code          → Validação técnica profunda
 8. /review-enforce-rules → Gate final estrito (OK ou BLOQUEADO) — opcional, recomendado
 ```
+
+Quando escopo ou abordagem estiverem incertos, insira `/brainstorm` após `/workflow` (o passo 3 vira exploração e aprovação, depois `/prd`, `/spec` ou `/plan`).
 
 ---
 
@@ -182,7 +191,7 @@ Princípios operacionais:
 | [Guia SDLC (Português)](docs/SDLC.pt-BR.md)                    | Versão pt-BR                                  |
 | [Changelog](CHANGELOG.md)                                      | Histórico de versões                          |
 | [Política de modelos](src/model-policy.md)                     | Estratégia de seleção e escalada de modelos   |
-| Specs de comandos                                              | [`/context`](src/context.md) · [`/workflow`](src/workflow.md) · [`/execute`](src/execute.md) · [`/review-code`](src/review-code.md) · [`/review-enforce-rules`](src/review-enforce-rules.md) |
+| Specs de comandos                                              | [`/context`](src/context.md) · [`/workflow`](src/workflow.md) · [`/brainstorm`](src/brainstorm.md) · [`/execute`](src/execute.md) · [`/review-code`](src/review-code.md) · [`/review-enforce-rules`](src/review-enforce-rules.md) |
 
 ---
 

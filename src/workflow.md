@@ -1,10 +1,10 @@
 ---
 name: workflow
-description: Orquestrador central — decide execução, validação e adapta comportamento com base em decisões, métricas, insights e sugestões assistidas, com controle de previsibilidade e evolução. É a única fonte de decisão de estratégia para /execute.
+description: Orquestrador central — decide exploração, execução, validação e adapta comportamento com base em decisões, métricas, insights e sugestões assistidas, com controle de previsibilidade e evolução. É a única fonte de decisão de estratégia para /brainstorm, /execute e /plan.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.6.0"
+  version: "9.7.0"
 ---
 
 ## Referência normativa comum
@@ -59,7 +59,7 @@ Ordem obrigatória:
 - insights apenas ajustam comportamento  
 - sugestões NUNCA executam automaticamente  
 - em caso de conflito → respeitar ordem acima  
-- `/workflow` é a única origem de decisão de estratégia (`/execute` vs `/plan`)
+- `/workflow` é a única origem de decisão de estratégia (`/brainstorm`, `/execute` vs `/plan`)
 - NÃO prosseguir sem invariantes anti-compaction validados pelo `/context`
 - quando houver decisão pendente no `## Próximos passos`, usar diálogo estruturado com opções selecionáveis
 
@@ -274,6 +274,34 @@ Adicionar no output:
 
 ---
 
+## EXPLORAR COM /brainstorm
+
+Usar quando:
+
+- clareza baixa ou média **e** múltiplas abordagens plausíveis
+- trade-offs técnicos ou de produto ainda não resolvidos
+- escopo indefinido antes de `/prd` ou `/plan`
+- usuário pedir exploração de alternativas
+
+Regras:
+
+- NÃO pular para `/execute` quando `/brainstorm` for necessário
+- após `/brainstorm` aprovado, handoff conforme decisão do gate:
+  - `/prd` — falta definição de produto ou escopo de negócio
+  - `/spec` — PRD existe, falta decisão técnica determinística
+  - `/plan` — escopo e abordagem claros o suficiente para planejar
+- retornar ao `/workflow` após handoff do brainstorm antes de continuar
+
+---
+
+## Ajuste por insights (brainstorm)
+
+- baixa clareza + múltiplas abordagens → FORÇAR /brainstorm antes de /plan
+- trade-off arquitetural não decidido → FORÇAR /brainstorm
+- alta clareza + abordagem única evidente → pular /brainstorm
+
+---
+
 # Etapa 3 — Estratégia de validação
 
 ---
@@ -346,6 +374,7 @@ Obrigatório quando:
 
 # Integração
 
+- /brainstorm
 - /execute  
 - /review  
 - /review-code  
@@ -428,6 +457,7 @@ Obrigatório quando:
 
 ### Estratégia
 
+- Exploração: Necessária (/brainstorm) / Não necessária
 - Execução: Direta / Planejada  
 - Validação:
 
@@ -446,7 +476,7 @@ Se não houver:
 
 ## Próximos passos
 
-1. /execute ou /plan  
+1. /brainstorm (quando exploração necessária) ou /execute ou /plan
 2. /review  
 3. /review-code  
 4. /memory-save  

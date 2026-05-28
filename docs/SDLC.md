@@ -30,6 +30,24 @@ idea -> definition -> planning -> development -> testing -> validation -> delive
 
 # SDLC Stages
 
+## 0. Exploration (optional)
+
+* Compare approaches before locking direction
+* Technical and product trade-offs
+* Validate assumptions against existing code
+
+In this system:
+
+```
+/brainstorm
+```
+
+When to use: insufficient clarity, multiple plausible approaches, or unresolved trade-offs.
+
+Typical handoff: `/brainstorm` -> `/prd`, `/spec`, or `/plan` (per gate decision).
+
+---
+
 ## 1. Discovery / Idea
 
 * Problem definition
@@ -143,6 +161,7 @@ The system implements a complete SDLC with commands:
 ```text
 /context
 /workflow
+/brainstorm
 /prd
 /spec
 /plan

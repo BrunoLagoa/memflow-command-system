@@ -4,6 +4,19 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.39] - 2026-05-28
+
+### Alterado
+- `src/brainstorm.md` (v1.3.0): evolução completa do comando — HARD-GATE anti-bypass, processo em 4 fases conversacionais, diálogo estruturado com opções selecionáveis, auto-revisão (4 checks), gate de salvamento, subseção `Design proposto`, política de modelo, decomposição em sub-projetos, recursos visuais opcionais e handoff explícito para `/prd`, `/spec` ou `/plan`.
+- `src/workflow.md` (v9.7.0): integração de `/brainstorm` na decisão de execução — critérios de `EXPLORAR COM /brainstorm`, ajustes por insights, campo `Exploração` na estratégia e encadeamento nos próximos passos.
+- `src/model-policy.md`: inclusão de `/brainstorm` no fluxo ideal e regras de modelo por fase.
+- `docs/SDLC.md` e `docs/SDLC.pt-BR.md`: nova etapa 0 (Exploração) com `/brainstorm` e fluxo SDLC atualizado.
+- `README.md` e `README.pt-BR.md`: diagrama de fluxo, diferencial de exploração estruturada, exemplo com `/brainstorm`, tabela de workflow e link para spec do comando.
+- `AGENTS.md`: notas de integração `/workflow` → `/brainstorm` e regra de sync de docs para mudanças de comportamento de comandos.
+
+### Adicionado
+- `scripts/tests/test-doc-flow-consistency.sh`: asserts de consistência para `/brainstorm` em README, workflow e SDLC.
+
 ## [1.1.38] - 2026-05-27
 
 ### Alterado
@@ -345,6 +358,8 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.39]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.38...v1.1.39
+[1.1.38]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.37...v1.1.38
 [1.1.37]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.36...v1.1.37
 [1.1.36]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.35...v1.1.36
 [1.1.35]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.34...v1.1.35

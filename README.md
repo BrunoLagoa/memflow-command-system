@@ -66,7 +66,7 @@ Most AI workflows look like this: open chat, paste context, ask for code, hope f
 
 Memflow makes that flow look more like a real engineering team:
 
-- A **workflow stage** that classifies the task and picks the right strategy and model — cheap by default, escalating only when needed.
+- A **workflow stage** that classifies the task, routes exploration when needed (`/brainstorm`), and picks the right strategy and model — cheap by default, escalating only when needed.
 - An **execution stage** that implements with controlled fallbacks and explicit checkpoints.
 - A **validation stage** with a strict final gate (`OK` or `BLOCKED`) — no "approval by feeling".
 - A **memory layer** that captures relevant decisions with category, impact, and a `0–100` score, and reuses them across sessions.
@@ -82,13 +82,19 @@ The result is something you can audit, repeat, and trust.
 │  /context   │ →  │  /workflow   │ →  │  /execute   │ →  │  /review   │
 │             │    │              │    │  (or /plan) │    │            │
 │ load memory │    │ decide model │    │  implement  │    │  validate  │
-└─────────────┘    └──────────────┘    └─────────────┘    └────────────┘
+└─────────────┘    └──────┬───────┘    └─────────────┘    └────────────┘
+                          │
+                    ┌─────▼──────┐
+                    │ /brainstorm│  optional — when clarity is low or trade-offs exist
+                    └────────────┘
                                               ↓
                                        ┌──────────────┐
                                        │ /memory-save │
                                        │  (optional)  │
                                        └──────────────┘
 ```
+
+When `/workflow` detects insufficient clarity or unresolved trade-offs, it routes to `/brainstorm` first. Handoff after approval: `/prd`, `/spec`, or `/plan`.
 
 For high-risk work, finish with `/review-code` (deep technical review) and `/review-enforce-rules` (strict final gate).
 
@@ -103,7 +109,7 @@ The control layer that decides, executes, and validates.
 | Command                  | What it does                                                                                  |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
 | `/context`               | Load project context, memory, operating mode, and available skills                            |
-| `/workflow`              | Classify the task and decide strategy, level, primary model, and fallbacks                    |
+| `/workflow`              | Classify the task; decide exploration (`/brainstorm`), execution strategy, level, primary model, and fallbacks |
 | `/execute`               | Apply the decision with controlled fallback                                                   |
 | `/review`                | Validate technical and architectural adherence                                                |
 | `/review-code`           | Deep technical validation before production readiness                                         |
@@ -115,12 +121,13 @@ Specialized resolution for everyday tasks.
 
 | Category                    | Commands                                          |
 | --------------------------- | ------------------------------------------------- |
-| Discovery & definition      | `/prd`, `/spec`, `/plan`, `/brainstorm`           |
+| Discovery & definition      | `/brainstorm`, `/prd`, `/spec`, `/plan`           |
 | Implementation & quality    | `/execute`, `/debug`, `/refactor`, `/test-plan`   |
 | Memory                      | `/memory-init`, `/memory-save`                    |
 
 ### Key differentiators
 
+- **Structured exploration** — `/brainstorm` compares 2–5 approaches in a phased dialogue, with HARD-GATE, self-review, optional artifact save, and handoff to `/prd`, `/spec`, or `/plan`.
 - **Decision reuse by score** — high-scoring decisions are auto-reused across sessions.
 - **Cost/quality model policy** — primary model + same-level fallbacks; escalate only when justified.
 - **Functional degraded mode** — keeps working even when `.agents` is missing.
@@ -145,6 +152,8 @@ Implementing a medium-complexity feature with active memory:
 7. /review-code          → Deep technical validation
 8. /review-enforce-rules → Strict final gate (OK or BLOCKED) — optional, recommended
 ```
+
+When scope or approach is unclear, insert `/brainstorm` after `/workflow` (step 3 becomes exploration and approval, then `/prd`, `/spec`, or `/plan`).
 
 ---
 
@@ -182,7 +191,7 @@ Operating principles:
 | [SDLC guide (Português)](docs/SDLC.pt-BR.md)              | pt-BR version                                |
 | [Changelog](CHANGELOG.md)                                 | Version history                              |
 | [Model policy](src/model-policy.md)                       | Model selection and escalation strategy      |
-| Command specs                                             | [`/context`](src/context.md) · [`/workflow`](src/workflow.md) · [`/execute`](src/execute.md) · [`/review-code`](src/review-code.md) · [`/review-enforce-rules`](src/review-enforce-rules.md) |
+| Command specs                                             | [`/context`](src/context.md) · [`/workflow`](src/workflow.md) · [`/brainstorm`](src/brainstorm.md) · [`/execute`](src/execute.md) · [`/review-code`](src/review-code.md) · [`/review-enforce-rules`](src/review-enforce-rules.md) |
 
 ---
 

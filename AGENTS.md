@@ -5,7 +5,7 @@
 - If you change command behavior, edit files in `src/` (especially `src/_shared/*` and command `.md` files), not generated install locations under `~/.config/...` or `.opencode/...`.
 
 ## High-value layout
-- `src/*.md`: executable command specs (`context`, `workflow`, `execute`, `review`, etc.).
+- `src/*.md`: executable command specs (`context`, `workflow`, `brainstorm`, `execute`, `review`, etc.).
 - `src/_shared/*.md`: shared normative bases referenced by command specs.
 - `scripts/install.sh` and `scripts/install.ps1`: canonical installer/update/check/uninstall logic.
 - `scripts/memflowctl` and `scripts/memflowctl.ps1`: thin wrappers that download and run installer scripts from GitHub (`main` by default).
@@ -19,6 +19,7 @@
 - Show installer help quickly: `bash scripts/install.sh --help` and `pwsh ./scripts/install.ps1 -?`
 
 ## Behavior quirks that are easy to miss
+- `/workflow` may route to `/brainstorm` before `/plan`, `/spec`, or `/prd` when clarity is low or trade-offs are unresolved; `/brainstorm` handoff is explicit (`Pronto para /prd`, `/spec`, or `/plan`).
 - `update`, `check`, and `uninstall` without explicit scope auto-discover manifests and operate on all detected installs (global and/or local), in order `global -> local`.
 - Missing installation for `update`/`uninstall` returns exit code `2` in non-interactive mode (covered by regression tests).
 - For local scope outside current project directory, callers must pass project dir explicitly (`--project-dir` / `-ProjectDir`) or installer blocks.
@@ -32,4 +33,5 @@
 
 ## Documentation sync rules
 - If installer behavior changes, update `README.md` and `CHANGELOG.md` in the same change.
+- If command behavior changes, update `CHANGELOG.md` and sync public docs as applicable (`README.md`, `README.pt-BR.md`, `docs/SDLC*.md`, and `src/model-policy.md` when model tiers or SDLC flow change).
 - If adding/removing manifest fields, keep `scripts/manifest.schema.json` aligned.
