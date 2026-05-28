@@ -21,9 +21,11 @@ jobs:
           chmod +x scripts/tests/test-install-regression.sh
           chmod +x scripts/tests/test-vscode-prompt-generation.sh
           chmod +x scripts/tests/test-doc-flow-consistency.sh
+          chmod +x scripts/tests/test-command-contracts.sh
           scripts/tests/test-install-regression.sh
           scripts/tests/test-vscode-prompt-generation.sh
           scripts/tests/test-doc-flow-consistency.sh
+          scripts/tests/test-command-contracts.sh
 
   install-regression-windows:
     runs-on: windows-latest

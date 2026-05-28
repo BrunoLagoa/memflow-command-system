@@ -56,6 +56,8 @@ Then jump straight to your first commands:
 /workflow
 ```
 
+> **New to Memflow?** Read the [first 10 minutes guide](docs/QUICKSTART.md) for a step-by-step walkthrough with real examples.
+
 > **Need scripted installs, update, check or uninstall?** See the [advanced installation guide](docs/INSTALL.md).
 
 ---
@@ -186,9 +188,11 @@ Operating principles:
 
 | Doc                                                       | What's inside                                |
 | --------------------------------------------------------- | -------------------------------------------- |
+| [First 10 minutes](docs/QUICKSTART.md)                    | Step-by-step walkthrough with real examples  |
 | [Advanced installation](docs/INSTALL.md)                  | Non-interactive install, update, check, uninstall, scope details, bootstrap pinning |
 | [SDLC guide (English)](docs/SDLC.md)                      | Conceptual guide to the Memflow SDLC         |
 | [SDLC guide (Português)](docs/SDLC.pt-BR.md)              | pt-BR version                                |
+| [End-to-end examples](docs/examples/)                     | Real usage scenarios with full command flows |
 | [Changelog](CHANGELOG.md)                                 | Version history                              |
 | [Model policy](src/model-policy.md)                       | Model selection and escalation strategy      |
 | Command specs                                             | [`/context`](src/context.md) · [`/workflow`](src/workflow.md) · [`/brainstorm`](src/brainstorm.md) · [`/execute`](src/execute.md) · [`/review-code`](src/review-code.md) · [`/review-enforce-rules`](src/review-enforce-rules.md) |
@@ -207,10 +211,9 @@ Operating principles:
 
 ## Roadmap
 
-- Expand `docs/` with complementary guides beyond SDLC and brand assets
-- Add an automated validation suite for commands
 - Provide stack-based templates for faster onboarding
 - Add effectiveness metrics (lead time, rework, cost per task)
+- Expand command specs with adaptive memory hints
 
 ---
 

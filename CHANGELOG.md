@@ -4,6 +4,20 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.40] - 2026-05-28
+
+### Adicionado
+- `scripts/tests/test-command-contracts.sh`: suíte comportamental com 116 contratos — frontmatter global (name, license, version, base-refs) para todos os 15 comandos executáveis; invariantes por comando: HARD-GATE do `/brainstorm`, bloqueio do `/execute` sem decisão do `/workflow`, saída binária do `/review-enforce-rules`, ausência de correção no `/debug`, gate de salvamento em `/prd`, `/spec`, `/plan` e `/brainstorm`, e invariantes anti-compaction em `/context` e `/workflow`.
+- `.github/workflows/install-regression.yml`: execução do `test-command-contracts.sh` no pipeline de CI.
+- `docs/examples/01-nova-feature.md`: exemplo ponta a ponta de nova feature (dark mode) com fluxo `/context` → `/workflow` → `/plan` → `/execute` → `/memory-save` → `/review` → `/review-code`.
+- `docs/examples/02-correcao-bug.md`: exemplo ponta a ponta de correção de bug (login silencioso) com fluxo `/context` → `/workflow` → `/debug` → `/execute` → `/review-code` → `/memory-save`.
+- `docs/examples/03-feature-complexa-com-brainstorm.md`: exemplo ponta a ponta de feature complexa (sistema de notificações) com fluxo `/context` → `/workflow` → `/brainstorm` → `/spec` → `/plan` → `/execute` → `/memory-save` → `/review` → `/review-enforce-rules`.
+- `docs/QUICKSTART.md`: guia "First 10 minutes with Memflow" em inglês — install, memory-init, primeira sessão, modelo mental e tabela de fluxos por cenário.
+- `docs/QUICKSTART.pt-BR.md`: versão pt-BR do quickstart — "Primeiros 10 minutos com Memflow".
+
+### Alterado
+- `README.md` e `README.pt-BR.md`: links para quickstart e exemplos adicionados no Quick start e na tabela de documentação; itens do Roadmap já entregues removidos.
+
 ## [1.1.39] - 2026-05-28
 
 ### Alterado
@@ -358,6 +372,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.40]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.39...v1.1.40
 [1.1.39]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.38...v1.1.39
 [1.1.38]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.37...v1.1.38
 [1.1.37]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.36...v1.1.37

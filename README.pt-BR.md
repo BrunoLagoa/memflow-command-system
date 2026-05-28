@@ -56,6 +56,8 @@ Depois, vá direto para seus primeiros comandos:
 /workflow
 ```
 
+> **Novo no Memflow?** Leia o [guia dos primeiros 10 minutos](docs/QUICKSTART.pt-BR.md) para um passo a passo com exemplos reais.
+
 > **Precisa de instalação scriptada, update, check ou uninstall?** Veja o [guia de instalação avançada](docs/INSTALL.pt-BR.md).
 
 ---
@@ -186,9 +188,11 @@ Princípios operacionais:
 
 | Doc                                                            | O que tem dentro                              |
 | -------------------------------------------------------------- | --------------------------------------------- |
+| [Primeiros 10 minutos](docs/QUICKSTART.pt-BR.md)               | Passo a passo com exemplos reais             |
 | [Instalação avançada](docs/INSTALL.pt-BR.md)                   | Instalação não-interativa, update, check, uninstall, detalhes de escopo, bootstrap pinning |
 | [Guia SDLC (English)](docs/SDLC.md)                            | Guia conceitual do SDLC do Memflow            |
 | [Guia SDLC (Português)](docs/SDLC.pt-BR.md)                    | Versão pt-BR                                  |
+| [Exemplos ponta a ponta](docs/examples/)                       | Cenários reais com fluxos completos de comandos |
 | [Changelog](CHANGELOG.md)                                      | Histórico de versões                          |
 | [Política de modelos](src/model-policy.md)                     | Estratégia de seleção e escalada de modelos   |
 | Specs de comandos                                              | [`/context`](src/context.md) · [`/workflow`](src/workflow.md) · [`/brainstorm`](src/brainstorm.md) · [`/execute`](src/execute.md) · [`/review-code`](src/review-code.md) · [`/review-enforce-rules`](src/review-enforce-rules.md) |
@@ -207,10 +211,9 @@ Princípios operacionais:
 
 ## Roadmap
 
-- Ampliar `docs/` com guias complementares além do SDLC e dos assets de marca
-- Adicionar suíte de validação automatizada para comandos
 - Disponibilizar templates por stack para onboarding mais rápido
 - Incluir métricas de efetividade (lead time, retrabalho, custo por tarefa)
+- Expandir specs de comandos com hints adaptativos de memória
 
 ---
 
