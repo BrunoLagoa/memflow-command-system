@@ -211,7 +211,9 @@ Quando uma sugestão for apresentada:
 
 ## Se ignorar:
 
-- manter sugestão (ou permitir expiração natural)  
+- incrementar `Ignoradas consecutivas` na sugestão correspondente em `decision-suggestions.md`
+- manter sugestão ativa enquanto `Ignoradas consecutivas` < 3
+- se `Ignoradas consecutivas` ≥ 3 → `/memory-save` arquiva (Etapa 13) e para de apresentar em `/workflow`
 
 ---
 

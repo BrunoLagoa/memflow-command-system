@@ -21,7 +21,7 @@
 
 ## Behavior quirks that are easy to miss
 - `/workflow` may route to `/brainstorm` before `/plan`, `/spec`, or `/prd` when clarity is low or trade-offs are unresolved; `/brainstorm` handoff is explicit (`Pronto para /prd`, `/spec`, or `/plan`).
-- `/memory-save` requires explicit user confirmation before writing; score < 21 → do not save; reinforcement merges into existing decision (+5 score, version bump) instead of duplicating.
+- `/memory-save` requires explicit user confirmation before writing; score < 21 → do not save; reinforcement merges into existing decision (+5 score, version bump) instead of duplicating; `session-memory.md` holds 500–1000 tokens during session (not a log), cleared after successful save; insights/suggestions evict by explicit retention criteria; suggestions archived after 3 consecutive ignores; when in doubt → do not save.
 - `/memory-init` bootstrap creates five memory files including `decision-suggestions.md`.
 - `update`, `check`, and `uninstall` without explicit scope auto-discover manifests and operate on all detected installs (global and/or local), in order `global -> local`.
 - Missing installation for `update`/`uninstall` returns exit code `2` in non-interactive mode (covered by regression tests).

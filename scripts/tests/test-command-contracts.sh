@@ -182,9 +182,20 @@ assert_contains "$MEMORY_SAVE" "NÃO salvar sem confirmação|NÃO salvar sem co
 assert_contains "$MEMORY_SAVE" "NÃO duplicar|mesclar" "memory-save: regra anti-duplicação"
 assert_contains "$MEMORY_SAVE" "Session-memory limpo|session-memory limpo" "memory-save: limpeza de session-memory após save"
 assert_contains "$MEMORY_SAVE" "Salvo|Não necessário|Bloqueado" "memory-save: status de saída definidos"
+assert_contains "$MEMORY_SAVE" "500–1000 tokens|500-1000" "memory-save: limite de tokens para session-memory durante sessão"
+assert_contains "$MEMORY_SAVE" "Critérios de eviction \(insights\)|Critérios de eviction" "memory-save: critérios de eviction definidos"
+assert_contains "$MEMORY_SAVE" "Ignoradas consecutivas" "memory-save: rastreio de sugestões ignoradas"
+assert_contains "$MEMORY_SAVE" "Ignoradas consecutivas.*≥.*3|≥ \\*\\*3\\*\\*" "memory-save: expiração após 3 ignoradas"
+assert_contains "$MEMORY_SAVE" "formato legado|migrar" "memory-save: migração de quality-metrics legado"
+assert_contains "$MEMORY_SAVE" "dashboard estruturado|dashboard" "memory-save: framing de decisions.md como dashboard"
+assert_contains "$MEMORY_SAVE" "Em caso de dúvida|em caso de dúvida" "memory-save: princípio em dúvida não salvar"
+assert_contains "$MEMORY_SAVE" "decidimos que|a partir de agora|definido que" "memory-save: padrões extras de detecção"
+assert_contains "$MEMORY_SAVE" "Somar apenas|somar.*apenas|não duplicar critérios" "memory-save: regras de cálculo de score"
 
 MEMORY_INIT="${SRC_DIR}/memory-init.md"
 assert_contains "$MEMORY_INIT" "decision-suggestions\.md" "memory-init: bootstrap inclui decision-suggestions.md"
+assert_contains "$MEMORY_INIT" "## Execuções|## KPIs|## Snapshot atual|## Observações" "memory-init: quality-metrics alinhado ao memory-save"
+assert_contains "$MEMORY_INIT" "## Arquivadas" "memory-init: decision-suggestions inclui seção Arquivadas"
 
 # ──────────────────────────────────────────────────────────────────
 # Gates de confirmação de salvamento (prd, spec, brainstorm, plan)

@@ -4,7 +4,7 @@ description: Cria ou atualiza o memory.md com o contexto base do projeto — inc
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "4.2.0"
+  version: "4.3.0"
 ---
 
 ## Referência normativa comum
@@ -123,14 +123,37 @@ Regras:
 
 #### quality-metrics.md
 
-Conteúdo inicial mínimo:
+Conteúdo inicial (alinhado ao `/memory-save` Etapa 11):
 
+```md
 # Métricas de Qualidade
 
-- taxa_aprovacao:
-- taxa_reprovacao:
-- retrabalho_medio:
-- observacoes:
+## Execuções
+
+- total: 0
+- aprovadas: 0
+- aprovadas_com_ressalvas: 0
+- reprovadas: 0
+
+## KPIs
+
+- taxa_aprovacao: 0%
+- taxa_reprovacao: 0%
+- retrabalho_medio: 0
+
+## Snapshot atual
+
+- Execuções: 0
+- Taxa aprovação: 0%
+- Taxa reprovação: 0%
+- Retrabalho médio: 0
+- Principal risco: (nenhum)
+- Tendência: estável
+
+## Observações
+
+- (nenhum insight ativo)
+```
 
 ---
 
@@ -138,9 +161,15 @@ Conteúdo inicial mínimo:
 
 Conteúdo inicial mínimo:
 
+```md
 # Sugestões de Decisão
 
 (nenhuma sugestão ativa)
+
+## Arquivadas
+
+(nenhuma)
+```
 
 ---
 

@@ -1,10 +1,10 @@
 ---
 name: memory-save
-description: Salva o estado da sessão e decisões relevantes — com detecção automática, score, versionamento, métricas, insights, sugestões e controle de crescimento. Integra resultados de /review e /review-code no ciclo de qualidade. Saída: Status (Salvo/Bloqueado/Não necessário), Análise, Problemas e Próximos passos.
+description: Salva o estado da sessão e decisões relevantes — com detecção automática, score, versionamento, dashboard de decisões, métricas, insights, sugestões e controle de crescimento. Integra resultados de /review e /review-code no ciclo de qualidade. Saída: Status (Salvo/Bloqueado/Não necessário), Análise, Problemas e Próximos passos.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "11.0.0"
+  version: "11.2.0"
 ---
 
 ## Referência normativa comum
@@ -42,12 +42,14 @@ Arquivos gerenciados:
 
 Salvar o estado atual da sessão e preservar decisões importantes **sem poluir a memória**.
 
+Gerenciar `.agents/memory/decisions.md` como **dashboard estruturado** — fonte de verdade das decisões persistentes com histórico rastreável.
+
 Garantir que:
 
 - decisões relevantes sobrevivam entre sessões
 - scores reflitam uso real (reforço e obsolescência)
 - métricas de qualidade alimentem `/context` e `/workflow` na próxima sessão
-- `session-memory.md` seja limpo após persistência bem-sucedida
+- `session-memory.md` funcione como estado temporário da sessão (não log) e seja limpo após persistência bem-sucedida
 
 ---
 
@@ -57,14 +59,17 @@ Verificar:
 
 1. `.agents/memory/` existe
    - Se NÃO → bloquear e orientar `/memory-init`
-2. Invariantes anti-compaction válidos (pt-BR + Memflow)
+2. `.agents/memory/decisions.md` existe
+   - Se `.agents/memory/` existe mas `decisions.md` NÃO → criar estrutura base (mesmo schema do `/memory-init`) e registrar na análise como fallback
+   - Preferir `/memory-init` completo quando memória nunca foi inicializada
+3. Invariantes anti-compaction válidos (pt-BR + Memflow)
    - Se NÃO → bloquear e orientar `/context`
-3. Há conteúdo elegível para salvar (decisão, métrica ou sessão relevante)
+4. Há conteúdo elegível para salvar (decisão, métrica ou sessão relevante)
    - Se NÃO → status `Não necessário` e parar
 
 ---
 
-## Etapa 1 — Validação de relevância
+## Etapa 1 — Validação de relevância (OBRIGATÓRIA)
 
 Executar somente se houver conteúdo relevante detectado em:
 
@@ -73,22 +78,50 @@ Executar somente se houver conteúdo relevante detectado em:
 - `session-memory.md` (estado temporário da sessão)
 - artefatos salvos (`.agents/docs/plans/`, `.agents/docs/brainstorm/`, etc.)
 
-### Não salvar quando:
+### NÃO salvar se for:
 
-- score de relevância < 21 (ajuste trivial, sem decisão)
+- logs técnicos ou output de debug
+- execuções triviais (score < 21)
+- repetições de informação já presente em `decisions.md`
+- conteúdo temporário sem impacto futuro
+- ações sem continuidade entre sessões
 - sessão sem execução, review ou decisão detectável
 - usuário escolher "Não salvar" no gate de confirmação
 
+### SALVAR apenas se houver:
+
+- decisões importantes
+- mudanças relevantes
+- definições técnicas ou arquiteturais
+- contexto útil para continuidade futura
+- métricas elegíveis após `/review` ou `/review-code`
+
+### Regra de bloqueio
+
+Se NÃO houver informação relevante:
+
+- NÃO atualizar arquivos
+- status `Não necessário` (não confundir com `Bloqueado`)
+- em caso de dúvida sobre relevância → **NÃO salvar**
+
 ---
 
-## Etapa 2 — Detecção de decisões
+## Etapa 2 — Auto-detecção de decisões
 
-Analisar a sessão atual e detectar padrões como:
+Analisar a sessão atual e identificar automaticamente decisões.
 
-- "vamos usar…"
+### Indicadores de decisão
+
+Detectar padrões como:
+
+- "decidimos que…"
 - "decidimos…"
-- "padronizar…"
+- "vamos usar…"
+- "não vamos mais usar…"
 - "não usar mais…"
+- "a partir de agora…"
+- "padronizar…"
+- "definido que…"
 - decisões explícitas em `/brainstorm`, `/plan`, `/spec` ou `/prd` salvos
 - reforço de decisão existente (mesmo tema, evidência adicional)
 
@@ -114,6 +147,13 @@ Alinhado ao `/execute`:
 | Mudança local | +5 |
 | Ajuste trivial | 0 |
 
+### Regras de cálculo
+
+- somar **apenas** critérios aplicáveis à sessão
+- limite máximo: **100**
+- **não** duplicar critérios equivalentes (ex.: arquitetura + stack quando um já cobre o outro)
+- garantir que toda decisão salva possua **Score** e **Impacto** coerentes (impacto é semântico, não derivado mecanicamente do score)
+
 ### Interpretação
 
 - **0–20** → Não salvar
@@ -133,22 +173,37 @@ Classificar cada decisão:
 
 ---
 
-## Etapa 5 — Classificação
+## Etapa 5 — Classificação de categoria
 
 Mapear para seção em `decisions.md`:
 
-| Tipo | Seção |
-|------|-------|
-| Segurança, compliance, invariantes | `## Críticas` |
-| Stack, arquitetura, padrões de código | `## Técnicas` |
-| Design, UX, acessibilidade | `## UI/UX` |
-| Demais | `## Outras` |
+| Tipo | Seção | Exemplos |
+|------|-------|----------|
+| Segurança, compliance, invariantes | `## Críticas` | stack, arquitetura, mudanças estruturais |
+| Padrões, regras técnicas, implementação | `## Técnicas` | padrões de código, bibliotecas, contratos internos |
+| Design, UX, acessibilidade | `## UI/UX` | interface, experiência, navegação |
+| Demais | `## Outras` | fallback quando não couber acima |
 
 Também registrar em `## Recentes` (máximo 5 entradas — ver Etapa 9).
+
+Manter `decisions.md` organizado por categoria — não misturar tipos.
 
 ---
 
 ## Etapa 6 — Estrutura de `decisions.md`
+
+Se `.agents/memory/decisions.md` não existir (fallback da Etapa 0), criar:
+
+```md
+# Decisões do Projeto
+
+## Críticas
+## Técnicas
+## UI/UX
+## Outras
+## Recentes
+## Histórico
+```
 
 ### Schema obrigatório por decisão
 
@@ -238,9 +293,17 @@ NÃO escrever arquivos sem confirmação explícita.
 
 ---
 
-## Etapa 10 — Limpeza de `session-memory.md`
+## Etapa 10 — `session-memory.md` (durante e após a sessão)
 
-Após persistência bem-sucedida:
+### Durante a sessão (antes do save)
+
+- `session-memory.md` é **estado temporário** — não é log, não é `decisions.md`
+- NÃO transformar em histórico permanente
+- manter entre **500–1000 tokens** quando houver conteúdo ativo
+- se exceder 1000 tokens antes do save → condensar (remover redundâncias), **não** truncar decisões já detectadas
+- registrar apenas contexto operacional da sessão corrente
+
+### Após persistência bem-sucedida
 
 - limpar conteúdo operacional temporário de `session-memory.md`
 - manter placeholder mínimo ou arquivo vazio
@@ -267,6 +330,8 @@ Registrar SOMENTE se:
 - `complexidade`: baixa | média | alta
 
 ### Atualização de `quality-metrics.md`
+
+Se o arquivo existir no formato legado (apenas `taxa_aprovacao:` soltos), migrar para a estrutura abaixo antes de incrementar contadores.
 
 Incrementar contadores e recalcular KPIs:
 
@@ -327,8 +392,31 @@ Gerar insight SOMENTE se:
 
 ### Controle de insights (CRÍTICO)
 
-- máximo de **10** insights ativos em `quality-metrics.md`
-- se exceder → remover os mais antigos, manter os mais relevantes
+- máximo de **10** insights ativos em `quality-metrics.md` (seção `## Observações`)
+- se exceder → aplicar eviction na ordem abaixo (remover o primeiro elegível):
+
+### Critérios de eviction (insights)
+
+Prioridade de **retenção** (manter os que pontuam melhor):
+
+1. **Recência** — ocorrência nas últimas 5 sessões registradas em `## Execuções`
+2. **Impacto em KPI** — insight ligado a reprovação ou retrabalho recente
+3. **Frequência** — padrão com ≥ 3 ocorrências no histórico
+4. **Data** — mais recente prevalece em empate
+
+Remover primeiro o insight com **menor** pontuação nessa ordem. Registrar na análise quais insights foram removidos.
+
+### Formato de insight em `## Observações`
+
+```md
+- [{tipo}] {descrição curta} (ocorrências: N, última: YYYY-MM-DD)
+```
+
+Exemplo:
+
+```md
+- [risco_alto_por_integracao] integrações externas reprovam com frequência (ocorrências: 4, última: 2026-05-28)
+```
 
 ---
 
@@ -357,13 +445,35 @@ Recomendação:
 
 Impacto esperado: baixo | médio | alto
 Confiança: baixa | média | alta
+Ignoradas consecutivas: 0
+Status: ativa
 Data: YYYY-MM-DD
 ```
 
 ### Controle de sugestões (CRÍTICO)
 
-- máximo de **5** sugestões ativas
-- se exceder → remover antigas, priorizar maior confiança e impacto
+- máximo de **5** sugestões com `Status: ativa`
+- se exceder → aplicar eviction (ver critérios abaixo)
+
+### Critérios de eviction (sugestões)
+
+Prioridade de **retenção** (manter as que pontuam melhor):
+
+1. **Confiança** — alta > média > baixa
+2. **Impacto esperado** — alto > médio > baixo
+3. **Recência** — `Data` mais recente
+4. **Menos ignoradas** — menor `Ignoradas consecutivas`
+
+Remover primeiro a sugestão com **menor** pontuação nessa ordem. Registrar na análise.
+
+### Expiração de sugestões ignoradas
+
+- quando o usuário **ignorar** via `/workflow` → incrementar `Ignoradas consecutivas` em +1
+- quando o usuário **aplicar** → remover sugestão da lista ativa
+- se `Ignoradas consecutivas` ≥ **3** → arquivar:
+  - alterar `Status: arquivada`
+  - mover para seção `## Arquivadas` no final de `decision-suggestions.md`
+  - NÃO reapresentar em `/workflow` salvo regeneração com novo insight
 
 ### Deduplicação de sugestões
 
@@ -392,8 +502,19 @@ Data: YYYY-MM-DD
 2. NÃO duplicar decisões (mesclar ou reforçar)
 3. NÃO poluir memória com ajustes triviais (score < 21)
 4. NÃO limpar `session-memory.md` se persistência falhou
-5. NÃO aplicar sugestões automaticamente
-6. NÃO decidir estratégia de execução
+5. NÃO transformar `session-memory.md` em log permanente
+6. NÃO aplicar sugestões automaticamente
+7. NÃO decidir estratégia de execução
+8. Em caso de dúvida sobre relevância ou conflito → **NÃO salvar**
+
+---
+
+## Boas práticas
+
+- usar ao final de cada tarefa relevante (especialmente após `/review`)
+- evitar uso em tarefas triviais
+- priorizar qualidade sobre quantidade de entradas
+- `.agents/memory/decisions.md` é a fonte de verdade — score deve refletir importância real
 
 ---
 
@@ -409,6 +530,16 @@ Data: YYYY-MM-DD
 ---
 
 ## Análise
+
+### Validação
+
+- Conteúdo relevante identificado: SIM / NÃO
+- Decisões detectadas: SIM / NÃO
+- Score calculado: X/100
+- Impacto: Baixo | Médio | Alto
+- Categoria atribuída: Críticas | Técnicas | UI/UX | Outras
+- Tipo de ação: Nova decisão | Reforço | Atualização | Métricas | Sessão
+- Justificativa: (breve)
 
 ### Persistência
 
@@ -436,9 +567,11 @@ Data: YYYY-MM-DD
 
 ## Problemas
 
-- Conflitos detectados
-- Decisões ambíguas não salvas
-- Bootstrap ausente
+- Informação irrelevante (se `Não necessário`)
+- Ambiguidades na classificação ou detecção
+- Possível conflito com decisões existentes
+- Limitações de detecção automática
+- Bootstrap ausente ou incompleto
 
 Se não houver:
 → Nenhum
@@ -447,6 +580,13 @@ Se não houver:
 
 ## Próximos passos
 
+Se `Não necessário` ou `Bloqueado`:
+
+- Nenhuma ação de persistência necessária
+
+Se `Salvo`:
+
 - `/context` — recarregar memória atualizada
+- Dashboard de decisões atualizado em `decisions.md`
 - Continuar fluxo SDLC conforme `/workflow`
 - Revisar sugestões pendentes em `decision-suggestions.md` (se geradas)

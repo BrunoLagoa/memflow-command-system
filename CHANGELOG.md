@@ -4,6 +4,22 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.43] - 2026-05-28
+
+### Alterado
+- `src/memory-save.md` (v11.2.0): `session-memory` ampliado para 500–1000 tokens com condensação antes do save; critérios objetivos de eviction para insights (10) e sugestões (5); expiração de sugestões após 3 ignoradas consecutivas; migração automática de `quality-metrics.md` legado; schema de sugestão com `Ignoradas consecutivas` e `Status`.
+- `src/memory-init.md` (v4.3.0): bootstrap de `quality-metrics.md` alinhado à estrutura completa (Execuções, KPIs, Snapshot, Observações); `decision-suggestions.md` com seção `## Arquivadas`.
+- `src/workflow.md`: ignorar sugestão incrementa contador e aciona arquivamento via `/memory-save` após 3 vezes.
+- `AGENTS.md`: notas de eviction, expiração de sugestões e limite de tokens atualizado.
+
+### Adicionado
+- `scripts/tests/test-command-contracts.sh`: +6 contratos para eviction, expiração de sugestões, migração legado e bootstrap alinhado (140 contratos no total).
+
+## [1.1.42] - 2026-05-28
+
+### Alterado
+- `src/memory-save.md` (v11.1.0): resgate seletivo do v7.0.0 — lista explícita anti-poluição, padrões extras de detecção, regras de cálculo de score, exemplos por categoria, híbrido `session-memory` (300–800 tokens durante sessão + limpeza pós-save), princípio "em dúvida não salve", fallback de criação de `decisions.md`, saída enriquecida e framing de dashboard.
+
 ## [1.1.41] - 2026-05-28
 
 ### Alterado
@@ -382,6 +398,8 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.43]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.42...v1.1.43
+[1.1.42]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.41...v1.1.42
 [1.1.41]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.40...v1.1.41
 [1.1.40]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.39...v1.1.40
 [1.1.39]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.38...v1.1.39
