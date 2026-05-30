@@ -4,7 +4,7 @@ description: Validação inteligente de qualidade do sistema antes da validaçã
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 ## Referência normativa comum
@@ -127,6 +127,14 @@ Utilizar obrigatoriamente:
 
 ---
 
+## 8. Escopo das mudanças (surgical check)
+
+- As mudanças ficaram restritas ao pedido?
+- Cada arquivo alterado tem vínculo direto com a solicitação?
+- Houve refatoração adjacente sem necessidade explícita?
+
+---
+
 # Classificação de problemas
 
 ---
@@ -145,6 +153,7 @@ Utilizar obrigatoriamente:
 - inconsistência de arquitetura
 - desalinhamento com docs
 - uso incorreto de modelo
+- mudanças fora de escopo sem justificativa
 
 ---
 

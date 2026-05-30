@@ -88,6 +88,8 @@ assert_contains "$WORKFLOW" "Decisão tomada" "workflow: status de saída 'Decis
 assert_contains "$WORKFLOW" "sempre prevalece" "workflow: decisions.md tem precedência máxima"
 assert_contains "$WORKFLOW" "anti-compaction|ANTI-COMPACTION" "workflow: gate de invariantes anti-compaction presente"
 assert_contains "$WORKFLOW" "pt-BR" "workflow: valida idioma pt-BR"
+assert_contains "$WORKFLOW" "Premissas e ambiguidades" "workflow: exige seção de premissas e ambiguidades"
+assert_contains "$WORKFLOW" "NÃO escolher interpretação silenciosamente|não escolher interpretação silenciosamente" "workflow: proíbe interpretação silenciosa em ambiguidades"
 
 # ──────────────────────────────────────────────────────────────────
 # /brainstorm — exploração estruturada
@@ -114,6 +116,10 @@ EXECUTE="${SRC_DIR}/execute.md"
 assert_contains "$EXECUTE" "BLOQUEAR e retornar ao" "execute: bloqueia sem decisão do /workflow"
 assert_contains "$EXECUTE" "NÃO decide estratégia" "execute: não assume papel de orquestrador"
 assert_contains "$EXECUTE" "decisão.*workflow|workflow.*decisão" "execute: exige decisão explícita do /workflow"
+assert_contains "$EXECUTE" "Premissas explícitas" "execute: exige premissas explícitas antes de codar"
+assert_contains "$EXECUTE" "Simplicidade primeiro" "execute: prioriza simplicidade"
+assert_contains "$EXECUTE" "mudanças cirúrgicas|vínculo direto com a solicitação" "execute: exige alterações cirúrgicas"
+assert_contains "$EXECUTE" "Execução orientada a metas|objetivo verificável" "execute: exige execução orientada a metas"
 
 # ──────────────────────────────────────────────────────────────────
 # /plan — planejamento antes da execução
@@ -126,6 +132,8 @@ assert_contains "$PLAN" "PLANEJAR PRIMEIRO" "plan: integrado à decisão PLANEJA
 assert_contains "$PLAN" "ambiguidade" "plan: bloqueia em caso de ambiguidade"
 assert_contains "$PLAN" "Confirmação obrigatória de salvamento" "plan: gate de confirmação de salvamento"
 assert_contains "$PLAN" "Não escreve código|NÃO escreve|não escreve código" "plan: não implementa código"
+assert_contains "$PLAN" "Premissas explícitas" "plan: exige premissas explícitas antes do plano"
+assert_contains "$PLAN" "Passo -> verificar|<passo>.*verificar" "plan: passos incluem verificação objetiva"
 
 # ──────────────────────────────────────────────────────────────────
 # /review e /review-code — validação de qualidade
@@ -136,9 +144,11 @@ printf "\n=== /review e /review-code ===\n\n"
 REVIEW="${SRC_DIR}/review.md"
 assert_contains "$REVIEW" "NÃO implementar|NÃO implementa|NÃO corrige" "review: não implementa nem corrige"
 assert_contains "$REVIEW" "Aprovado|Reprovado" "review: status de saída Aprovado/Reprovado definido"
+assert_contains "$REVIEW" "Escopo das mudanças|surgical check" "review: valida escopo cirúrgico das mudanças"
 
 REVIEW_CODE="${SRC_DIR}/review-code.md"
 assert_contains "$REVIEW_CODE" "NÃO implementa|NÃO corrige|não implementa|não corrige" "review-code: não implementa nem corrige"
+assert_contains "$REVIEW_CODE" "Simplicidade e overengineering" "review-code: valida simplicidade técnica"
 
 # ──────────────────────────────────────────────────────────────────
 # /review-enforce-rules — gate binário final
@@ -162,6 +172,16 @@ DEBUG="${SRC_DIR}/debug.md"
 assert_contains "$DEBUG" "NÃO executa correções" "debug: não executa correções"
 assert_contains "$DEBUG" "NÃO implementar correções|NÃO implementa" "debug: não implementa"
 assert_contains "$DEBUG" "/execute|/refactor|/plan" "debug: handoff para /execute, /refactor ou /plan"
+
+# ──────────────────────────────────────────────────────────────────
+# /test-plan — plano de testes executável e verificável
+# ──────────────────────────────────────────────────────────────────
+
+printf "\n=== /test-plan ===\n\n"
+
+TEST_PLAN="${SRC_DIR}/test-plan.md"
+assert_contains "$TEST_PLAN" "Critério de aprovação por cenário" "test-plan: exige critério objetivo por cenário"
+assert_contains "$TEST_PLAN" "loop de validação|reproduzir cenário" "test-plan: exige loop de validação"
 
 # ──────────────────────────────────────────────────────────────────
 # /memory-save — persistência e lifecycle de memória

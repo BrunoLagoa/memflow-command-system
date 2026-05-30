@@ -4,7 +4,7 @@ description: Cria plano de implementação detalhado quando /workflow decide PLA
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 ## Referência normativa comum
@@ -107,9 +107,24 @@ Antes de gerar o plano:
 - O problema está claro?
 - O escopo está definido?
 - Existe contexto suficiente?
+- Premissas e dependências estão explícitas?
+- Existem interpretações múltiplas para o pedido?
 
 Se NÃO:
 → PARAR e solicitar esclarecimento
+
+---
+
+## Premissas explícitas (OBRIGATÓRIO)
+
+Antes de montar os passos:
+
+- declarar premissas assumidas
+- declarar pontos ainda incertos
+- se houver incerteza que altere abordagem:
+  - PARAR
+  - solicitar decisão do usuário via opções objetivas
+- NÃO assumir interpretação silenciosa quando houver mais de uma leitura válida
 
 ---
 
@@ -225,6 +240,8 @@ Se `.agents` NÃO estiver disponível:
 - quantidade de tarefas definida por sizing dinâmico (complexidade + escopo real), sem quantidade fixa reutilizada entre planos
 - para alta complexidade, incluir obrigatoriamente subtarefas
 - checklist final obrigatório de granularidade: cada item pode ser executado sem ambiguidades?
+- cada passo deve incluir verificação objetiva no formato:
+  - `Passo -> verificar: teste/comando/evidência esperada`
 - classificar cada tarefa como:
   - `[P]` paralelizável (pode executar em paralelo)
   - `[S]` sequencial (depende de ordem)
@@ -255,7 +272,8 @@ Se `.agents` NÃO estiver disponível:
 
 ### Critérios de sucesso
 
-- como validar após `/execute`
+- critérios verificáveis (não genéricos) para validar após `/execute`
+- mapear cada critério para comando, teste, evidência ou output esperado
 
 ---
 

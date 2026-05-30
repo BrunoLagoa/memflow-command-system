@@ -4,7 +4,7 @@ description: Orquestrador central — decide exploração, execução, validaç�
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.7.0"
+  version: "9.8.0"
 ---
 
 ## Referência normativa comum
@@ -56,6 +56,7 @@ Ordem obrigatória:
 
 - decisões explícitas NUNCA podem ser sobrescritas  
 - skills disponíveis e aplicáveis NÃO podem ser ignoradas
+- NÃO assumir premissas de implementação sem explicitar no output
 - insights apenas ajustam comportamento  
 - sugestões NUNCA executam automaticamente  
 - em caso de conflito → respeitar ordem acima  
@@ -248,6 +249,19 @@ Adicionar no output:
 
 ---
 
+# Etapa 1.5 — Premissas e ambiguidades (OBRIGATÓRIO)
+
+Antes de decidir a estratégia:
+
+- listar premissas assumidas para a classificação
+- listar dúvidas que impactam decisão
+- se houver dúvida crítica sem resposta:
+  - BLOQUEAR decisão
+  - abrir diálogo estruturado de opções com o usuário
+- NÃO escolher interpretação silenciosamente quando houver múltiplas leituras plausíveis
+
+---
+
 # Etapa 2 — Decisão de execução
 
 ---
@@ -418,6 +432,14 @@ Obrigatório quando:
 - Impacto:
 - Risco:
 - Clareza:
+
+---
+
+### Premissas e ambiguidades
+
+- premissas assumidas:
+- ambiguidades detectadas:
+- decisão pendente com usuário: SIM / NÃO
 
 ---
 

@@ -4,6 +4,19 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.44] - 2026-05-30
+
+### Alterado
+- `src/workflow.md` (v9.8.0): adicionada etapa obrigatória de premissas e ambiguidades, com bloqueio para dúvidas críticas e proibição de interpretação silenciosa quando houver múltiplas leituras válidas.
+- `src/plan.md` (v1.2.0): planejamento reforçado com premissas explícitas antes dos passos e exigência de critérios verificáveis por etapa no formato `Passo -> verificar`.
+- `src/execute.md` (v3.4.0): execução endurecida com premissas explícitas, regra de simplicidade primeiro, mudanças cirúrgicas com rastreabilidade ao pedido e loop obrigatório de validação orientado a metas.
+- `src/review.md` (v2.3.0): novo critério de validação de escopo cirúrgico para detectar alterações fora do pedido.
+- `src/review-code.md` (v1.3.0): adicionada seção de simplicidade e overengineering para reduzir complexidade acidental e abstrações desnecessárias.
+- `src/test-plan.md` (v1.1.0): plano de testes evoluído com critério de aprovação por cenário e loop explícito de validação.
+
+### Adicionado
+- `scripts/tests/test-command-contracts.sh`: novos contratos para premissas explícitas, simplicidade, execução orientada a metas, escopo cirúrgico e loop de validação em `/test-plan`.
+
 ## [1.1.43] - 2026-05-28
 
 ### Alterado
@@ -398,6 +411,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.44]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.43...v1.1.44
 [1.1.43]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.42...v1.1.43
 [1.1.42]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.41...v1.1.42
 [1.1.41]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.40...v1.1.41

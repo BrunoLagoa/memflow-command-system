@@ -4,7 +4,7 @@ description: Gera plano de testes completo com cenários principais, casos de bo
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 ## Referência normativa comum
@@ -68,6 +68,7 @@ Sempre incluir:
 - **Quais testes executar**: caminhos de arquivos, pastas, suítes ou filtros relevantes
 - **Comandos concretos** para rodar só o necessário, conforme stack detectada
 - **Mapeamento** de cada cenário crítico para ao menos um teste/filtro (ou marcar “criar teste”)
+- **Critério de aprovação por cenário**: evidência objetiva de sucesso/falha esperada
 
 ### Se usar Vitest
 
@@ -93,6 +94,7 @@ Sempre incluir:
 - Se faltar contexto → AVISAR
 - Não assumir Node/npm quando não for a stack do projeto
 - Plano sem **lista de execução concreta do executor detectado** → **incompleto**; não tratar o passo como encerrado até isso constar na resposta
+- aplicar loop de validação: reproduzir cenário, executar teste, confirmar evidência e só então marcar como validado
 
 ---
 

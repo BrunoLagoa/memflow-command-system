@@ -4,7 +4,7 @@ description: Implementa código com base na decisão do /workflow respeitando `m
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.3.0"
+  version: "3.4.0"
 ---
 
 ## Referência normativa comum
@@ -95,6 +95,28 @@ E PARAR.
 
 - EXECUTAR DIRETO → executar  
 - PLANEJAR → bloquear  
+
+---
+
+## Premissas explícitas (OBRIGATÓRIO)
+
+Antes de alterar código:
+
+- listar premissas de execução adotadas
+- listar ambiguidades abertas
+- se houver mais de uma interpretação válida para a mesma tarefa:
+  - PARAR
+  - solicitar decisão explícita do usuário
+- NÃO ocultar incerteza nem escolher interpretação silenciosamente
+
+---
+
+## Simplicidade primeiro
+
+- implementar o mínimo necessário para resolver o pedido
+- NÃO adicionar features, flexibilidade ou abstrações não solicitadas
+- NÃO criar tratamento para cenários impossíveis no contexto atual
+- se houver opção mais simples com mesmo resultado, priorizar a opção mais simples
 
 ---
 
@@ -195,7 +217,21 @@ Após implementar:
 3. lint/typecheck  
 4. testes  
 
-Se erro → corrigir automaticamente  
+Se erro → corrigir e repetir o ciclo até validar critérios de sucesso definidos no plano/escopo
+
+---
+
+## Execução orientada a metas (OBRIGATÓRIO)
+
+Para cada etapa implementada:
+
+- definir objetivo verificável
+- executar validação objetiva (teste, comando, evidência de comportamento)
+- só avançar quando a validação passar
+
+Formato recomendado:
+
+1. `<passo>` → verificar: `<comando/teste/evidência>`
 
 ---
 
@@ -204,6 +240,9 @@ Se erro → corrigir automaticamente
 - NÃO sobrescrever sem análise  
 - NÃO duplicar código  
 - NÃO alterar múltiplos arquivos sem necessidade  
+- aplicar mudanças cirúrgicas: cada linha alterada deve ter vínculo direto com a solicitação
+- NÃO refatorar partes adjacentes fora do escopo do pedido
+- remover apenas sobras geradas pela própria alteração (imports/variáveis/funções órfãs criadas pela mudança)
 - NÃO autoexecutar próximos comandos do fluxo sem confirmação do usuário
 - NÃO encerrar execução com plano salvo desatualizado quando houve avanço em tarefas/subtarefas
 
@@ -319,6 +358,8 @@ Objetivo:
 
 - O que foi feito  
 - Arquivos alterados  
+- Premissas explícitas e ambiguidades tratadas
+- Rastreabilidade: mudanças ligadas ao pedido (SIM / NÃO)
 - Uso de Serena  
 - Uso de fallback  
 - Aderência ao workflow  

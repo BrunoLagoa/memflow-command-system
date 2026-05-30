@@ -4,7 +4,7 @@ description: Avalia qualidade técnica da implementação comparando código com
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 ## Referência normativa comum
@@ -114,6 +114,15 @@ Se incompleto:
 
 ---
 
+## 7. Simplicidade e overengineering
+
+- a solução usa o mínimo de complexidade necessário?
+- existe abstração de uso único sem necessidade real?
+- há configurabilidade/flexibilidade adicionada sem requisito explícito?
+- o volume de código é proporcional ao problema resolvido?
+
+---
+
 ## Classificação de problemas
 
 ### Critical (MUST FIX)
@@ -130,6 +139,7 @@ Se incompleto:
 - problemas de arquitetura
 - ausência de testes relevantes
 - tratamento de erro insuficiente
+- overengineering (abstrações/configurações sem necessidade)
 
 ---
 
