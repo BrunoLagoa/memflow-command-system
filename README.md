@@ -62,6 +62,18 @@ Then jump straight to your first commands:
 
 ---
 
+## Source and Distribution
+
+To reduce token cost in production prompts while keeping authoring in pt-BR:
+
+- `developer/` is the **authoring source** in Portuguese (pt-BR).
+- `src/` is the **distribution payload** in English used by installers.
+- Installer targets (`opencode`, `cursor`, `vscode`) continue to consume `src/`.
+
+When command behavior changes, keep both trees synchronized and preserve the same file structure between `developer/` and `src/`.
+
+---
+
 ## Why Memflow?
 
 Most AI workflows look like this: open chat, paste context, ask for code, hope for the best, repeat. Every session restarts from zero. Decisions evaporate. The same mistakes get re-litigated next week.

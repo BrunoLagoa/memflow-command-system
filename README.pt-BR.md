@@ -62,6 +62,18 @@ Depois, vá direto para seus primeiros comandos:
 
 ---
 
+## Fonte e Distribuição
+
+Para reduzir custo de token nos prompts do produto e manter a autoria em pt-BR:
+
+- `developer/` é a **fonte de autoria** em Português (pt-BR).
+- `src/` é o **payload de distribuição** em inglês consumido pelos instaladores.
+- Os targets do instalador (`opencode`, `cursor`, `vscode`) continuam consumindo `src/`.
+
+Quando houver mudança de comportamento dos comandos, mantenha `developer/` e `src/` sincronizados com a mesma estrutura de arquivos.
+
+---
+
 ## Por que Memflow?
 
 A maioria dos fluxos com IA é assim: abre chat, cola contexto, pede código, torce, repete. Cada sessão começa do zero. Decisões se perdem. Os mesmos erros voltam na próxima semana.
