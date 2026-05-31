@@ -25,8 +25,8 @@ Decide:
 
 - execution (/execute or /plan)
 - validation (/review, /review-code)
-- template
-- intelligent adaptation based on history
+- model
+- history-based intelligent adaptation
 
 ---
 
@@ -40,7 +40,7 @@ Decide:
 
 ---
 
-# 🆕 Decision Priority (CRITICAL)
+# 🆕 Decision priority (CRITICAL)
 
 Mandatory order:
 
@@ -54,36 +54,36 @@ Mandatory order:
 
 ## Rules
 
-- explicit decisions can NEVER be overwritten  
+- Explicit decisions can NEVER be overwritten
 - available and applicable skills CANNOT be ignored
 - DO NOT assume implementation assumptions without making them explicit in the output
-- insights only adjust behavior  
-- suggestions NEVER run automatically  
-- in case of conflict → respect the order above  
-- `/workflow` is the only strategy decision origin (`/brainstorm`, `/execute` vs `/plan`)
+- insights only adjust behavior
+- Suggestions NEVER run automatically
+- in case of conflict → respect order above
+- `/workflow` is the only strategy decision source (`/brainstorm`, `/execute` vs `/plan`)
 - DO NOT proceed without anti-compaction invariants validated by `/context`
-- when there is a pending decision in `## Next steps`, use structured dialogue with selectable options
+- when there is a pending decision in `## Próximos passos`, use structured dialogue with selectable options
 
 ---
 
-## Pending decisions in `## Next steps` (MANDATORY)
+## Pending decisions in `## Próximos passos` (MANDATORY)
 
 When `/workflow` depends on a user choice to follow (e.g. define scope, prioritize phase, choose implementation direction):
 
 - present options in a structured and selectable dialog
-- avoid open typing requests when there are concrete options
-- allow option `Other` when it makes sense to not limit the user
-- if the user chooses `Other`, request details afterwards (free text only at this stage)
+- avoid open-ended typing requests when there are concrete options
+- allow option `Outra` when it makes sense to not limit the user
+- if the user chooses `Outra`, request details afterwards (free text only at this stage)
 - if the answer is ambiguous, repeat the same structured dialogue until there is an explicit selection
-- record in analysis/problems that there is a pending decision and what choice was made when answered
+- record in the analysis/problemas that there is a pending decision and what choice was made when answered
 
 ---
 
-# Step 0 — Existing decisions
+# Step 0 — Existing Decisions
 
-- check previous decisions  
-- prioritize by score  
-- detect conflicts  
+- check previous decisions
+- prioritize by score
+- detect conflicts
 
 ---
 
@@ -91,18 +91,20 @@ When `/workflow` depends on a user choice to follow (e.g. define scope, prioriti
 
 If it exists:
 
-- approval rate  
-- failure rate  
-- medium rework  
+- approval rate
+- failure rate
+- medium rework
 
 ---
 
 # Step 0.6 — Insights
 
-- low clarity  
-- high complexity  
-- external integrations  
-- high rework  
+Detect:
+
+- low clarity
+- high complexity
+- external integrations
+- high rework
 
 ---
 
@@ -118,27 +120,27 @@ If it exists:
 
 For each suggestion:
 
-- title  
-- recommendation  
-- impact  
-- confidence  
+- title
+- recommendation
+- impact
+- trust
 
 ---
 
 ## Activation criteria
 
-- confidence ≥ average  
-- impact ≥ medium  
+- confidence ≥ average
+- impact ≥ medium
 
 ---
 
-## 🆕 Usage limit (CRITICAL)
+## 🆕 Usage Limit (CRITICAL)
 
 - apply dynamic limit per run:
   - low complexity and low risk: maximum **2 suggestions**
   - medium complexity or medium risk: maximum **3 suggestions**
   - high complexity or high risk: maximum **4 suggestions**
-- when there are more eligible suggestions than the limit, prioritize by:
+- When there are more eligible suggestions than the limit, prioritize by:
   - greater impact
   - greater confidence
 
@@ -146,8 +148,8 @@ For each suggestion:
 
 ## Assisted mode
 
-- DO NOT apply automatically  
-- just suggest  
+- DO NOT apply automatically
+- just suggest
 
 ---
 
@@ -173,7 +175,7 @@ If applicability is ambiguous:
 
 Validate whether `/context` confirmed invariants:
 
-- validated pt-BR language
+- pt-BR language validated
 - validated Memflow identity
 
 If status comes as `Reidratados`:
@@ -181,10 +183,10 @@ If status comes as `Reidratados`:
 - allow normal continuity
 - record in the output that there was post-compaction recovery
 
-If status comes as `Failed` or absent:
+If status comes as `Falhou` or absent:
 
 - BLOCK workflow decision
-- require re-execution of `/context`
+- require rerun of `/context`
 
 ---
 
@@ -199,28 +201,28 @@ When a suggestion is presented:
 
 ---
 
-## If applicable:
+## If apply:
 
-- convert recommendation into decision  
-- register in `decisions.md`  
-- remove from suggestion list  
-- register via `/memory-save`  
+- convert recommendation into decision
+- register in `decisions.md`
+- remove from suggestion list
+- register via `/memory-save`
 
 ---
 
 ## If ignored:
 
-- increment `Consecutive ignores` in the corresponding suggestion in `decision-suggestions.md`
-- keep the suggestion active while `Consecutive ignores` < 3
-- if `Consecutive ignores` >= 3, `/memory-save` archives it (Step 13) and stops showing it in `/workflow`
+- increment `Ignoradas consecutivas` in the corresponding suggestion in `decision-suggestions.md`
+- keep suggestion active while `Ignoradas consecutivas` < 3
+- if `Ignoradas consecutivas` ≥ 3 → `/memory-save` archives (Step 13) and stops presenting at `/workflow`
 
 ---
 
 ## Important
 
-- application must be explicit  
-- never automatic  
-- must generate traceability  
+- application must be explicit
+- never automatic
+- must generate traceability
 
 ---
 
@@ -234,16 +236,16 @@ Add to output:
 - recommendation: <text>
 - available action:
   - apply
-  - ignore  
+  - ignore
 
 ---
 
 # Step 1 — Task Classification
 
-- Complexity: low / medium / high  
-- Impact: low / medium / high  
-- Risk: low / medium / high  
-- Clarity: high / medium / low  
+- Complexity: low / medium / high
+- Impact: low / medium / high
+- Risk: low / medium / high
+- Clarity: high / medium / low
 
 ---
 
@@ -253,9 +255,9 @@ Before deciding on strategy:
 
 - list assumptions assumed for the classification
 - list doubts that impact decision
-- if there is a critical unanswered question:
+- If there is a critical unanswered question:
   - BLOCK decision
-  - open structured dialog of options with the user
+  - open structured options dialog with the user
 - DO NOT choose interpretation silently when there are multiple plausible readings
 
 ---
@@ -266,25 +268,25 @@ Before deciding on strategy:
 
 ## DIRECT EXECUTION
 
-- low complexity  
-- low risk  
-- high clarity  
+- low complexity
+- low risk
+- high clarity
 
 ---
 
-## RUN WITH /plan
+## EXECUTION WITH /plan
 
-- medium/high complexity  
-- medium/high risk  
-- low clarity  
+- average/alta complexity
+- medium risk/alto
+- low clarity
 
 ---
 
-## Adjust by insights
+## Tune for insights
 
-- low clarity → FORCE /plan  
-- high complexity → prioritize /plan  
-- high rework → avoid direct execution  
+- low clarity → FORCE /plan
+- high complexity → prioritize /plan
+- high rework → avoid direct execution
 
 ---
 
@@ -295,22 +297,24 @@ Use when:
 - low or medium clarity **and** multiple plausible approaches
 - technical or product trade-offs not yet resolved
 - undefined scope before `/prd` or `/plan`
-- user request exploration of alternatives
+- user requests exploration of alternatives
 
 Rules:
 
 - DO NOT jump to `/execute` when `/brainstorm` is necessary
 - after `/brainstorm` approved, handoff according to gate decision:
-  - `/prd` — lacks product definition or business scope
-  - `/spec` — PRD exists, deterministic technical decision is lacking
+  - `/prd` — lack of product definition or business scope
+  - `/spec` — PRD exists, deterministic technical decision is missing
   - `/plan` — scope and approach clear enough to plan
 - return to `/workflow` after brainstorm handoff before continuing
 
 ---
 
-## Adjustment by insights (brainstorm)- low clarity + multiple approaches → FORCE /brainstorm before /plan
-- architectural trade-off not decided → FORCE /brainstorm
-- high clarity + evident unique approach → skip /brainstorm
+## Adjustment by insights (brainstorm)
+
+- low clarity + multiple approaches → FORCE /brainstorm before /plan
+- undecided architectural trade-off → FORCE /brainstorm
+- high clarity + evident single approach → skip /brainstorm
 
 ---
 
@@ -320,7 +324,7 @@ Rules:
 
 ## /review
 
-- ALWAYS mandatory  
+- ALWAYS mandatory
 
 ---
 
@@ -328,18 +332,18 @@ Rules:
 
 Mandatory when:
 
-- modified code  
-- risk ≥ medium  
-- external integration  
-- architectural change  
-- suggestion indicate technical risk  
+- modified code
+- risk ≥ medium
+- external integration
+- architectural change
+- suggestion indicate technical risk
 
 ---
 
-## Adjust by insights
+## Tune for insights
 
-- external integration → FORCE /review-code  
-- high error history → reinforce validation  
+- external integration → FORCE /review-code
+- high error history → strengthen validation
 
 ---
 
@@ -349,38 +353,38 @@ Mandatory when:
 
 ## BLOCK
 
-- review = Disapproved  
-- review-code = Deprecated  
+- review = Failed
+- review-code = Failed
 
 ---
 
 ## ALLOW WITH PROVISIONS
 
-- any “with reservations”  
+- any “with reservations”
 
 ---
 
 ## APPROVE
 
-- both approved  
+- both approved
 
 ---
 
 # Step 5 — Model Orchestration
 
-- economic model by default  
-- escalate when necessary  
+- economic model by default
+- escalate when necessary
 
 ---
 
-# Step 6 — Consistency control
+# Step 6 — Consistency Control
 
-- DO NOT ignore decisions  
-- DO NOT ignore metrics  
-- DO NOT ignore insights  
-- DO NOT ignore suggestions  
+- DO NOT ignore decisions
+- DO NOT ignore metrics
+- DO NOT ignore insights
+- DO NOT ignore suggestions
 - DO NOT ignore applicable skills
-- limit influence of suggestions  
+- limit influence of suggestions
 
 ---
 
@@ -396,19 +400,19 @@ Mandatory when:
 
 # Rules
 
-- DO NOT implement  
-- DO NOT allow bypass  
-- DO NOT ignore risk  
+- DO NOT implement
+- DO NOT allow bypass
+- DO NOT ignore risk
 - demand return to `/workflow` if decision is absent
 
 ---
 
 # Important
 
-- decisions are sovereign  
-- insights adjust  
-- suggestions guide  
-- system must remain predictable  
+- decisions are sovereign
+- insights adjust
+- suggestions guide
+- system must remain predictable
 
 ---
 
@@ -416,7 +420,7 @@ Mandatory when:
 
 ## Status
 
-- Decision made  
+- Decision made
 
 ---
 
@@ -441,7 +445,7 @@ Mandatory when:
 
 ### Metrics
 
-- available: YES / NO  
+- available: YES / NO
 - failure_rate:
 
 ---
@@ -454,8 +458,8 @@ Mandatory when:
 
 ### Suggestions
 
-- list of relevant suggestions  
-- available actions: apply / ignore  
+- list of relevant suggestions
+- available actions: apply / ignore
 
 ---
 
@@ -478,28 +482,28 @@ Mandatory when:
 ### Strategy
 
 - Exploration: Required (/brainstorm) / Not required
-- Execution: Direct / Planned  
+- Execution: Direct / Planned
 - Validation:
 
 ---
 
 ## Problems
 
-- ambiguities  
-- risks  
+- ambiguities
+- risks
 - failure of anti-compaction invariants (if any)
 
 If there is none:
-→ None  
+→ None
 
 ---
 
 ## Next steps
 
 1. /brainstorm (when exploration required) or /execute or /plan
-2./review  
-3./review-code  
-4./memory-save  
+2. /review  
+3. /review-code  
+4. /memory-save  
 5. If there is an applicable skill: use the skill before continuing
 6. If anti-compaction invariants fail: rerun `/context`
 7. If there is a pending decision to continue: open the selectable options dialog before proceeding
