@@ -4,6 +4,11 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.46] - 2026-05-30
+
+### Alterado
+- `src/workflow.md`: refinado texto em inglês para melhorar consistência terminológica, clareza de instruções e legibilidade geral sem alterar a lógica de decisão do comando.
+
 ## [1.1.45] - 2026-05-30
 
 ### Alterado
@@ -420,6 +425,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.46]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.45...v1.1.46
 [1.1.45]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.44...v1.1.45
 [1.1.44]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.43...v1.1.44
 [1.1.43]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.42...v1.1.43
