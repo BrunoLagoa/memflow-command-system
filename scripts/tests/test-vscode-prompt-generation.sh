@@ -56,7 +56,7 @@ if [[ "$ctx" != *"### Conteúdo injetado: model-policy.md"* ]]; then
   echo "[FAIL] memflow.context.prompt.md não contém injeção de model-policy.md"
   exit 1
 fi
-if [[ "$ctx" != *"# Model Policy — Orquestração de Modelos"* ]]; then
+if [[ "$ctx" != *"# Model Policy — Orquestração de Modelos"* && "$ctx" != *"# Model Policy — Model Orchestration"* ]]; then
   echo "[FAIL] memflow.context.prompt.md não contém corpo esperado de model-policy.md"
   exit 1
 fi
