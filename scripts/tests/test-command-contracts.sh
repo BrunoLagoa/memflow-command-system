@@ -237,7 +237,13 @@ printf "\n=== Invariantes anti-compaction ===\n\n"
 CONTEXT="${SRC_DIR}/context.md"
 assert_contains "$CONTEXT" "pt-BR|pt_BR" "context: invariante de idioma pt-BR presente"
 assert_contains "$CONTEXT" "anti-compaction|ANTI-COMPACTION" "context: seção anti-compaction presente"
+assert_contains "$CONTEXT" "DO NOT ask the user to run .*/context.*again|não solicitar.*execute .*/context.*novamente|NÃO solicitar.*execute .*/context.*novamente" "context: não pede /context novamente quando ativo"
+assert_contains "$CONTEXT" "immediately execute.*context.*memory.*metrics.*skills|executar imediatamente.*contexto.*memória.*métricas.*skills" "context: executa carregamento quando invocado"
 assert_contains "$WORKFLOW" "anti-compaction|ANTI-COMPACTION" "workflow: gate de invariantes anti-compaction presente"
+
+BASE_PRECONDITIONS="${SRC_DIR}/_shared/base-preconditions.md"
+assert_contains "$BASE_PRECONDITIONS" "Early activation rule|Regra de ativação antecipada" "base-preconditions: exceção antecipada para comando ativo"
+assert_contains "$BASE_PRECONDITIONS" "DO NOT ask the user to run .*/context.*again|NÃO solicitar.*execute .*/context.*novamente" "base-preconditions: /context ativo não pede reexecução"
 
 printf "\n=== Resultado ===\n"
 printf "Total: %d passou, %d falhou\n" "$pass_count" "$fail_count"

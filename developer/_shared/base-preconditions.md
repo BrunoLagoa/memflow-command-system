@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.4.0"
+  version: "1.4.1"
 ---
 
 # Base comum de pré-condições (referência normativa)
@@ -13,9 +13,26 @@ Aplicar este bloco de pré-condições em comandos operacionais.
 
 ---
 
+## Regra de ativação antecipada (CRÍTICO)
+
+Antes de aplicar qualquer bloqueio de pré-condição, identificar o comando ativo.
+
+Se o comando ativo for `/context`:
+
+- NÃO exigir contexto prévio
+- NÃO solicitar que o usuário execute `/context` novamente
+- executar imediatamente o carregamento de contexto, memória, métricas, skills e invariantes anti-compaction definido pelo próprio `/context`
+
+Se o comando ativo for `/memory-init`:
+
+- permitir bootstrap da estrutura de memória sem contexto prévio
+- após bootstrap, orientar nova entrada por `/context`
+
+---
+
 ## Pré-condição de contexto (OBRIGATÓRIO)
 
-Antes de qualquer execução:
+Antes de qualquer execução, exceto `/context` e `/memory-init`:
 
 - Verificar se o comando `/context` foi executado
 

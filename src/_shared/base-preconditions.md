@@ -4,16 +4,35 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.4.0"
----# Common base of preconditions (normative reference)
+  version: "1.4.1"
+---
+
+# Common base of preconditions (normative reference)
 
 Apply this block of preconditions to operational commands.
 
 ---
 
+## Early activation rule (CRITICAL)
+
+Before applying any precondition block, identify the active command.
+
+If the active command is `/context`:
+
+- DO NOT require prior context
+- DO NOT ask the user to run `/context` again
+- immediately execute the context, memory, metrics, skills and anti-compaction invariant loading defined by `/context` itself
+
+If the active command is `/memory-init`:
+
+- allow bootstrapping the memory structure without prior context
+- after bootstrap, guide re-entry through `/context`
+
+---
+
 ## Context precondition (REQUIRED)
 
-Before any execution:
+Before any execution, except `/context` and `/memory-init`:
 
 - Check if the `/context` command was executed
 
@@ -108,7 +127,9 @@ If memory does NOT exist:
 
 ---
 
-## Canonical boot order1. `/memory-init` (only when memory structure does not exist)
+## Canonical boot order
+
+1. `/memory-init` (only when memory structure does not exist)
 2. `/context` (context and memory mandatory loading)
 3. decision commands/execution (`/workflow`, `/execute`, `/plan`, etc.)
 

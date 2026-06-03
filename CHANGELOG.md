@@ -4,6 +4,14 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.47] - 2026-06-03
+
+### Corrigido
+- `developer/context.md` e `src/context.md`: reforçada a regra de ativação do `/context` para executar o carregamento de contexto, memória, métricas, skills e invariantes quando invocado, sem solicitar `/context` novamente em sessão nova.
+- `developer/_shared/base-preconditions.md` e `src/_shared/base-preconditions.md`: movida a exceção do `/context` para uma regra antecipada antes dos bloqueios de pré-condição, evitando falso bloqueio quando o próprio `/context` é o comando ativo.
+- `src/_shared/base-preconditions.md` e `src/context.md`: corrigidas quebras de Markdown que podiam degradar a interpretação do comando por modelos menores.
+- `scripts/tests/test-command-contracts.sh`: adicionados contratos para impedir regressão no comportamento de inicialização do `/context`.
+
 ## [1.1.46] - 2026-05-30
 
 ### Alterado

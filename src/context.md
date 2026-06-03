@@ -4,7 +4,7 @@ description: First command of the flow — loads memory (decisions, state and me
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.3.0"
+  version: "8.3.1"
 ---
 
 ## Common normative reference
@@ -16,6 +16,17 @@ Mandatory application:
 - `_shared/base-degraded-mode.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
+
+---
+
+## Command activation rule (CRITICAL)
+
+When the user invokes `/context`, this command is already active.
+
+- DO NOT only respond that normative references were registered
+- DO NOT ask the user to run `/context` again
+- DO NOT block because "preconditions are not validated yet"
+- immediately execute the context, memory, metrics, skills and anti-compaction invariant loading described below
 
 ---
 
@@ -76,7 +87,7 @@ If they exist:
 
 ---
 
-# 🧠Metrics interpretation
+# Metrics interpretation
 
 If it exists:
 
@@ -100,7 +111,7 @@ If it exists:
 
 ---
 
-# 🆕 Pattern interpretation (INSIGHTS 🔥)
+# Pattern interpretation (INSIGHTS)
 
 If there are observations:
 
@@ -157,7 +168,7 @@ If reliable memory:
 
 ---
 
-##DO:
+## DO:
 
 - load memory
 - interpret metrics
@@ -168,7 +179,9 @@ If reliable memory:
 
 # Fallback mode
 
-If memory missing:- default behavior
+If memory is missing:
+
+- default behavior
 
 ---
 
@@ -214,9 +227,9 @@ If they do not exist:
 
 ---
 
-# Font priority
+# Source priority
 
-1.memory.md  
+1. memory.md  
 2. decisions.md  
 3. quality-metrics.md  
 4. .agents  
@@ -299,7 +312,9 @@ If they do not exist:
 
 ---
 
-# Important- DO NOT implement
+# Important
+
+- DO NOT implement
 - DO NOT decide flow
 - signals are strategic support
 
