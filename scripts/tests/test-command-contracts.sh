@@ -256,6 +256,9 @@ assert_contains "$CONTEXT" "pt-BR|pt_BR" "context: invariante de idioma pt-BR pr
 assert_contains "$CONTEXT" "anti-compaction|ANTI-COMPACTION" "context: seção anti-compaction presente"
 assert_contains "$CONTEXT" "DO NOT ask the user to run .*/context.*again|não solicitar.*execute .*/context.*novamente|NÃO solicitar.*execute .*/context.*novamente" "context: não pede /context novamente quando ativo"
 assert_contains "$CONTEXT" "immediately execute.*context.*memory.*metrics.*skills|executar imediatamente.*contexto.*memória.*métricas.*skills" "context: executa carregamento quando invocado"
+assert_not_contains "$CONTEXT" "\\(mantido\\)|\\(maintained\\)" "context: não mantém placeholder de integração MCP"
+assert_contains "$CONTEXT" "DO NOT block .*/context.* because MCPs are unavailable|NÃO bloquear .*/context.* pela ausência de MCP" "context: MCP ausente não bloqueia o comando"
+assert_contains "$CONTEXT" "DO NOT assume any specific MCP is required|NÃO assumir dependência obrigatória de nenhum MCP específico" "context: nenhum MCP específico é obrigatório"
 assert_order "$CONTEXT" "Command activation rule|Regra de ativação do comando" "Common normative reference|Referência normativa comum" "context: regra de ativação vem antes da injeção normativa"
 assert_contains "$WORKFLOW" "anti-compaction|ANTI-COMPACTION" "workflow: gate de invariantes anti-compaction presente"
 

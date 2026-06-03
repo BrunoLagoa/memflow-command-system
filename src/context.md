@@ -4,7 +4,7 @@ description: First command of the flow — loads memory (decisions, state and me
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.3.1"
+  version: "8.3.2"
 ---
 
 ## Command activation rule (CRITICAL)
@@ -223,7 +223,17 @@ If they do not exist:
 
 # MCP integration
 
-(maintained)
+If MCPs are available:
+
+- record which relevant MCP servers or tools are available
+- use MCPs only as complementary context sources
+- DO NOT block `/context` because MCPs are unavailable
+- DO NOT assume any specific MCP is required (including Serena)
+
+If no MCP is available:
+
+- record absence as a light limitation (without blocking)
+- continue with memory, `.agents`, docs and local code
 
 ---
 

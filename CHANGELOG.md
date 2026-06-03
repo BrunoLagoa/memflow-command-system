@@ -4,6 +4,14 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.1.48] - 2026-06-03
+
+### Corrigido
+- `developer/context.md` e `src/context.md` (v8.3.2): substituído placeholder `(mantido)` / `(maintained)` na seção de integração MCP por regras explícitas — MCP opcional, complementar e sem bloqueio do `/context` quando ausente.
+
+### Adicionado
+- `scripts/tests/test-command-contracts.sh`: contrato para impedir regressão do placeholder e exigir regras de MCP opcional no `/context`.
+
 ## [1.1.47] - 2026-06-03
 
 ### Corrigido
@@ -433,6 +441,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.48]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.47...v1.1.48
 [1.1.47]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.46...v1.1.47
 [1.1.46]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.45...v1.1.46
 [1.1.45]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.44...v1.1.45

@@ -4,7 +4,7 @@ description: Primeiro comando do fluxo — carrega memória (decisões, estado e
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.3.1"
+  version: "8.3.2"
 ---
 
 ## Regra de ativação do comando (CRÍTICO)
@@ -223,7 +223,17 @@ Se não existirem:
 
 # Integração MCP
 
-(mantido)
+Se MCPs estiverem disponíveis:
+
+- registrar quais servidores ou ferramentas MCP relevantes estão disponíveis
+- usar MCPs apenas como fonte complementar de contexto
+- NÃO bloquear `/context` pela ausência de MCP
+- NÃO assumir dependência obrigatória de nenhum MCP específico (incluindo Serena)
+
+Se não houver MCP disponível:
+
+- registrar ausência como limitação leve (sem bloquear)
+- continuar com memória, `.agents`, docs e código local
 
 ---
 
