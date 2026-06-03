@@ -4,7 +4,7 @@ description: Primeiro comando do fluxo — carrega memória (decisões, estado e
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.3.2"
+  version: "8.3.3"
 ---
 
 ## Regra de ativação do comando (CRÍTICO)
@@ -181,7 +181,15 @@ Se memória confiável:
 
 Se memória ausente:
 
-- comportamento padrão
+- NÃO bloquear `/context`
+- ativar modo degradado funcional
+- registrar explicitamente que a memória persistente não foi carregada
+- revalidar invariantes anti-compaction usando as referências normativas disponíveis
+- usar `AGENTS.md`, `docs`, código real do projeto e MCPs disponíveis como fontes complementares
+- NÃO assumir modo otimizado
+- NÃO varrer o projeto inteiro sem necessidade
+- NÃO exigir Serena ou qualquer MCP específico
+- reduzir confiança das conclusões e reportar limitações
 
 ---
 

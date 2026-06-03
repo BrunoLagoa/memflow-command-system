@@ -4,7 +4,7 @@ description: First command of the flow — loads memory (decisions, state and me
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.3.2"
+  version: "8.3.3"
 ---
 
 ## Command activation rule (CRITICAL)
@@ -181,7 +181,15 @@ If reliable memory:
 
 If memory is missing:
 
-- default behavior
+- DO NOT block `/context`
+- enable functional degraded mode
+- explicitly record that persistent memory was not loaded
+- revalidate anti-compaction invariants using available normative references
+- use `AGENTS.md`, `docs`, real project code and available MCPs as complementary sources
+- DO NOT assume optimized mode
+- DO NOT scan the entire project without need
+- DO NOT require Serena or any specific MCP
+- reduce confidence in conclusions and report limitations
 
 ---
 

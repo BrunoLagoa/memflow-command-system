@@ -8,9 +8,11 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 
 ### Corrigido
 - `developer/context.md` e `src/context.md` (v8.3.2): substituído placeholder `(mantido)` / `(maintained)` na seção de integração MCP por regras explícitas — MCP opcional, complementar e sem bloqueio do `/context` quando ausente.
+- `developer/context.md` e `src/context.md` (v8.3.3): expandido `Modo fallback` para operar em modo degradado funcional quando a memória estiver ausente, sem bloquear `/context` nem depender de Serena/MCP específico.
 
 ### Adicionado
 - `scripts/tests/test-command-contracts.sh`: contrato para impedir regressão do placeholder e exigir regras de MCP opcional no `/context`.
+- `scripts/tests/test-command-contracts.sh`: contrato para impedir fallback genérico no `/context` quando a memória persistente estiver ausente.
 
 ## [1.1.47] - 2026-06-03
 
