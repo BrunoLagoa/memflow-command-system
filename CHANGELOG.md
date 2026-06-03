@@ -433,6 +433,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.1.47]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.46...v1.1.47
 [1.1.46]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.45...v1.1.46
 [1.1.45]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.44...v1.1.45
 [1.1.44]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.43...v1.1.44
