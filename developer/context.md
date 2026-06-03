@@ -7,6 +7,17 @@ metadata:
   version: "8.3.1"
 ---
 
+## Regra de ativação do comando (CRÍTICO)
+
+Quando o usuário invocar `/context`, este comando já está ativo.
+
+- NÃO responder apenas que as referências normativas foram registradas
+- NÃO solicitar que o usuário execute `/context` novamente
+- NÃO bloquear por "pré-condições ainda não validadas"
+- executar imediatamente o carregamento de contexto, memória, métricas, skills e invariantes anti-compaction descrito abaixo
+
+---
+
 ## Referência normativa comum
 
 Aplicar obrigatoriamente:
@@ -16,17 +27,6 @@ Aplicar obrigatoriamente:
 - `_shared/base-degraded-mode.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
-
----
-
-## Regra de ativação do comando (CRÍTICO)
-
-Quando o usuário invocar `/context`, este comando já está ativo.
-
-- NÃO responder apenas que as referências normativas foram registradas
-- NÃO solicitar que o usuário execute `/context` novamente
-- NÃO bloquear por "pré-condições ainda não validadas"
-- executar imediatamente o carregamento de contexto, memória, métricas, skills e invariantes anti-compaction descrito abaixo
 
 ---
 

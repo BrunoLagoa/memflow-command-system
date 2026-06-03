@@ -40,6 +40,23 @@ assert_not_contains() {
   fi
 }
 
+assert_order() {
+  local file="$1"
+  local first_pattern="$2"
+  local second_pattern="$3"
+  local label="$4"
+  local first_line second_line
+  first_line="$(grep -nE "$first_pattern" "$file" | head -n 1 | cut -d: -f1 || true)"
+  second_line="$(grep -nE "$second_pattern" "$file" | head -n 1 | cut -d: -f1 || true)"
+  if [[ -n "$first_line" && -n "$second_line" && "$first_line" -lt "$second_line" ]]; then
+    printf "[PASS] %s\n" "$label"
+    pass_count=$((pass_count + 1))
+  else
+    printf "[FAIL] %s\n" "$label"
+    fail_count=$((fail_count + 1))
+  fi
+}
+
 # ──────────────────────────────────────────────────────────────────
 # Contrato global: todos os comandos executáveis
 # ──────────────────────────────────────────────────────────────────
@@ -239,6 +256,7 @@ assert_contains "$CONTEXT" "pt-BR|pt_BR" "context: invariante de idioma pt-BR pr
 assert_contains "$CONTEXT" "anti-compaction|ANTI-COMPACTION" "context: seção anti-compaction presente"
 assert_contains "$CONTEXT" "DO NOT ask the user to run .*/context.*again|não solicitar.*execute .*/context.*novamente|NÃO solicitar.*execute .*/context.*novamente" "context: não pede /context novamente quando ativo"
 assert_contains "$CONTEXT" "immediately execute.*context.*memory.*metrics.*skills|executar imediatamente.*contexto.*memória.*métricas.*skills" "context: executa carregamento quando invocado"
+assert_order "$CONTEXT" "Command activation rule|Regra de ativação do comando" "Common normative reference|Referência normativa comum" "context: regra de ativação vem antes da injeção normativa"
 assert_contains "$WORKFLOW" "anti-compaction|ANTI-COMPACTION" "workflow: gate de invariantes anti-compaction presente"
 
 BASE_PRECONDITIONS="${SRC_DIR}/_shared/base-preconditions.md"

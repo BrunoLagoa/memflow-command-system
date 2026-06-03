@@ -7,6 +7,17 @@ metadata:
   version: "8.3.1"
 ---
 
+## Command activation rule (CRITICAL)
+
+When the user invokes `/context`, this command is already active.
+
+- DO NOT only respond that normative references were registered
+- DO NOT ask the user to run `/context` again
+- DO NOT block because "preconditions are not validated yet"
+- immediately execute the context, memory, metrics, skills and anti-compaction invariant loading described below
+
+---
+
 ## Common normative reference
 
 Mandatory application:
@@ -16,17 +27,6 @@ Mandatory application:
 - `_shared/base-degraded-mode.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
-
----
-
-## Command activation rule (CRITICAL)
-
-When the user invokes `/context`, this command is already active.
-
-- DO NOT only respond that normative references were registered
-- DO NOT ask the user to run `/context` again
-- DO NOT block because "preconditions are not validated yet"
-- immediately execute the context, memory, metrics, skills and anti-compaction invariant loading described below
 
 ---
 
