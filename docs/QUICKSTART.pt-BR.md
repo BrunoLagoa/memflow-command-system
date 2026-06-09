@@ -18,7 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 install"
 ```
 
-O instalador faz 3 perguntas: sistema operacional, plataforma (OpenCode / VSCode / Cursor) e escopo (global ou local). Responda e pronto.
+O instalador faz 3 perguntas: sistema operacional, plataforma (OpenCode / VSCode / Cursor / Claude Code) e escopo (global ou local). Responda e pronto.
 
 **Verificar:**
 
@@ -30,7 +30,7 @@ bash scripts/install.sh check
 
 ## 2. Inicializar memória no projeto (1 min)
 
-Abra o projeto na ferramenta de IA (OpenCode, Cursor ou VSCode) e execute:
+Abra o projeto na ferramenta de IA (OpenCode, Cursor, VSCode ou Claude Code) e execute:
 
 ```text
 /memory-init

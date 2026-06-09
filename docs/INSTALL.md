@@ -28,6 +28,7 @@ Where files actually land after install:
 | `opencode`        | local   | `<project>/.opencode/commands/memflow`                     |
 | `vscode`          | project | `<project>/.github/prompts/memflow.<command>.prompt.md`    |
 | `cursor`          | project | `<project>/.cursor/commands/memflow/<command>.md`          |
+| `claude`          | project | `<project>/.claude/commands/memflow/<command>.md`          |
 
 ## Scope by target
 
@@ -41,6 +42,10 @@ Where files actually land after install:
 - **`cursor`** — single project installation in `.cursor/commands/memflow` (no global/local split).
   - References to `_shared/*.md` and `model-policy.md` are inlined into each generated command file.
   - Generated files strip top-level frontmatter and promote the `description` field as the first visible line to improve Cursor command list descriptions.
+- **`claude`** — single project installation in `.claude/commands/memflow` (no global/local split).
+  - References to `_shared/*.md` and `model-policy.md` are inlined into each generated command file.
+  - `target-adapter.md` references are resolved to `target-adapter.claude.md`.
+  - Generated files keep their YAML frontmatter, since Claude Code reads `description` natively; the `memflow` subdirectory appears as the `(project:memflow)` namespace in `/help`.
 
 For runtime command resolution on `opencode`, normative files are looked up from the active command root first (auto-detecting `global` vs `local`), and only then fall back to official path discovery (`global → local`).
 
@@ -108,6 +113,21 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target cursor -ProjectDir .
 ```
 
+### Claude Code — Single project installation
+
+**macOS/Linux**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh \
+  | bash -s -- install --non-interactive --target claude --project-dir .
+```
+
+**PowerShell**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target claude -ProjectDir .
+```
+
 ## Update
 
 By default, `update` uses the latest tagged release.
@@ -119,9 +139,10 @@ If there is no previous installation in the requested target:
 Without `--scope`, `update` uses manifest auto-discovery:
 - on `opencode`, it updates detected scopes (`global` and/or `local`);
 - on `vscode`, it updates generated files in `<project>/.github/prompts`;
-- on `cursor`, it updates generated command files in `<project>/.cursor/commands/memflow`.
+- on `cursor`, it updates generated command files in `<project>/.cursor/commands/memflow`;
+- on `claude`, it updates generated command files in `<project>/.claude/commands/memflow`.
 
-Run from the **same directory** where you usually work. For `vscode` and `cursor`, pass `--target <target> --project-dir .` (or `-Target <target> -ProjectDir .` in PowerShell).
+Run from the **same directory** where you usually work. For `vscode`, `cursor`, and `claude`, pass `--target <target> --project-dir .` (or `-Target <target> -ProjectDir .` in PowerShell).
 
 **macOS/Linux**
 
@@ -143,7 +164,8 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 Without `--scope`, `check` uses manifest auto-discovery:
 - on `opencode`, it checks installed scopes;
 - on `vscode`, it checks the single project installation from `<project>/.github/.memflow-install.json`;
-- on `cursor`, it checks the single project installation from `<project>/.cursor/commands/.memflow-install.json`.
+- on `cursor`, it checks the single project installation from `<project>/.cursor/commands/.memflow-install.json`;
+- on `claude`, it checks the single project installation from `<project>/.claude/commands/.memflow-install.json`.
 
 **macOS/Linux**
 
@@ -167,7 +189,8 @@ If no installation exists in the informed target, `uninstall` returns an explici
 Without `--scope`, `uninstall` also uses manifest auto-discovery:
 - on `opencode`, it removes detected scopes;
 - on `vscode`, it removes generated `memflow.*` files from `.github/prompts`;
-- on `cursor`, it removes generated command files from `.cursor/commands/memflow`.
+- on `cursor`, it removes generated command files from `.cursor/commands/memflow`;
+- on `claude`, it removes generated command files from `.claude/commands/memflow`.
 
 **macOS/Linux**
 

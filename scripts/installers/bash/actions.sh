@@ -15,6 +15,9 @@ dispatch_install_for_target() {
     cursor)
       cursor_install_from_source "$commands_root" "$install_dir" "$manifest_file" "$version" "$source_dir"
       ;;
+    claude)
+      claude_install_from_source "$commands_root" "$install_dir" "$manifest_file" "$version" "$source_dir"
+      ;;
     vscode)
       vscode_install_from_source "$commands_root" "$manifest_file" "$version" "$source_dir"
       ;;
@@ -36,6 +39,9 @@ dispatch_uninstall_for_target() {
       ;;
     cursor)
       cursor_uninstall_installation "$install_dir" "$manifest_file"
+      ;;
+    claude)
+      claude_uninstall_installation "$install_dir" "$manifest_file"
       ;;
     vscode)
       vscode_uninstall_installation "$commands_root" "$manifest_file"

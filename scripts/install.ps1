@@ -4,7 +4,7 @@ param(
   [string]$Action = "install",
   [ValidateSet("global", "local")]
   [string]$Scope,
-  [ValidateSet("opencode", "vscode", "cursor")]
+  [ValidateSet("opencode", "vscode", "cursor", "claude")]
   [string]$Target,
   [ValidateSet("linux", "macos", "windows")]
   [string]$Os,
@@ -22,7 +22,7 @@ $script:MemflowScopeProvided = $PSBoundParameters.ContainsKey("Scope")
 $script:MemflowTargetProvided = $PSBoundParameters.ContainsKey("Target")
 $script:MemflowRef = if ($env:MEMFLOW_REF) { $env:MEMFLOW_REF } else { "main" }
 $script:NotFoundExitCode = 2
-$script:SupportedTargets = @("opencode", "vscode", "cursor")
+$script:SupportedTargets = @("opencode", "vscode", "cursor", "claude")
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $CommonScript = Join-Path $ScriptDir "lib/common.ps1"
@@ -98,6 +98,7 @@ function Resolve-InstallerModulePath {
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/shared.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/shared.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/opencode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/opencode.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/cursor.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/cursor.ps1")
+. (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/claude.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/claude.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/vscode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/vscode.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/actions.ps1" -RemoteRelativePath "scripts/installers/powershell/actions.ps1")
 

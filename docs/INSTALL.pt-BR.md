@@ -28,6 +28,7 @@ Onde os arquivos ficam após instalação:
 | `opencode`        | local   | `<projeto>/.opencode/commands/memflow`                     |
 | `vscode`          | projeto | `<projeto>/.github/prompts/memflow.<comando>.prompt.md`    |
 | `cursor`          | projeto | `<projeto>/.cursor/commands/memflow/<comando>.md`          |
+| `claude`          | projeto | `<projeto>/.claude/commands/memflow/<comando>.md`          |
 
 ## Escopo por target
 
@@ -41,6 +42,10 @@ Onde os arquivos ficam após instalação:
 - **`cursor`** — instalação **única por projeto** em `.cursor/commands/memflow` (sem separação global/local).
   - Referências a `_shared/*.md` e `model-policy.md` são injetadas no próprio arquivo de comando gerado.
   - Os comandos gerados removem frontmatter no topo e promovem o campo `description` para a primeira linha visível, melhorando a descrição exibida na lista de comandos do Cursor.
+- **`claude`** — instalação **única por projeto** em `.claude/commands/memflow` (sem separação global/local).
+  - Referências a `_shared/*.md` e `model-policy.md` são injetadas no próprio arquivo de comando gerado.
+  - Referências a `target-adapter.md` são resolvidas para `target-adapter.claude.md`.
+  - Os comandos gerados mantêm o frontmatter YAML, já que o Claude Code lê o `description` nativamente; a subpasta `memflow` aparece como namespace `(project:memflow)` no `/help`.
 
 Na execução dos comandos em `opencode`, os arquivos normativos são resolvidos primeiro pela raiz do comando ativo (com detecção automática de escopo `global` vs `local`) e só depois por descoberta dos caminhos oficiais (`global → local`).
 
@@ -108,6 +113,21 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target cursor -ProjectDir .
 ```
 
+### Claude Code — Instalação única por projeto
+
+**macOS/Linux**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.sh \
+  | bash -s -- install --non-interactive --target claude --project-dir .
+```
+
+**PowerShell**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1 install -NonInteractive -Target claude -ProjectDir .
+```
+
 ## Atualizar
 
 Por padrão, o `update` usa a release tagueada mais recente.
@@ -119,9 +139,10 @@ Se não existir instalação prévia no alvo solicitado:
 Sem `--scope`, o `update` usa autodiscovery por manifest:
 - em `opencode`, atualiza os escopos detectados (`global` e/ou `local`);
 - em `vscode`, atualiza os arquivos gerados em `<projeto>/.github/prompts`;
-- em `cursor`, atualiza os comandos gerados em `<projeto>/.cursor/commands/memflow`.
+- em `cursor`, atualiza os comandos gerados em `<projeto>/.cursor/commands/memflow`;
+- em `claude`, atualiza os comandos gerados em `<projeto>/.claude/commands/memflow`.
 
-Execute no **mesmo diretório** em que você costuma trabalhar. Para `vscode` e `cursor`, informe `--target <target> --project-dir .` (ou `-Target <target> -ProjectDir .` no PowerShell).
+Execute no **mesmo diretório** em que você costuma trabalhar. Para `vscode`, `cursor` e `claude`, informe `--target <target> --project-dir .` (ou `-Target <target> -ProjectDir .` no PowerShell).
 
 **macOS/Linux**
 
@@ -143,7 +164,8 @@ O `check` verifica se existe versão mais recente sem alterar a instalação.
 Sem `--scope`, o `check` usa autodiscovery por manifest:
 - em `opencode`, verifica os escopos instalados;
 - em `vscode`, verifica a instalação única do projeto via manifest em `<projeto>/.github/.memflow-install.json`;
-- em `cursor`, verifica a instalação única do projeto via manifest em `<projeto>/.cursor/commands/.memflow-install.json`.
+- em `cursor`, verifica a instalação única do projeto via manifest em `<projeto>/.cursor/commands/.memflow-install.json`;
+- em `claude`, verifica a instalação única do projeto via manifest em `<projeto>/.claude/commands/.memflow-install.json`.
 
 **macOS/Linux**
 
@@ -167,7 +189,8 @@ Se não existir instalação no alvo informado, o `uninstall` retorna erro expl�
 Sem `--scope`, o `uninstall` também usa descoberta automática por manifest:
 - em `opencode`, remove os escopos detectados;
 - em `vscode`, remove arquivos `memflow.*` gerados em `.github/prompts`;
-- em `cursor`, remove comandos gerados em `.cursor/commands/memflow`.
+- em `cursor`, remove comandos gerados em `.cursor/commands/memflow`;
+- em `claude`, remove comandos gerados em `.claude/commands/memflow`.
 
 **macOS/Linux**
 

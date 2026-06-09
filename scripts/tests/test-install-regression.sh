@@ -373,6 +373,56 @@ else
   pass_count=$((pass_count + 1))
 fi
 
+project_claude="${tmp_root}/claude-project"
+mkdir -p "$project_claude"
+
+home_claude="${tmp_root}/home-claude"
+mkdir -p "$home_claude"
+
+run_expect_exit \
+  "update claude sem instalação deve falhar com código 2" \
+  2 \
+  env HOME="$home_claude" bash "$INSTALL_SCRIPT" update --project-dir "$project_claude" --target claude --non-interactive --version local
+
+run_expect_exit \
+  "uninstall claude sem instalação deve falhar com código 2" \
+  2 \
+  env HOME="$home_claude" bash "$INSTALL_SCRIPT" uninstall --target claude --non-interactive --project-dir "$project_claude"
+
+run_expect_success \
+  "install claude inicial deve funcionar com instalação local única" \
+  env HOME="$home_claude" bash "$INSTALL_SCRIPT" install --project-dir "$project_claude" --target claude --non-interactive --version local
+
+assert_opencode_install_is_bundled "${project_claude}/.claude/commands/memflow" "install claude"
+
+run_expect_success \
+  "update claude deve funcionar com instalação existente" \
+  env HOME="$home_claude" bash "$INSTALL_SCRIPT" update --target claude --non-interactive --project-dir "$project_claude" --version local
+
+run_expect_success \
+  "check claude deve funcionar com instalação existente" \
+  env HOME="$home_claude" bash "$INSTALL_SCRIPT" check --target claude --non-interactive --project-dir "$project_claude"
+
+run_expect_success \
+  "uninstall claude deve remover instalação existente" \
+  env HOME="$home_claude" bash "$INSTALL_SCRIPT" uninstall --target claude --non-interactive --project-dir "$project_claude"
+
+if [[ -d "${project_claude}/.claude/commands/memflow" ]]; then
+  printf "[FAIL] uninstall claude manteve instalação local\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] uninstall claude remove instalação local\n"
+  pass_count=$((pass_count + 1))
+fi
+
+if [[ -d "${home_claude}/.config/claude/commands/memflow" ]]; then
+  printf "[FAIL] claude criou instalação global indevida\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] claude não usa instalação global\n"
+  pass_count=$((pass_count + 1))
+fi
+
 printf "\nResultado: %d passou, %d falhou\n" "$pass_count" "$fail_count"
 if [[ "$fail_count" -gt 0 ]]; then
   exit 1

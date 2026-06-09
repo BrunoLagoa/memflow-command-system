@@ -4,6 +4,18 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.2.0] - 2026-06-09
+
+### Adicionado
+- Novo target `claude` nos instaladores Bash e PowerShell: instalação única por projeto em `<projeto>/.claude/commands/memflow`, com `install`, `update`, `check` e `uninstall` suportados e autodiscovery por manifest.
+- `src/_shared/target-adapter.claude.md` e `developer/_shared/target-adapter.claude.md`: adaptador de target dedicado para resolução normativa no Claude Code (blocos `_shared/*` e `model-policy.md` injetados inline; instalação sempre local).
+- `scripts/installers/bash/targets/claude.sh` e `scripts/installers/powershell/targets/claude.ps1`: adapters que mantêm o frontmatter dos comandos, já que o Claude Code lê `description` nativamente.
+- `scripts/tests/test-install-regression.sh` e `scripts/tests/test-install-regression.ps1`: cenários de regressão para o target `claude` (install/update/check/uninstall e proteção contra instalação global indevida).
+
+### Alterado
+- `scripts/manifest.schema.json`: `target` passa a aceitar `claude` no enum.
+- `README.md`, `README.pt-BR.md`, `docs/INSTALL.md`, `docs/INSTALL.pt-BR.md`, `docs/QUICKSTART.md` e `docs/QUICKSTART.pt-BR.md`: documentação atualizada para incluir o target `claude`.
+
 ## [1.1.48] - 2026-06-03
 
 ### Corrigido
@@ -443,6 +455,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.2.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.48...v1.2.0
 [1.1.48]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.47...v1.1.48
 [1.1.47]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.46...v1.1.47
 [1.1.46]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.45...v1.1.46

@@ -46,7 +46,7 @@ powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.c
 The wizard guides you through:
 
 1. **Operating system**
-2. **Platform** — `OpenCode`, `VSCode`, or `Cursor`
+2. **Platform** — `OpenCode`, `VSCode`, `Cursor`, or `Claude Code`
 3. **Scope** — `global` or `local` (when applicable)
 
 Then jump straight to your first commands:
@@ -68,7 +68,7 @@ To reduce token cost in production prompts while keeping authoring in pt-BR:
 
 - `developer/` is the **authoring source** in Portuguese (pt-BR).
 - `src/` is the **distribution payload** in English used by installers.
-- Installer targets (`opencode`, `cursor`, `vscode`) continue to consume `src/`.
+- Installer targets (`opencode`, `cursor`, `vscode`, `claude`) continue to consume `src/`.
 
 When command behavior changes, keep both trees synchronized and preserve the same file structure between `developer/` and `src/`.
 
@@ -178,6 +178,7 @@ When scope or approach is unclear, insert `/brainstorm` after `/workflow` (step 
 | OpenCode    |   ✅   | Main platform. Full slash command and SDLC support.                                |
 | VSCode      |   ✅   | Installed via `--target vscode` as prompt files in `.github/prompts`.              |
 | Cursor      |   ✅   | Installed via `--target cursor` as commands in `.cursor/commands/memflow`.         |
+| Claude Code |   ✅   | Installed via `--target claude` as commands in `.claude/commands/memflow`.         |
 | Antigravity |   ⏳   | Pending validation.                                                                |
 
 ---

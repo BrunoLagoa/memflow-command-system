@@ -3,8 +3,8 @@
 normalize_scope_for_target() {
   local requested_scope="$1"
   local target="$2"
-  if [[ "$target" == "vscode" || "$target" == "cursor" ]]; then
-    # VSCode e Cursor usam instalação única por projeto.
+  if [[ "$target" == "vscode" || "$target" == "cursor" || "$target" == "claude" ]]; then
+    # VSCode, Cursor e Claude usam instalação única por projeto.
     printf "local"
     return 0
   fi
@@ -53,7 +53,7 @@ Uso:
 Opções:
   --non-interactive       Executa sem perguntas interativas
   --scope <global|local>  Escopo de instalação
-  --target <opencode|vscode|cursor>  Plataforma de comandos
+  --target <opencode|vscode|cursor|claude>  Plataforma de comandos
   --os <linux|macos|windows>
   --version <tag|local>   Versão alvo (tag de release)
   --project-dir <dir>     Diretório do projeto para escopo local
@@ -146,14 +146,14 @@ validate_inputs() {
 
 
 supported_targets() {
-  printf "%s\n" "opencode" "vscode" "cursor"
+  printf "%s\n" "opencode" "vscode" "cursor" "claude"
 }
 
 
 is_supported_target() {
   local target="$1"
   case "$target" in
-    opencode|vscode|cursor) return 0 ;;
+    opencode|vscode|cursor|claude) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -208,13 +208,13 @@ wizard_select() {
   fi
 
   if [[ -z "$TARGET" ]]; then
-    TARGET="$(choose_option_tty "2 - Selecione o local de instalação" "opencode" "vscode" "cursor")"
+    TARGET="$(choose_option_tty "2 - Selecione o local de instalação" "opencode" "vscode" "cursor" "claude")"
   else
     printf "2 - Selecione o local de instalação\n  > %s\n" "$TARGET"
   fi
 
   if [[ -z "$SCOPE" ]]; then
-    if [[ "$TARGET" == "vscode" || "$TARGET" == "cursor" ]]; then
+    if [[ "$TARGET" == "vscode" || "$TARGET" == "cursor" || "$TARGET" == "claude" ]]; then
       SCOPE="local"
       printf "3 - Escopo\n  > local (único para %s)\n" "$TARGET"
     else
@@ -253,6 +253,10 @@ commands_root_for_scope() {
   fi
   if [[ "$target" == "cursor" ]]; then
     printf "%s" "${project_dir}/.cursor/commands"
+    return 0
+  fi
+  if [[ "$target" == "claude" ]]; then
+    printf "%s" "${project_dir}/.claude/commands"
     return 0
   fi
 
@@ -302,7 +306,7 @@ find_existing_manifest() {
   local target global_root local_root
   while IFS= read -r target; do
     [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
-    if [[ "$target" == "vscode" || "$target" == "cursor" ]]; then
+    if [[ "$target" == "vscode" || "$target" == "cursor" || "$target" == "claude" ]]; then
       local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
       if [[ -f "${local_root}/.memflow-install.json" ]]; then
         printf "%s" "${local_root}/.memflow-install.json"
@@ -339,7 +343,7 @@ collect_existing_manifests() {
   local target global_root local_root
   while IFS= read -r target; do
     [[ -n "$target_filter" && "$target" != "$target_filter" ]] && continue
-    if [[ "$target" == "vscode" || "$target" == "cursor" ]]; then
+    if [[ "$target" == "vscode" || "$target" == "cursor" || "$target" == "claude" ]]; then
       local_root="$(commands_root_for_scope "local" "$target" "$os_name" "$project_dir")"
       if [[ -f "${local_root}/.memflow-install.json" ]]; then
         printf "%s\n" "${local_root}/.memflow-install.json"
@@ -500,6 +504,8 @@ print_version_update_notice() {
     update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --target vscode --project-dir . --non-interactive"
   elif [[ "$target_value" == "cursor" ]]; then
     update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --target cursor --project-dir . --non-interactive"
+  elif [[ "$target_value" == "claude" ]]; then
+    update_command="curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash -s -- update --target claude --project-dir . --non-interactive"
   elif [[ "$os_name" == "windows" ]]; then
     update_command="powershell -ExecutionPolicy Bypass -Command \"iwr https://raw.githubusercontent.com/${REPO}/main/scripts/install.ps1 -OutFile \$env:TEMP\\install.ps1; & \$env:TEMP\\install.ps1 update -Scope ${scope_value} -NonInteractive\""
   fi

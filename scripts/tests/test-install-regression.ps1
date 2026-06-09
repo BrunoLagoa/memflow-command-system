@@ -54,7 +54,8 @@ try {
   $HomeRoot = Join-Path $TmpRoot "home"
   $ProjectLocal = Join-Path $TmpRoot "project-local"
   $ProjectVscode = Join-Path $TmpRoot "project-vscode"
-  New-Item -ItemType Directory -Path $HomeRoot, $ProjectLocal, $ProjectVscode -Force | Out-Null
+  $ProjectClaude = Join-Path $TmpRoot "project-claude"
+  New-Item -ItemType Directory -Path $HomeRoot, $ProjectLocal, $ProjectVscode, $ProjectClaude -Force | Out-Null
 
   $env:HOME = $HomeRoot
   $env:USERPROFILE = $HomeRoot
@@ -115,6 +116,44 @@ try {
   }
 
   Invoke-ExpectSuccess "uninstall vscode deve remover prompts" @("uninstall", "-Target", "vscode", "-ProjectDir", $ProjectVscode, "-NonInteractive")
+
+  Invoke-ExpectExit "update claude sem instalação deve falhar com código 2" 2 @("update", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive", "-Version", "local")
+
+  Invoke-ExpectExit "uninstall claude sem instalação deve falhar com código 2" 2 @("uninstall", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive")
+
+  Invoke-ExpectSuccess "install claude inicial deve funcionar" @("install", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive", "-Version", "local")
+
+  $claudeInstallDir = Join-Path $ProjectClaude ".claude\commands\memflow"
+  if (Test-Path $claudeInstallDir) {
+    Write-Host "[PASS] install claude cria comandos em .claude\commands\memflow"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install claude não criou comandos em .claude\commands\memflow"
+    $FailCount += 1
+  }
+
+  Invoke-ExpectSuccess "update claude com instalação existente deve funcionar" @("update", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive", "-Version", "local")
+
+  Invoke-ExpectSuccess "check claude com instalação existente deve funcionar" @("check", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive")
+
+  Invoke-ExpectSuccess "uninstall claude remove instalação existente" @("uninstall", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive")
+
+  if (-not (Test-Path $claudeInstallDir)) {
+    Write-Host "[PASS] uninstall claude remove instalação local"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] uninstall claude manteve instalação local"
+    $FailCount += 1
+  }
+
+  $claudeGlobalDir = Join-Path $HomeRoot ".config\claude\commands\memflow"
+  if (-not (Test-Path $claudeGlobalDir)) {
+    Write-Host "[PASS] claude não usa instalação global"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] claude criou instalação global indevida"
+    $FailCount += 1
+  }
 } finally {
   Remove-Item -Recurse -Force $TmpRoot -ErrorAction SilentlyContinue
 }
