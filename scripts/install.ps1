@@ -102,6 +102,8 @@ function Resolve-InstallerModulePath {
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/targets/vscode.ps1" -RemoteRelativePath "scripts/installers/powershell/targets/vscode.ps1")
 . (Resolve-InstallerModulePath -LocalRelativePath "installers/powershell/actions.ps1" -RemoteRelativePath "scripts/installers/powershell/actions.ps1")
 
+$ProjectDir = Normalize-ProjectDir -RequestedProjectDir $ProjectDir -ProjectDirProvided $script:ProjectDirProvided
+
 $resolved = Resolve-WizardValues
 $resolvedOs = [string]$resolved.Os
 $resolvedScope = [string]$resolved.Scope

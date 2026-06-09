@@ -423,6 +423,36 @@ else
   pass_count=$((pass_count + 1))
 fi
 
+project_git_root="${tmp_root}/git-root-project"
+mkdir -p "${project_git_root}/scripts"
+mkdir -p "${project_git_root}/.git"
+
+home_git_root="${tmp_root}/home-git-root"
+mkdir -p "$home_git_root"
+
+(
+  cd "${project_git_root}/scripts"
+  run_expect_success \
+    "install claude a partir de scripts/ deve usar raiz do repositório git" \
+    env HOME="$home_git_root" bash "$INSTALL_SCRIPT" install --target claude --non-interactive --version local
+)
+
+if [[ -d "${project_git_root}/.claude/commands/memflow" ]]; then
+  printf "[PASS] install a partir de scripts/ cria comandos na raiz do projeto\n"
+  pass_count=$((pass_count + 1))
+else
+  printf "[FAIL] install a partir de scripts/ não criou comandos na raiz do projeto\n"
+  fail_count=$((fail_count + 1))
+fi
+
+if [[ -d "${project_git_root}/scripts/.claude/commands/memflow" ]]; then
+  printf "[FAIL] install a partir de scripts/ criou comandos dentro de scripts/\n"
+  fail_count=$((fail_count + 1))
+else
+  printf "[PASS] install a partir de scripts/ não instala dentro de scripts/\n"
+  pass_count=$((pass_count + 1))
+fi
+
 printf "\nResultado: %d passou, %d falhou\n" "$pass_count" "$fail_count"
 if [[ "$fail_count" -gt 0 ]]; then
   exit 1

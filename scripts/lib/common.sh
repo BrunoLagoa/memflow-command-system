@@ -136,3 +136,19 @@ ensure_command() {
 iso_timestamp() {
   date -u +"%Y-%m-%dT%H:%M:%SZ"
 }
+
+resolve_default_project_dir() {
+  local start_dir="${1:-$(pwd)}"
+  local current_dir=""
+
+  current_dir="$(cd "$start_dir" && pwd)"
+  while [[ "$current_dir" != "/" ]]; do
+    if [[ -d "${current_dir}/.git" ]]; then
+      printf "%s" "$current_dir"
+      return 0
+    fi
+    current_dir="$(dirname "$current_dir")"
+  done
+
+  printf "%s" "$(cd "$start_dir" && pwd)"
+}

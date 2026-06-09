@@ -119,6 +119,29 @@ parse_args() {
 }
 
 
+normalize_project_dir() {
+  if [[ "$PROJECT_DIR_EXPLICIT" -eq 1 ]]; then
+    return 0
+  fi
+
+  if declare -F resolve_default_project_dir >/dev/null 2>&1; then
+    PROJECT_DIR="$(resolve_default_project_dir "$PROJECT_DIR")"
+    return 0
+  fi
+
+  local start_dir="$PROJECT_DIR"
+  local current_dir=""
+  current_dir="$(cd "$start_dir" && pwd)"
+  while [[ "$current_dir" != "/" ]]; do
+    if [[ -d "${current_dir}/.git" ]]; then
+      PROJECT_DIR="$current_dir"
+      return 0
+    fi
+    current_dir="$(dirname "$current_dir")"
+  done
+}
+
+
 validate_inputs() {
   case "$ACTION" in
     install|update|uninstall|check) ;;

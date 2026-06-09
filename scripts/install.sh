@@ -152,6 +152,7 @@ load_install_module "installers/bash/actions.sh" "scripts/installers/bash/action
 main() {
   parse_args "$@"
   validate_inputs
+  normalize_project_dir
 
   case "$ACTION" in
     install) run_install ;;

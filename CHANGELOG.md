@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.2.1] - 2026-06-09
+
+### Corrigido
+- Instaladores Bash e PowerShell: quando `--project-dir` / `-ProjectDir` não é informado, o diretório padrão passa a resolver a raiz do repositório Git (`.git`) a partir do diretório atual, evitando instalações locais em subpastas como `scripts/.claude/commands/memflow`.
+- `scripts/tests/test-install-regression.sh`: cenário de regressão para instalação a partir de `scripts/` usando a raiz do repositório.
+
 ## [1.2.0] - 2026-06-09
 
 ### Adicionado
@@ -455,6 +461,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.2.1]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.48...v1.2.0
 [1.1.48]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.47...v1.1.48
 [1.1.47]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.46...v1.1.47

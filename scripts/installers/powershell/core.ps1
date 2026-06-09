@@ -26,6 +26,34 @@ function Get-SupportedTargets {
 }
 
 
+function Normalize-ProjectDir {
+  param(
+    [string]$RequestedProjectDir,
+    [bool]$ProjectDirProvided
+  )
+
+  if ($ProjectDirProvided) {
+    return $RequestedProjectDir
+  }
+
+  if (Get-Command Resolve-DefaultProjectDir -ErrorAction SilentlyContinue) {
+    return (Resolve-DefaultProjectDir -StartDir $RequestedProjectDir)
+  }
+
+  $current = (Resolve-Path $RequestedProjectDir).Path
+  while ($true) {
+    if (Test-Path (Join-Path $current ".git")) {
+      return $current
+    }
+    $parent = Split-Path -Parent $current
+    if (-not $parent -or $parent -eq $current) {
+      return (Resolve-Path $RequestedProjectDir).Path
+    }
+    $current = $parent
+  }
+}
+
+
 function Normalize-ScopeForTarget {
   param(
     [string]$RequestedScope,

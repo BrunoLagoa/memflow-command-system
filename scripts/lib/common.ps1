@@ -51,6 +51,24 @@ function Ensure-Command {
   }
 }
 
+function Resolve-DefaultProjectDir {
+  param(
+    [string]$StartDir = (Get-Location).Path
+  )
+
+  $current = (Resolve-Path $StartDir).Path
+  while ($true) {
+    if (Test-Path (Join-Path $current ".git")) {
+      return $current
+    }
+    $parent = Split-Path -Parent $current
+    if (-not $parent -or $parent -eq $current) {
+      return (Resolve-Path $StartDir).Path
+    }
+    $current = $parent
+  }
+}
+
 function Select-Option {
   param(
     [string]$Prompt,
