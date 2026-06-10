@@ -27,7 +27,38 @@
 
 ---
 
-## Quick start
+## Em uma frase
+
+Memflow transforma o "abre o chat e torce" em um fluxo de engenharia que **decide com critério, executa com disciplina, valida com rigor e lembra das decisões** entre sessões.
+
+---
+
+## Por que Memflow?
+
+A maioria dos fluxos com IA é assim: abre chat, cola contexto, pede código, torce, repete. Cada sessão começa do zero. Decisões se perdem. Os mesmos erros voltam na próxima semana.
+
+O Memflow troca o improviso por um processo auditável e repetível:
+
+| Sem Memflow                                   | Com Memflow                                                        |
+| --------------------------------------------- | ----------------------------------------------------------------- |
+| Cada sessão começa do zero                    | Memória reaproveitada entre sessões                               |
+| Decisões se perdem no histórico do chat       | Decisões viram memória estruturada com categoria, impacto e score |
+| Sempre o modelo mais caro (ou o mais barato)  | Modelo certo para a tarefa — barato por padrão, escala quando precisa |
+| "Tá aprovado" no feeling                      | Gate final explícito: `OK` ou `BLOQUEADO`                         |
+| A IA decide e executa de uma vez              | Cada etapa pede confirmação antes de seguir                       |
+
+Por baixo, o Memflow funciona como um time de engenharia em estágios:
+
+- **Workflow** — classifica a tarefa, encaminha exploração quando precisa (`/brainstorm`) e escolhe estratégia e modelo certos.
+- **Execução** — implementa com fallbacks controlados e checkpoints explícitos.
+- **Validação** — gate final estrito (`OK` ou `BLOQUEADO`), sem aprovação no feeling.
+- **Memória** — captura decisões relevantes com categoria, impacto e score `0–100`, e reaproveita entre sessões.
+
+O resultado é algo que você pode auditar, repetir e confiar.
+
+---
+
+## Início rápido
 
 Um comando interativo. Ele detecta seu ambiente, faz 3 perguntas e instala.
 
@@ -43,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 install"
 ```
 
-O wizard guia você pelas escolhas:
+O wizard guia você por 3 escolhas:
 
 1. **Sistema operacional**
 2. **Plataforma** — `OpenCode`, `VSCode`, `Cursor` ou `Claude Code`
@@ -62,55 +93,24 @@ Depois, vá direto para seus primeiros comandos:
 
 ---
 
-## Fonte e Distribuição
-
-Para reduzir custo de token nos prompts do produto e manter a autoria em pt-BR:
-
-- `developer/` é a **fonte de autoria** em Português (pt-BR).
-- `src/` é o **payload de distribuição** em inglês consumido pelos instaladores.
-- Os targets do instalador (`opencode`, `cursor`, `vscode`, `claude`) continuam consumindo `src/`.
-
-Quando houver mudança de comportamento dos comandos, mantenha `developer/` e `src/` sincronizados com a mesma estrutura de arquivos.
-
----
-
-## Por que Memflow?
-
-A maioria dos fluxos com IA é assim: abre chat, cola contexto, pede código, torce, repete. Cada sessão começa do zero. Decisões se perdem. Os mesmos erros voltam na próxima semana.
-
-O Memflow transforma esse fluxo em algo parecido com um time de engenharia real:
-
-- Um **estágio de workflow** que classifica a tarefa, encaminha exploração quando necessário (`/brainstorm`) e escolhe estratégia e modelo certos — barato por padrão, escalando só quando precisa.
-- Um **estágio de execução** que implementa com fallbacks controlados e checkpoints explícitos.
-- Um **estágio de validação** com gate final estrito (`OK` ou `BLOQUEADO`) — sem "aprovar no feeling".
-- Uma **camada de memória** que captura decisões relevantes com categoria, impacto e score `0–100`, e reaproveita entre sessões.
-
-O resultado é algo que você pode auditar, repetir e confiar.
-
----
-
-## O fluxo
+## Como funciona — o fluxo
 
 ```text
-┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌────────────┐
-│  /context   │ →  │  /workflow   │ →  │  /execute   │ →  │  /review   │
-│             │    │              │    │ (ou /plan)  │    │            │
-│carrega mem. │    │decide modelo │    │ implementa  │    │   valida   │
-└─────────────┘    └──────┬───────┘    └─────────────┘    └────────────┘
-                          │
-                    ┌─────▼──────┐
-                    │ /brainstorm│  opcional — quando clareza é baixa ou há trade-offs
-                    └────────────┘
-                                              ↓
-                                       ┌──────────────┐
-                                       │ /memory-save │
-                                       │  (opcional)  │
-                                       └──────────────┘
+   ┌──────────┐   ┌──────────────┐   ┌────────────────┐   ┌──────────┐
+   │ /context │──▶│  /workflow   │──▶│    /execute    │──▶│ /review  │
+   │  carrega │   │   decide     │   │   (ou /plan)   │   │  valida  │
+   │  memória │   │   modelo     │   │   implementa   │   │          │
+   └──────────┘   └──────┬───────┘   └────────────────┘   └────┬─────┘
+                         │                                      │
+                  ┌──────▼───────┐                    ┌─────────▼──────┐
+                  │ /brainstorm  │                    │  /memory-save  │
+                  │  (opcional)  │                    │   (opcional)   │
+                  └──────────────┘                    └────────────────┘
 ```
 
-Quando `/workflow` detecta clareza insuficiente ou trade-offs não resolvidos, encaminha para `/brainstorm` primeiro. Handoff após aprovação: `/prd`, `/spec` ou `/plan`.
-
-Para trabalho de alto risco, finalize com `/review-code` (revisão técnica profunda) e `/review-enforce-rules` (gate final estrito).
+- **`/context` → `/workflow` → `/execute` → `/review`** é o caminho principal.
+- Quando `/workflow` detecta clareza insuficiente ou trade-offs não resolvidos, encaminha para **`/brainstorm`** primeiro. O handoff após aprovação vai para `/prd`, `/spec` ou `/plan`.
+- Para trabalho de alto risco, finalize com **`/review-code`** (revisão técnica profunda) e **`/review-enforce-rules`** (gate final estrito).
 
 ---
 
@@ -118,7 +118,7 @@ Para trabalho de alto risco, finalize com `/review-code` (revisão técnica prof
 
 ### Comandos de orquestração
 
-A camada de controle que decide, executa e valida.
+A camada de controle que decide, executa e valida — o caminho principal.
 
 | Comando                  | O que faz                                                                                     |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
@@ -131,12 +131,12 @@ A camada de controle que decide, executa e valida.
 
 ### Comandos de capacidade
 
-Resolução especializada para o dia a dia.
+Resolução especializada para o dia a dia, chamada pelo workflow conforme a necessidade.
 
 | Categoria                       | Comandos                                          |
 | ------------------------------- | ------------------------------------------------- |
 | Descoberta e definição          | `/brainstorm`, `/prd`, `/spec`, `/plan`           |
-| Implementação e qualidade       | `/execute`, `/debug`, `/refactor`, `/test-plan`   |
+| Implementação e qualidade       | `/debug`, `/refactor`, `/test-plan`               |
 | Memória                         | `/memory-init`, `/memory-save`                    |
 
 ### Principais diferenciais
@@ -149,6 +149,23 @@ Resolução especializada para o dia a dia.
 - **Re-hidratação anti-compaction** — invariantes pt-BR + identidade Memflow restauradas via `/context` e `/workflow`.
 - **Integração MCP** — código, memória contextual e documentação externa.
 - **Planos vivos** — quando `/plan` é salvo, as tarefas são dimensionadas por complexidade com marcadores de status (`[ ]`, `[-]`, `[x]`, `[!]`) e modos de execução (`[P]` paralelo, `[S]` sequencial).
+
+---
+
+## Glossário rápido
+
+Termos que aparecem no projeto, em uma linha cada:
+
+| Termo                        | O que significa                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| `.agents`                    | Pasta de contexto do projeto que o `/context` carrega (memória, modos, skills).                  |
+| Score `0–100`                | Nota de relevância de uma decisão; quanto maior, mais ela é reaproveitada entre sessões.         |
+| Fallback                     | Modelo de reserva no mesmo nível, usado quando o principal falha — sem escalar custo à toa.      |
+| HARD-GATE                    | Ponto de parada obrigatório que exige confirmação explícita antes de seguir.                     |
+| Modo degradado               | Operação reduzida porém funcional quando falta `.agents` ou contexto.                            |
+| Re-hidratação anti-compaction| Restauração de invariantes (idioma pt-BR e identidade Memflow) quando o histórico é compactado.  |
+| MCP                          | Model Context Protocol — integração com código, memória contextual e docs externas.             |
+| Planos vivos                 | Planos do `/plan` com tarefas marcadas por status e modo de execução, atualizados ao longo do trabalho. |
 
 ---
 
@@ -235,6 +252,16 @@ Princípios operacionais:
 Este projeto segue [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). Mensagens de commit são validadas no CI para pull requests e pushes na `main`.
 
 Tipos permitidos: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `build`, `ci`.
+
+### Fonte e distribuição
+
+Se você vai mexer no código dos comandos, atenção a como o projeto é organizado (isso reduz custo de token nos prompts e mantém a autoria em pt-BR):
+
+- `developer/` é a **fonte de autoria** em Português (pt-BR).
+- `src/` é o **payload de distribuição** em inglês consumido pelos instaladores.
+- Os targets do instalador (`opencode`, `cursor`, `vscode`, `claude`) continuam consumindo `src/`.
+
+Quando houver mudança de comportamento dos comandos, mantenha `developer/` e `src/` sincronizados com a mesma estrutura de arquivos.
 
 ## Pessoas
 

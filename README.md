@@ -27,6 +27,37 @@
 
 ---
 
+## In one sentence
+
+Memflow turns the "open a chat and hope for the best" habit into an engineering flow that **decides with criteria, executes with discipline, validates with rigor, and remembers decisions** across sessions.
+
+---
+
+## Why Memflow?
+
+Most AI workflows look like this: open chat, paste context, ask for code, hope for the best, repeat. Every session restarts from zero. Decisions evaporate. The same mistakes get re-litigated next week.
+
+Memflow swaps improvisation for an auditable, repeatable process:
+
+| Without Memflow                                | With Memflow                                                          |
+| ---------------------------------------------- | -------------------------------------------------------------------- |
+| Every session restarts from zero               | Memory reused across sessions                                        |
+| Decisions get lost in chat history             | Decisions become structured memory with category, impact, and score |
+| Always the most expensive (or cheapest) model  | The right model for the task — cheap by default, escalate when needed |
+| "Looks approved" by feeling                    | Explicit final gate: `OK` or `BLOCKED`                              |
+| AI decides and executes in one shot            | Each step waits for explicit confirmation before moving on           |
+
+Under the hood, Memflow works like an engineering team in stages:
+
+- **Workflow** — classifies the task, routes exploration when needed (`/brainstorm`), and picks the right strategy and model.
+- **Execution** — implements with controlled fallbacks and explicit checkpoints.
+- **Validation** — strict final gate (`OK` or `BLOCKED`), no approval by feeling.
+- **Memory** — captures relevant decisions with category, impact, and a `0–100` score, and reuses them across sessions.
+
+The result is something you can audit, repeat, and trust.
+
+---
+
 ## Quick start
 
 One interactive command. It detects your environment, asks 3 questions, and installs.
@@ -43,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/m
 powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/BrunoLagoa/memflow-command-system/main/scripts/install.ps1 -OutFile $env:TEMP\install.ps1; & $env:TEMP\install.ps1 install"
 ```
 
-The wizard guides you through:
+The wizard guides you through 3 choices:
 
 1. **Operating system**
 2. **Platform** — `OpenCode`, `VSCode`, `Cursor`, or `Claude Code`
@@ -62,55 +93,24 @@ Then jump straight to your first commands:
 
 ---
 
-## Source and Distribution
-
-To reduce token cost in production prompts while keeping authoring in pt-BR:
-
-- `developer/` is the **authoring source** in Portuguese (pt-BR).
-- `src/` is the **distribution payload** in English used by installers.
-- Installer targets (`opencode`, `cursor`, `vscode`, `claude`) continue to consume `src/`.
-
-When command behavior changes, keep both trees synchronized and preserve the same file structure between `developer/` and `src/`.
-
----
-
-## Why Memflow?
-
-Most AI workflows look like this: open chat, paste context, ask for code, hope for the best, repeat. Every session restarts from zero. Decisions evaporate. The same mistakes get re-litigated next week.
-
-Memflow makes that flow look more like a real engineering team:
-
-- A **workflow stage** that classifies the task, routes exploration when needed (`/brainstorm`), and picks the right strategy and model — cheap by default, escalating only when needed.
-- An **execution stage** that implements with controlled fallbacks and explicit checkpoints.
-- A **validation stage** with a strict final gate (`OK` or `BLOCKED`) — no "approval by feeling".
-- A **memory layer** that captures relevant decisions with category, impact, and a `0–100` score, and reuses them across sessions.
-
-The result is something you can audit, repeat, and trust.
-
----
-
-## The flow
+## How it works — the flow
 
 ```text
-┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌────────────┐
-│  /context   │ →  │  /workflow   │ →  │  /execute   │ →  │  /review   │
-│             │    │              │    │  (or /plan) │    │            │
-│ load memory │    │ decide model │    │  implement  │    │  validate  │
-└─────────────┘    └──────┬───────┘    └─────────────┘    └────────────┘
-                          │
-                    ┌─────▼──────┐
-                    │ /brainstorm│  optional — when clarity is low or trade-offs exist
-                    └────────────┘
-                                              ↓
-                                       ┌──────────────┐
-                                       │ /memory-save │
-                                       │  (optional)  │
-                                       └──────────────┘
+   ┌──────────┐   ┌──────────────┐   ┌────────────────┐   ┌──────────┐
+   │ /context │──▶│  /workflow   │──▶│    /execute    │──▶│ /review  │
+   │   load   │   │   decide     │   │    (or /plan)  │   │ validate │
+   │  memory  │   │   model      │   │   implement    │   │          │
+   └──────────┘   └──────┬───────┘   └────────────────┘   └────┬─────┘
+                         │                                      │
+                  ┌──────▼───────┐                    ┌─────────▼──────┐
+                  │ /brainstorm  │                    │  /memory-save  │
+                  │  (optional)  │                    │   (optional)   │
+                  └──────────────┘                    └────────────────┘
 ```
 
-When `/workflow` detects insufficient clarity or unresolved trade-offs, it routes to `/brainstorm` first. Handoff after approval: `/prd`, `/spec`, or `/plan`.
-
-For high-risk work, finish with `/review-code` (deep technical review) and `/review-enforce-rules` (strict final gate).
+- **`/context` → `/workflow` → `/execute` → `/review`** is the main path.
+- When `/workflow` detects insufficient clarity or unresolved trade-offs, it routes to **`/brainstorm`** first. Handoff after approval goes to `/prd`, `/spec`, or `/plan`.
+- For high-risk work, finish with **`/review-code`** (deep technical review) and **`/review-enforce-rules`** (strict final gate).
 
 ---
 
@@ -118,7 +118,7 @@ For high-risk work, finish with `/review-code` (deep technical review) and `/rev
 
 ### Orchestration commands
 
-The control layer that decides, executes, and validates.
+The control layer that decides, executes, and validates — the main path.
 
 | Command                  | What it does                                                                                  |
 | ------------------------ | --------------------------------------------------------------------------------------------- |
@@ -131,12 +131,12 @@ The control layer that decides, executes, and validates.
 
 ### Capability commands
 
-Specialized resolution for everyday tasks.
+Specialized resolution for everyday tasks, called by the workflow as needed.
 
 | Category                    | Commands                                          |
 | --------------------------- | ------------------------------------------------- |
 | Discovery & definition      | `/brainstorm`, `/prd`, `/spec`, `/plan`           |
-| Implementation & quality    | `/execute`, `/debug`, `/refactor`, `/test-plan`   |
+| Implementation & quality    | `/debug`, `/refactor`, `/test-plan`               |
 | Memory                      | `/memory-init`, `/memory-save`                    |
 
 ### Key differentiators
@@ -149,6 +149,23 @@ Specialized resolution for everyday tasks.
 - **Anti-compaction invariants** — pt-BR + Memflow identity re-hydrated via `/context` and `/workflow`.
 - **MCP integration** — code, contextual memory, and external docs.
 - **Live plans** — when `/plan` is saved, tasks are sized by complexity with status markers (`[ ]`, `[-]`, `[x]`, `[!]`) and execution modes (`[P]` parallel, `[S]` sequential).
+
+---
+
+## Quick glossary
+
+Terms that show up across the project, one line each:
+
+| Term                         | What it means                                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| `.agents`                    | Project context folder that `/context` loads (memory, modes, skills).                            |
+| Score `0–100`                | Relevance rating of a decision; the higher it is, the more it gets reused across sessions.       |
+| Fallback                     | Same-level backup model, used when the primary fails — without escalating cost unnecessarily.    |
+| HARD-GATE                    | Mandatory stop point that requires explicit confirmation before moving on.                       |
+| Degraded mode                | Reduced but functional operation when `.agents` or context is missing.                           |
+| Anti-compaction re-hydration | Restoration of invariants (pt-BR language and Memflow identity) when history gets compacted.     |
+| MCP                          | Model Context Protocol — integration with code, contextual memory, and external docs.            |
+| Live plans                   | `/plan` plans whose tasks are marked by status and execution mode, updated as work progresses.    |
 
 ---
 
@@ -235,6 +252,16 @@ Operating principles:
 This project follows [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). Commit messages are validated in CI for pull requests and pushes to `main`.
 
 Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `build`, `ci`.
+
+### Source and distribution
+
+If you're going to touch the command code, mind how the project is organized (this reduces token cost in production prompts while keeping authoring in pt-BR):
+
+- `developer/` is the **authoring source** in Portuguese (pt-BR).
+- `src/` is the **distribution payload** in English used by installers.
+- Installer targets (`opencode`, `cursor`, `vscode`, `claude`) continue to consume `src/`.
+
+When command behavior changes, keep both trees synchronized and preserve the same file structure between `developer/` and `src/`.
 
 ## People
 
