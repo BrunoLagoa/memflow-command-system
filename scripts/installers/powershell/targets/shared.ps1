@@ -34,27 +34,27 @@ function Render-CommandWithSharedInjection {
   $result = New-Object System.Collections.Generic.List[string]
 
   foreach ($line in (Get-Content -Path $SourceFile)) {
-    if ($line -match "^\s*-\s+`?_shared/base-output\.md`?\s*$") {
+    if ($line -match '^\s*-\s+`?_shared/base-output\.md`?\s*$') {
       $result.Add("### Conteúdo injetado: _shared/base-output.md")
       foreach ($sharedLine in $sharedOutputLines) { $result.Add($sharedLine) }
       continue
     }
-    if ($line -match "^\s*-\s+`?_shared/base-preconditions\.md`?\s*$") {
+    if ($line -match '^\s*-\s+`?_shared/base-preconditions\.md`?\s*$') {
       $result.Add("### Conteúdo injetado: _shared/base-preconditions.md")
       foreach ($sharedLine in $sharedPreconditionsLines) { $result.Add($sharedLine) }
       continue
     }
-    if ($line -match "^\s*-\s+`?_shared/base-degraded-mode\.md`?\s*$") {
+    if ($line -match '^\s*-\s+`?_shared/base-degraded-mode\.md`?\s*$') {
       $result.Add("### Conteúdo injetado: _shared/base-degraded-mode.md")
       foreach ($sharedLine in $sharedDegradedLines) { $result.Add($sharedLine) }
       continue
     }
-    if ($line -match "^\s*-\s+`?_shared/target-adapter\.md`?\s*$") {
+    if ($line -match '^\s*-\s+`?_shared/target-adapter\.md`?\s*$') {
       $result.Add($TargetAdapterInjectedTitle)
       foreach ($sharedLine in $sharedTargetAdapterLines) { $result.Add($sharedLine) }
       continue
     }
-    if ($line -match "^\s*-\s+`?model-policy\.md`?\s*$") {
+    if ($line -match '^\s*-\s+`?model-policy\.md`?\s*$') {
       $result.Add("### Conteúdo injetado: model-policy.md")
       foreach ($sharedLine in $modelPolicyLines) { $result.Add($sharedLine) }
       continue

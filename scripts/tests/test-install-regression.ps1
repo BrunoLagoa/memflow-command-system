@@ -133,6 +133,16 @@ try {
     $FailCount += 1
   }
 
+  $vscodeWorkflowFile = Join-Path $ProjectVscode ".github\prompts\memflow.workflow.prompt.md"
+  $vscodeWorkflow = if (Test-Path $vscodeWorkflowFile) { Get-Content -Raw -Path $vscodeWorkflowFile } else { "" }
+  if (($vscodeWorkflow -like "*injetado: _shared/target-adapter.vscode.md*") -and ($vscodeWorkflow -like "*injetado: model-policy.md*")) {
+    Write-Host "[PASS] install vscode injeta adaptador do VSCode e model-policy"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install vscode não injeta adaptador do VSCode ou model-policy"
+    $FailCount += 1
+  }
+
   Invoke-ExpectSuccess "uninstall vscode deve remover prompts" @("uninstall", "-Target", "vscode", "-ProjectDir", $ProjectVscode, "-NonInteractive")
 
   Invoke-ExpectExit "update claude sem instalação deve falhar com código 2" 2 @("update", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive", "-Version", "local")
@@ -157,6 +167,23 @@ try {
     $PassCount += 1
   } else {
     Write-Host "[FAIL] install claude não injeta base-domain-model em context.md"
+    $FailCount += 1
+  }
+
+  if (($claudeContext -like "*injetado: model-policy.md*") -and ($claudeContext -like "*injetado: _shared/target-adapter.claude.md*") -and ($claudeContext -notlike "*injetado: _shared/target-adapter.md*")) {
+    Write-Host "[PASS] install claude injeta model-policy e adaptador próprio do Claude"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install claude não injeta model-policy ou adaptador próprio do Claude"
+    $FailCount += 1
+  }
+
+  $leftoverRefs = @(Select-String -Path (Join-Path $claudeInstallDir "*.md") -Pattern '^\s*-\s+`?(_shared/[A-Za-z0-9._-]+|model-policy)\.md`?\s*$')
+  if ($leftoverRefs.Count -eq 0) {
+    Write-Host "[PASS] install claude não deixa referências normativas sem injeção"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install claude deixou $($leftoverRefs.Count) referência(s) normativa(s) sem injeção"
     $FailCount += 1
   }
 

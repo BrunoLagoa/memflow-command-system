@@ -27,6 +27,10 @@ Conclusão das fases 2 e 3 da adoção de práticas de [mattpocock/skills](https
 - `model-policy.md` (v1.2.0): regras de modelo para subagents e para `/retro`.
 - `README.md`, `README.pt-BR.md`, `docs/SDLC*.md`, `docs/QUICKSTART*.md` e `AGENTS.md`: documentação de subagents, modo mapa, `/retro` e `/refactor`.
 
+### Corrigido
+- Instalador PowerShell (`targets/shared.ps1`): padrões de injeção passam a usar aspas simples; em aspas duplas a crase era tratada como escape e as linhas com crase nunca casavam, então `model-policy.md` não era injetado e, desde a 1.3.0, o adaptador do OpenCode era injetado no lugar do adaptador de cada target em instalações Windows.
+- `scripts/tests/test-install-regression.ps1`: cenários que garantem `model-policy.md` e o adaptador correto (Claude, Cursor, VSCode) injetados e nenhuma referência normativa sem injeção.
+
 ## [1.3.0] - 2026-10-27
 
 Práticas inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills) (MIT), adaptadas aos gates do Memflow (confirmação explícita, HARD-GATE e pt-BR).
