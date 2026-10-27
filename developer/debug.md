@@ -4,7 +4,7 @@ description: Diagnóstico estruturado de bugs com feedback loop primeiro — con
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 ## Referência normativa comum
@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -179,6 +180,18 @@ Classificar o erro como:
 - NÃO listar múltiplas causas sem ranquear
 - Sempre indicar causa mais provável
 - Remover instrumentação `[DEBUG-...]` antes de encerrar, ou registrar em **Próximos passos** que ela deve ser removida no `/execute`
+
+---
+
+## Orquestração com subagents
+
+Aplicar `_shared/base-subagents.md`. Somente quando a decisão do `/workflow` for `Orquestração: Com subagents`:
+
+- **Levantamento de fatos:** subagents somente leitura podem localizar o caminho de código do sintoma, histórico de commits da área (`git log`) e reproduções semelhantes, em paralelo
+- a construção do feedback loop, as hipóteses e as sondas continuam no contexto principal
+- sondas **não** rodam em paralelo: mudar uma variável por vez continua obrigatório
+
+Sem subagents → executar tudo no contexto principal.
 
 ---
 

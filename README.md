@@ -138,6 +138,7 @@ Specialized resolution for everyday tasks, called by the workflow as needed.
 | Discovery & definition      | `/brainstorm`, `/prd`, `/spec`, `/plan`           |
 | Implementation & quality    | `/debug`, `/refactor`, `/test-plan`               |
 | Memory                      | `/memory-init`, `/memory-save`                    |
+| Continuous improvement      | `/retro`                                          |
 
 ### Key differentiators
 
@@ -146,6 +147,10 @@ Specialized resolution for everyday tasks, called by the workflow as needed.
 - **Spec by synthesis** — `/spec` turns an approved `/brainstorm` into a specification without a new interview, with test seams, testing decisions, and out of scope.
 - **Feedback-loop debugging** — `/debug` only hypothesizes once it has a command that reproduces the bug; the fix in `/execute` starts with the regression test.
 - **Two-axis code review** — `/review-code` evaluates Standards and Spec separately over the diff since a fixed point.
+- **Optional subagents** — for each task, `/workflow` asks whether the flow runs with or without subagents (default: without); with subagents, fact-finding, axis-based review and `[P]` frontier tasks run in parallel, with a sequential fallback when the platform lacks the tool.
+- **Map mode** — `/brainstorm` organizes efforts too large for one session into a map of decision tickets under `.agents/docs/maps/`.
+- **Deep modules** — `/refactor` uses design vocabulary (seam, depth, locality) and the deletion test to prioritize deepening.
+- **Environment retrospective** — `/retro` turns session mistakes into automated checks, review standards and leaner steering files.
 - **Decision reuse by score** — high-scoring decisions are auto-reused across sessions.
 - **Cost/quality model policy** — primary model + same-level fallbacks; escalate only when justified.
 - **Functional degraded mode** — keeps working even when `.agents` is missing.
@@ -173,6 +178,7 @@ Terms that show up across the project, one line each:
 | Glossary / ADR               | The project's ubiquitous language and short records of hard-to-reverse decisions, in `.agents/domain/`. |
 | Seam                         | Public interface where behavior is tested, agreed in `/spec` and used by `/test-plan` and `/execute`. |
 | Feedback loop                | Fast, deterministic command that goes red on the bug; prerequisite for hypotheses in `/debug`.    |
+| Subagent                     | Helper agent with its own context, used only when the task runs "with subagents" in `/workflow`. |
 
 ---
 
@@ -274,7 +280,7 @@ Normative blocks in `_shared/` referenced as a list item (`- \`_shared/<name>.md
 
 ### Credits
 
-The glossary/ADR, question rounds, spec by synthesis, vertical slices, debug feedback loop, and two-axis review practices were inspired by [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) and adapted to Memflow's gates.
+The glossary/ADR, question rounds, spec by synthesis, vertical slices, debug feedback loop, two-axis review, subagents, map mode, deep modules, and retrospective practices were inspired by [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) and adapted to Memflow's gates.
 
 ## People
 

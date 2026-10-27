@@ -33,6 +33,7 @@ idea -> definition -> planning -> development -> testing -> validation -> delive
 ## 0. Exploration (optional)
 
 * Compare approaches before locking direction
+* Effort too large for one session: map mode (`.agents/docs/maps/`)
 * Technical and product trade-offs
 * Validate assumptions against existing code
 * Questions in rounds over the decision frontier, each with a recommended answer
@@ -157,7 +158,12 @@ In this system:
 /refactor
 /memory-save
 /memory-init
+/retro
 ```
+
+`/retro` improves the agent environment (checks, standards, steering files) based on what happened in the session.
+
+At any stage, `/workflow` defines whether the task runs **with or without subagents** (default: without).
 
 ---
 
@@ -180,6 +186,7 @@ The system implements a complete SDLC with commands:
 /refactor
 /memory-save
 /memory-init
+/retro
 ```
 
 ---

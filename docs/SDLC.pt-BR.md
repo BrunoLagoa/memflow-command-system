@@ -33,6 +33,7 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 ## 0. 💡 Exploração (opcional)
 
 * Comparar abordagens antes de fechar direção
+* Esforço grande demais para uma sessão: modo mapa (`.agents/docs/maps/`)
 * Trade-offs técnicos e de produto
 * Validação de premissas no código existente
 * Perguntas em rodadas por fronteira de decisões, cada uma com resposta recomendada
@@ -157,7 +158,12 @@ Handoff típico: `/brainstorm` → `/prd`, `/spec` ou `/plan` (conforme gate).
 /refactor
 /memory-save
 /memory-init
+/retro
 ```
+
+`/retro` melhora o ambiente do agente (checagens, padrões, instruções) a partir do que aconteceu na sessão.
+
+Em qualquer etapa, o `/workflow` define se a tarefa segue **com ou sem subagents** (padrão: sem).
 
 ---
 
@@ -180,6 +186,7 @@ O sistema implementa um SDLC completo com comandos:
 /refactor
 /memory-save
 /memory-init
+/retro
 ```
 
 ---

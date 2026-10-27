@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Model Policy — Orquestração de Modelos
@@ -280,6 +280,21 @@ Free/Econômico → Intermediário → Avançado
 ### `/review-enforce-rules`
 
 - aplicar validação rígida opcional de uso de modelo em cenários críticos
+
+### `/retro`
+
+- usar modelo intermediário
+- escalar apenas para sessões longas ou complexas
+
+---
+
+### Subagents (quando `Orquestração: Com subagents`)
+
+- levantamento de fatos (somente leitura): modelo econômico
+- implementação da fronteira (`/execute`): mesmo nível definido para a tarefa
+- revisão em eixos (`/review-code`) e design em paralelo (`/refactor`): mesmo nível do comando que delega
+- consolidação, decisões e gates: sempre no agente principal, com o modelo do comando
+- NÃO escalar o modelo dos subagents acima do nível do agente principal sem justificativa
 
 ---
 

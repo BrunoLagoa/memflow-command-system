@@ -8,6 +8,8 @@
 ## High-value layout
 - `src/*.md`: executable command specs (`context`, `workflow`, `brainstorm`, `execute`, `review`, etc.).
 - `src/_shared/*.md`: shared normative bases referenced by command specs. Any list-item line of the form ``- `_shared/<name>.md` `` is injected generically by `scripts/installers/*/targets/shared.*`; a missing file aborts install.
+- `src/_shared/base-subagents.md`: optional subagent orchestration; `/workflow` asks with/without subagents per task (default without) and every command falls back to sequential when the target lacks the tool.
+- Each target has its own adapter (`target-adapter.md` = OpenCode, `.claude`, `.cursor`, `.vscode`), selected in `scripts/installers/*/targets/<target>.*`.
 - `src/_shared/base-domain-model.md`: glossary (`.agents/domain/GLOSSARY.md`) and ADRs (`.agents/domain/adr/`) rules; writes always require user confirmation.
 - `scripts/install.sh` and `scripts/install.ps1`: canonical installer/update/check/uninstall logic.
 - `scripts/memflowctl` and `scripts/memflowctl.ps1`: thin wrappers that download and run installer scripts from GitHub (`main` by default).

@@ -154,6 +154,10 @@ Understand → Decide → Plan → Implement → Validate → Remember
 | Complex feature (unclear) | `/context` → `/workflow` → `/brainstorm` → `/spec` → `/plan` → `/execute` → `/review` |
 | Bug fix | `/context` → `/workflow` → `/debug` → `/execute` → `/review-code` |
 | Refactor | `/context` → `/workflow` → `/plan` → `/refactor` → `/review` |
+| Multi-session effort | `/context` → `/workflow` → `/brainstorm` (map mode) → … → `/spec` |
+| Improve the environment after a session | `/retro` → `/workflow` |
+
+For each task, `/workflow` asks whether the flow runs **with or without subagents** (default: without).
 
 ---
 

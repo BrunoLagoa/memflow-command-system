@@ -65,7 +65,7 @@ EXECUTABLE_COMMANDS=(
   context workflow brainstorm execute plan
   review review-code review-enforce-rules
   debug prd spec refactor test-plan
-  memory-init memory-save
+  memory-init memory-save retro
 )
 
 printf "\n=== Contratos globais (todos os comandos) ===\n\n"
@@ -85,7 +85,7 @@ done
 
 printf "\n=== Bases normativas compartilhadas (_shared) ===\n\n"
 
-SHARED_BASES=(base-output base-preconditions base-degraded-mode base-domain-model)
+SHARED_BASES=(base-output base-preconditions base-degraded-mode base-domain-model base-subagents target-adapter target-adapter.claude target-adapter.cursor target-adapter.vscode)
 for base in "${SHARED_BASES[@]}"; do
   file="${SRC_DIR}/_shared/${base}.md"
   assert_contains "$file" "hidden: true" "_shared/${base}: marcado como hidden (non-executable)"
@@ -117,6 +117,76 @@ done
 CONTEXT_DOMAIN="${SRC_DIR}/context.md"
 assert_contains "$CONTEXT_DOMAIN" "only the titles|somente os títulos" "context: carrega apenas títulos dos ADRs"
 assert_contains "$CONTEXT_DOMAIN" "DO NOT create domain files|NÃO criar arquivos de domínio" "context: não cria arquivos de domínio"
+
+# ──────────────────────────────────────────────────────────────────
+# Orquestração com ou sem subagents
+# ──────────────────────────────────────────────────────────────────
+
+printf "\n=== Orquestração com subagents ===\n\n"
+
+SUBAGENTS="${SRC_DIR}/_shared/base-subagents.md"
+assert_contains "$SUBAGENTS" "default is \*\*Without subagents\*\*|padrão é \*\*Sem subagents\*\*" "base-subagents: padrão é sem subagents"
+assert_contains "$SUBAGENTS" "decided in .*/workflow.*for each new task|decidido no .*/workflow.*a cada nova tarefa" "base-subagents: modo decidido no /workflow por tarefa"
+assert_contains "$SUBAGENTS" "sequential fallback|fallback sequencial" "base-subagents: fallback sequencial sem bloquear"
+assert_contains "$SUBAGENTS" "Allowed uses \(closed list\)|Usos permitidos \(lista fechada\)" "base-subagents: lista fechada de usos"
+assert_contains "$SUBAGENTS" "single writer|único escritor" "base-subagents: agente principal é único escritor do plano"
+assert_contains "$SUBAGENTS" "write to .*\.agents/memory/.* or .*\.agents/domain/|escrever em .*\.agents/memory/.* ou .*\.agents/domain/" "base-subagents: subagent não escreve memória/domínio"
+assert_contains "$SUBAGENTS" "Do not trust blindly|Não confiar cegamente" "base-subagents: relatórios verificados pelo agente principal"
+assert_contains "$SUBAGENTS" "runSubagent" "base-subagents: capacidade VSCode documentada"
+assert_contains "$SUBAGENTS" "Task \(.general., .explore.\)" "base-subagents: capacidade OpenCode documentada"
+
+for adapter in target-adapter target-adapter.claude target-adapter.cursor target-adapter.vscode; do
+  assert_contains "${SRC_DIR}/_shared/${adapter}.md" "^## Subagents$" "_shared/${adapter}: seção Subagents presente"
+done
+
+for cmd in workflow brainstorm spec plan execute debug refactor review-code retro; do
+  assert_contains "${SRC_DIR}/${cmd}.md" "^- \`_shared/base-subagents\.md\`$" "/${cmd}: referencia base-subagents"
+done
+
+WORKFLOW_SUB="${SRC_DIR}/workflow.md"
+assert_contains "$WORKFLOW_SUB" "Step 5\.1 — Orchestration mode|Etapa 5\.1 — Modo de orquestração" "workflow: etapa de modo de orquestração"
+assert_contains "$WORKFLOW_SUB" "\*\*Sem subagents \(Recomendado\)\*\*" "workflow: sem subagents é a opção recomendada padrão"
+assert_contains "$WORKFLOW_SUB" "new task → new question|nova tarefa → nova pergunta" "workflow: pergunta a cada nova tarefa"
+assert_contains "$WORKFLOW_SUB" "Orquestração: Com subagents / Sem subagents" "workflow: estratégia registra orquestração"
+
+EXECUTE_SUB="${SRC_DIR}/execute.md"
+assert_contains "$EXECUTE_SUB" "Frontier implementation with subagents|Implementação da fronteira com subagents" "execute: implementação da fronteira com subagents"
+assert_contains "$EXECUTE_SUB" "worktree" "execute: isolamento por worktree"
+assert_contains "$EXECUTE_SUB" "\*\*disjoint\*\*|\*\*disjuntos\*\*" "execute: tarefas paralelas com arquivos disjuntos"
+assert_contains "$EXECUTE_SUB" "DOES NOT push|NÃO faz push" "execute: integrador não faz push sem confirmação"
+
+assert_contains "${SRC_DIR}/review-code.md" "two subagents in the same message|dois subagents na mesma mensagem" "review-code: eixos em subagents paralelos"
+assert_contains "${SRC_DIR}/debug.md" "probes do \*\*not\*\* run in parallel|sondas \*\*não\*\* rodam em paralelo" "debug: sondas não rodam em paralelo"
+
+# ──────────────────────────────────────────────────────────────────
+# Modo mapa (/brainstorm), /refactor e /retro
+# ──────────────────────────────────────────────────────────────────
+
+printf "\n=== Modo mapa, /refactor e /retro ===\n\n"
+
+BRAINSTORM_MAP="${SRC_DIR}/brainstorm.md"
+assert_contains "$BRAINSTORM_MAP" "Map mode \(multi-session effort\)|Modo mapa \(esforço multi-sessão\)" "brainstorm: modo mapa presente"
+assert_contains "$BRAINSTORM_MAP" "\.agents/docs/maps/" "brainstorm: mapa salvo em .agents/docs/maps/"
+assert_contains "$BRAINSTORM_MAP" "NEVER activate automatically|NUNCA ativar automaticamente" "brainstorm: modo mapa não ativa sozinho"
+assert_contains "$BRAINSTORM_MAP" "One ticket per session|Um ticket por sessão" "brainstorm: um ticket por sessão"
+assert_contains "$BRAINSTORM_MAP" "Tipo: pesquisa \| protótipo \| entrevista \| tarefa" "brainstorm: tipos de ticket definidos"
+assert_contains "$BRAINSTORM_MAP" "Mapa atualizado" "brainstorm: status Mapa atualizado"
+assert_contains "${SRC_DIR}/spec.md" "\.agents/docs/maps/" "spec: aceita mapa concluído como fonte"
+
+REFACTOR="${SRC_DIR}/refactor.md"
+assert_contains "$REFACTOR" "Deletion test|Teste de deleção" "refactor: teste de deleção"
+assert_contains "$REFACTOR" "Design vocabulary|Vocabulário de design" "refactor: vocabulário de módulos profundos"
+assert_contains "$REFACTOR" "One adapter = hypothetical seam|Um adaptador = seam hipotético" "refactor: regra de seam real vs hipotético"
+assert_contains "$REFACTOR" "hot spots|pontos quentes" "refactor: prioriza pontos quentes do histórico"
+assert_contains "$REFACTOR" "DO NOT propose interfaces before the choice|NÃO propor interfaces antes da escolha" "refactor: não propõe interface antes da escolha"
+assert_contains "$REFACTOR" "Parallel design|Design em paralelo" "refactor: design em paralelo com subagents"
+
+RETRO="${SRC_DIR}/retro.md"
+assert_contains "$RETRO" "deterministic check|checagem determinística" "retro: erro mecânico vira checagem determinística"
+assert_contains "$RETRO" "DO NOT change code|NÃO alterar código" "retro: não altera código"
+assert_contains "$RETRO" "\*\*Alta\*\*.*\*\*Média\*\*.*\*\*Baixa\*\*" "retro: ordena por severidade"
+assert_contains "$RETRO" "DOES NOT replace .*/memory-save|NÃO substitui .*/memory-save" "retro: não substitui /memory-save"
+assert_contains "$RETRO" "Navigation|Navegação" "retro: categoria navegação"
 
 printf "\n=== /workflow ===\n\n"
 

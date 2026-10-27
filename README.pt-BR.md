@@ -138,6 +138,7 @@ Resolução especializada para o dia a dia, chamada pelo workflow conforme a nec
 | Descoberta e definição          | `/brainstorm`, `/prd`, `/spec`, `/plan`           |
 | Implementação e qualidade       | `/debug`, `/refactor`, `/test-plan`               |
 | Memória                         | `/memory-init`, `/memory-save`                    |
+| Melhoria contínua               | `/retro`                                          |
 
 ### Principais diferenciais
 
@@ -146,6 +147,10 @@ Resolução especializada para o dia a dia, chamada pelo workflow conforme a nec
 - **Spec por síntese** — `/spec` transforma um `/brainstorm` aprovado em especificação sem nova entrevista, com seams de teste, decisões de teste e fora de escopo.
 - **Debug com feedback loop** — `/debug` só levanta hipóteses depois de ter um comando que reproduz o bug; a correção no `/execute` começa pelo teste de regressão.
 - **Review em dois eixos** — `/review-code` avalia Padrões e Spec separadamente sobre o diff desde um ponto fixo.
+- **Subagents opcionais** — a cada tarefa o `/workflow` pergunta se o fluxo segue com ou sem subagents (padrão: sem); com subagents, levantamento de fatos, revisão em eixos e tarefas `[P]` da fronteira rodam em paralelo, com fallback sequencial quando a plataforma não oferece a ferramenta.
+- **Modo mapa** — `/brainstorm` organiza esforços grandes demais para uma sessão em um mapa de tickets de decisão em `.agents/docs/maps/`.
+- **Módulos profundos** — `/refactor` usa vocabulário de design (seam, profundidade, localidade) e o teste de deleção para priorizar aprofundamentos.
+- **Retrospectiva do ambiente** — `/retro` transforma erros da sessão em checagens automáticas, padrões de revisão e instruções mais enxutas.
 - **Reaproveitamento de decisões por score** — decisões com score alto são reaproveitadas automaticamente entre sessões.
 - **Política de modelo custo/qualidade** — modelo principal + fallbacks no mesmo nível; escala só quando justificado.
 - **Modo degradado funcional** — continua operando mesmo sem `.agents`.
@@ -173,6 +178,7 @@ Termos que aparecem no projeto, em uma linha cada:
 | Glossário / ADR              | Linguagem ubíqua do projeto e registro curto de decisões difíceis de reverter, em `.agents/domain/`. |
 | Seam                         | Interface pública onde o comportamento é testado, acordada na `/spec` e usada no `/test-plan` e `/execute`. |
 | Feedback loop                | Comando rápido e determinístico que fica vermelho no bug; pré-requisito das hipóteses no `/debug`.  |
+| Subagent                     | Agente auxiliar com contexto próprio, usado só quando a tarefa segue "com subagents" no `/workflow`. |
 
 ---
 
@@ -274,7 +280,7 @@ Blocos normativos em `_shared/` referenciados como item de lista (`- \`_shared/<
 
 ### Créditos
 
-As práticas de glossário/ADR, rodadas de perguntas, spec por síntese, fatias verticais, feedback loop de debug e review em dois eixos foram inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) e adaptadas aos gates do Memflow.
+As práticas de glossário/ADR, rodadas de perguntas, spec por síntese, fatias verticais, feedback loop de debug, review em dois eixos, subagents, modo mapa, módulos profundos e retrospectiva foram inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) e adaptadas aos gates do Memflow.
 
 ## Pessoas
 

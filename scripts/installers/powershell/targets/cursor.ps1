@@ -57,8 +57,8 @@ function Render-CursorCommandWithShared {
     -SourceFile $SourceFile `
     -DestinationFile $DestinationFile `
     -SourceDir $SourceDir `
-    -TargetAdapterRelativePath "target-adapter.md" `
-    -TargetAdapterInjectedTitle "### Conteúdo injetado: _shared/target-adapter.md"
+    -TargetAdapterRelativePath "target-adapter.cursor.md" `
+    -TargetAdapterInjectedTitle "### Conteúdo injetado: _shared/target-adapter.cursor.md"
 
   Remove-CursorFrontmatter -TargetFile $DestinationFile
 }

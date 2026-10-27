@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Adaptador de target (Claude Code)
@@ -30,6 +30,14 @@ Aplicar este adaptador quando o target ativo for `claude`.
 - Se uma base normativa necessária não estiver presente no comando gerado:
   - reportar ausência
   - bloquear execução crítica
+
+## Subagents
+
+- Ferramenta de subagent neste target: **Agent** (subagents do Claude Code).
+- Levantamento de fatos → subagent de exploração somente leitura (ex.: `Explore`); implementação e revisão → subagent de uso geral.
+- Várias chamadas na mesma mensagem rodam em paralelo; subagents customizados podem existir em `.claude/agents/`.
+- Disponibilidade, usos permitidos e fallback seguem `_shared/base-subagents.md`.
+- Se a ferramenta não estiver disponível na sessão → operar sem subagents (fallback sequencial) e avisar.
 
 ## Precedência
 

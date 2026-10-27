@@ -4,7 +4,7 @@ description: Implements code based on the /workflow decision respecting `model-p
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.5.0"
+  version: "3.6.0"
 ---
 
 ## Common normative reference
@@ -15,6 +15,7 @@ Mandatory application:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -375,6 +376,46 @@ Objective:
 - DO NOT skip validations  
 - DO NOT end with an error  
 - DO NOT execute without understanding  
+
+---
+
+# Frontier implementation with subagents
+
+Apply `_shared/base-subagents.md`. Only when the `/workflow` decision is `Orquestração: Com subagents` **and** there is a plan with `Bloqueado por`:
+
+## Preconditions
+
+- frontier with 2 or more eligible `[P]` tasks
+- touched files/areas declared per task and **disjoint** between the tasks of the round
+- if isolation is not guaranteed → run the round sequentially in the main context
+
+## Isolation
+
+- prefer **one git worktree per task**, on its own local branch created from the current working branch (integration branch)
+- without git/worktree → only parallelize tasks with disjoint files in the same working tree; when in doubt → sequential
+
+## Implementer subagent
+
+Brief through pointers (plan path, task ID, spec path, agreed seams). Each implementer:
+
+- confirms it starts from the integration branch
+- implements **only** its task, using TDD mode when there are seams
+- runs the task verification (`Step -> verify`) and reports command and result
+- may commit only on the **task's own branch** (never push, never on the integration branch)
+- DOES NOT update the plan, DOES NOT ask the user, DOES NOT start other tasks
+- reports: changed files, verification executed, problems found
+
+## Main agent (integrator)
+
+- sends the round's implementers in the same message (up to 4)
+- integrates each completed task into the integration branch, one at a time, and runs the quality cycle (format, lint/typecheck, tests)
+- conflict or failing verification → resolve in the main context or mark `[!]` with reason
+- is the **single writer** of the saved plan: updates status, checkpoint and next step
+- recomputes the frontier and launches the next round
+- at the end: removes the tasks' worktrees and temporary branches, runs the full suite and moves on to validation
+- DOES NOT push or open a PR without explicit user confirmation
+
+Without subagents → run the frontier tasks sequentially in the main context.
 
 ---
 

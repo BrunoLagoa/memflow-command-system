@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 # Target adapter (Claude Code)
 
@@ -29,6 +29,14 @@ Apply this adapter when the active target is `claude`.
 - If a required normative basis is not present in the generated command:
   - report absence
   - block critical execution
+
+## Subagents
+
+- Subagent tool on this target: **Agent** (Claude Code subagents).
+- Fact-finding → read-only exploration subagent (e.g. `Explore`); implementation and review → general-purpose subagent.
+- Multiple calls in the same message run in parallel; custom subagents may exist in `.claude/agents/`.
+- Availability, allowed uses and fallback follow `_shared/base-subagents.md`.
+- If the tool is not available in the session → operate without subagents (sequential fallback) and warn.
 
 ## Precedence
 

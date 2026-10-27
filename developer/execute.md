@@ -4,7 +4,7 @@ description: Implementa código com base na decisão do /workflow respeitando `m
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.5.0"
+  version: "3.6.0"
 ---
 
 ## Referência normativa comum
@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -375,6 +376,46 @@ Objetivo:
 - NÃO pular validações  
 - NÃO finalizar com erro  
 - NÃO executar sem entendimento  
+
+---
+
+# Implementação da fronteira com subagents
+
+Aplicar `_shared/base-subagents.md`. Somente quando a decisão do `/workflow` for `Orquestração: Com subagents` **e** houver plano com `Bloqueado por`:
+
+## Pré-condições
+
+- fronteira com 2 ou mais tarefas `[P]` elegíveis
+- arquivos/áreas tocados declarados por tarefa e **disjuntos** entre as tarefas da rodada
+- se não houver isolamento garantido → executar a rodada em sequência no contexto principal
+
+## Isolamento
+
+- preferir **git worktree por tarefa**, em branch local própria criada a partir da branch de trabalho atual (branch de integração)
+- sem git/worktree disponível → só paralelizar tarefas com arquivos disjuntos no mesmo working tree; em dúvida → sequencial
+
+## Subagent implementador
+
+Brief por ponteiros (path do plano, ID da tarefa, path da spec, seams acordados). Cada implementador:
+
+- confirma que parte da branch de integração
+- implementa **somente** a sua tarefa, usando o Modo TDD quando houver seams
+- executa a verificação da tarefa (`Passo -> verificar`) e reporta comando e resultado
+- pode commitar apenas na **branch própria da tarefa** (nunca push, nunca na branch de integração)
+- NÃO atualiza o plano, NÃO pergunta ao usuário, NÃO inicia outras tarefas
+- reporta: arquivos alterados, verificação executada, problemas encontrados
+
+## Agente principal (integrador)
+
+- envia os implementadores da rodada na mesma mensagem (até 4)
+- integra cada tarefa concluída na branch de integração, uma por vez, e roda o ciclo de qualidade (format, lint/typecheck, testes)
+- conflito ou verificação falhando → resolver no contexto principal ou marcar `[!]` com motivo
+- é o **único escritor** do plano salvo: atualiza status, checkpoint e próximo passo
+- recalcula a fronteira e dispara a próxima rodada
+- ao final: remove worktrees e branches temporárias das tarefas, roda a suíte completa e segue para validação
+- NÃO faz push nem abre PR sem confirmação explícita do usuário
+
+Sem subagents → executar as tarefas da fronteira em sequência no contexto principal.
 
 ---
 

@@ -4,7 +4,7 @@ description: Evaluates technical quality of the implementation on two independen
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 ## Common normative reference
@@ -15,6 +15,7 @@ Mandatory application:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -217,6 +218,21 @@ Reporting them separately stops one axis from masking the other.
 - This command validates the actual implementation
 - Refactors suggested here are the refactor stage of the TDD cycle (not part of `/execute`'s red → green)
 - DO NOT auto-execute any next step without explicit confirmation from the user
+
+---
+
+# Subagent orchestration
+
+Apply `_shared/base-subagents.md`. Only when the `/workflow` decision is `Orquestração: Com subagents`:
+
+- send **two subagents in the same message**, one per axis, so neither pollutes the other's context:
+  - **Standards:** diff command, commit list, standards sources found **and the smell baseline pasted in full** (the subagent has no other access to it); brief: report per file/hunk (a) documented-standard violations citing file and rule and (b) baseline smells quoting the hunk, distinguishing hard violations from judgement calls; up to 400 words
+  - **Spec:** diff command, commit list and spec path (or content); brief: (a) missing/partial requirements, (b) extra scope, (c) wrong implementation, quoting the spec line; up to 400 words
+- no spec → send only the Standards subagent
+- present the reports under the axes, verbatim or lightly cleaned, **without merging or re-ranking**
+- verify every Critical finding in the code before using it in the Status
+
+Without subagents → evaluate both axes sequentially in the main context, keeping them separate.
 
 ---
 

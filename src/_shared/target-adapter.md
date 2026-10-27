@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 # Target adapter (OpenCode)
 
@@ -38,6 +38,14 @@ Apply this adapter when the active target is `opencode`.
 - If the file is not found in any official path:
   - report absence
   - DO NOT use fallback
+
+## Subagents
+
+- Subagent tool on this target: **Task**, with the built-in subagents `explore` (read-only) and `general` (general purpose, cannot spawn further subagents).
+- Fact-finding → prefer `explore`; frontier implementation and review → `general`.
+- Custom subagents may exist in `.opencode/agents/` or in the OpenCode config; respect the active agent's `permission.task`.
+- Availability, allowed uses and fallback follow `_shared/base-subagents.md`.
+- If the tool is not available in the session → operate without subagents (sequential fallback) and warn.
 
 ## Precedence
 

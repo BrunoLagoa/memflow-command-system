@@ -4,7 +4,7 @@ description: Creates a detailed implementation plan when /workflow decides PLAN 
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 ## Common normative reference
@@ -15,6 +15,7 @@ Mandatory application:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolve these references according to `_shared/target-adapter.md` (no fallback outside the active target).
@@ -238,6 +239,19 @@ If `.agents` is NOT available:
 - DO NOT move forward without complete clarity
 - DO NOT proceed to `/execute` without validation
 - This command sets the execution quality
+
+---
+
+## Subagent orchestration
+
+Apply `_shared/base-subagents.md`. Only when the `/workflow` decision is `Orquestração: Com subagents`:
+
+- **Fact-finding:** read-only subagents to map affected files, dependencies and integration points in parallel
+- mark in the plan which `[P]` tasks are eligible for subagent implementation in `/execute` (frontier with disjoint files/areas)
+- include in each `[P]` task the **touched files/areas**, so `/execute` can confirm isolation
+- slicing, blocking edges and the review with the user stay in the main context
+
+Without subagents → run everything in the main context; `[P]` still only indicates independence.
 
 ---
 

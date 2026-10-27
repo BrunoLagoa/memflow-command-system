@@ -4,7 +4,7 @@ description: Avalia qualidade técnica da implementação em dois eixos independ
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 ## Referência normativa comum
@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -217,6 +218,21 @@ Reportar separadamente impede que um eixo mascare o outro.
 - Este comando valida a implementação real
 - Refatorações sugeridas aqui são a etapa de refactor do ciclo TDD (não fazem parte do red → green do `/execute`)
 - NÃO autoexecutar qualquer próximo passo sem confirmação explícita do usuário
+
+---
+
+# Orquestração com subagents
+
+Aplicar `_shared/base-subagents.md`. Somente quando a decisão do `/workflow` for `Orquestração: Com subagents`:
+
+- enviar **dois subagents na mesma mensagem**, um por eixo, para que nenhum contamine o contexto do outro:
+  - **Padrões:** comando de diff, lista de commits, fontes de padrões encontradas **e o baseline de smells colado por completo** (o subagent não tem outro acesso a ele); brief: reportar por arquivo/trecho (a) violações de padrão documentado citando arquivo e regra e (b) smells do baseline citando o trecho, distinguindo violação dura de julgamento; até 400 palavras
+  - **Spec:** comando de diff, lista de commits e path (ou conteúdo) da spec; brief: (a) requisitos ausentes/parciais, (b) escopo extra, (c) implementação incorreta, citando a linha da spec; até 400 palavras
+- sem spec → enviar apenas o subagent de Padrões
+- apresentar os relatórios sob os eixos, verbatim ou levemente limpos, **sem mesclar nem re-ranquear**
+- verificar cada achado Critical no código antes de usá-lo no Status
+
+Sem subagents → avaliar os dois eixos em sequência no contexto principal, mantendo-os separados.
 
 ---
 

@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Model Policy — Model Orchestration
@@ -284,6 +284,21 @@ Free/Economic → Intermediate → Advanced
 ### `/review-enforce-rules`
 
 - apply optional hard validation of model usage in critical scenarios
+
+### `/retro`
+
+- use intermediate model
+- escalate only for long or complex sessions
+
+---
+
+### Subagents (when `Orquestração: Com subagents`)
+
+- fact-finding (read-only): economic model
+- frontier implementation (`/execute`): same level defined for the task
+- axis review (`/review-code`) and parallel design (`/refactor`): same level as the delegating command
+- consolidation, decisions and gates: always in the main agent, with the command's model
+- DO NOT escalate subagent models above the main agent's level without justification
 
 ---
 

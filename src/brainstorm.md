@@ -1,10 +1,10 @@
 ---
 name: brainstorm
-description: Structured brainstorming before any implementation — explores the problem in conversational phases, generates 2 to 5 approaches with pros/cons, proposed design, risks and recommendation. Includes HARD-GATE anti-bypass, questions in rounds over the decision frontier with selectable options and a recommended answer, domain model refinement (glossary and ADRs), self-review, save gate and readiness criteria (DoD). Output: Status, Analysis, Problems and Next steps. Prerequisite: /context. Next step: /prd, /spec or /plan (depending on gate). It doesn't implement anything.
+description: Structured brainstorming before any implementation — explores the problem in conversational phases, generates 2 to 5 approaches with pros/cons, proposed design, risks and recommendation. Includes HARD-GATE anti-bypass, questions in rounds over the decision frontier with selectable options and a recommended answer, domain model refinement (glossary and ADRs), map mode for multi-session efforts, optional subagents for fact-finding, self-review, save gate and readiness criteria (DoD). Output: Status, Analysis, Problems and Next steps. Prerequisite: /context. Next step: /prd, /spec or /plan (depending on gate). It doesn't implement anything.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 ## Common normative reference
 
@@ -14,6 +14,7 @@ Mandatory application:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolve these references according to `_shared/target-adapter.md` (no fallback outside the active target).
@@ -220,6 +221,97 @@ When the scope involves multiple independent subsystems (e.g. chat + billing + a
 3. register the others in **Next steps** as future cycles (`brainstorm → spec/plan → execute` each)
 4. DO NOT try to close recommendation for the entire system at once
 
+## Map mode (multi-session effort)
+
+For large, foggy efforts that **do not fit in one session** (greenfield, very large feature), where the path to the destination is not visible yet. DO NOT use for a well-scoped feature — in that case, use the normal brainstorm or the decomposition into sub-projects.
+
+### Activation
+
+- Propose in a structured dialog: `Ativar modo mapa` / `Seguir com brainstorm normal (Recomendado quando cabe em uma sessão)`.
+- NEVER activate automatically.
+- The map is a saved artifact: create files only after explicit confirmation.
+
+### Artifacts
+
+- Map: `.agents/docs/maps/<effort>/map.md`
+- Decision tickets: `.agents/docs/maps/<effort>/tickets/NN-slug.md` (numbered from `01`)
+
+Map body (an index, not a store — the decision lives in the ticket):
+
+```md
+## Destino
+<what reaching the end of this map looks like: spec, decision or change; 1–2 lines>
+
+## Notas
+<domain, commands every session should consult, standing preferences for this effort>
+
+## Decisões até agora
+- [<resolved ticket title>](tickets/NN-slug.md): <one-line gist of the answer>
+
+## Ainda não especificado
+<fog: questions you can sense but cannot phrase precisely yet>
+
+## Fora de escopo
+<work consciously excluded from this effort, with the reason>
+```
+
+Ticket body:
+
+```md
+# NN — <title>
+
+Tipo: pesquisa | protótipo | entrevista | tarefa
+Bloqueado por: NN, NN | Nenhum
+Status: aberto | em andamento | resolvido
+
+## Pergunta
+<the decision or investigation this ticket resolves>
+
+## Resposta
+<filled in on resolution>
+```
+
+### Ticket types
+
+- **pesquisa** (agent alone): read docs, APIs or local sources to get a fact a decision depends on; with subagents, one subagent per ticket.
+- **protótipo** (with the user): cheap, throwaway artifact to react to ("how should it look/behave?").
+- **entrevista** (with the user, default): question rounds + domain model.
+- **tarefa** (agent or user): manual work that must happen before a decision (e.g. get access, create an account to evaluate an API); the answer records what was done and resulting facts.
+
+The agent NEVER answers for the user in `entrevista` or `protótipo` tickets.
+
+### Rules
+
+- **Plan, don't do:** each ticket produces a decision, not a deliverable.
+- **One ticket per session** (except `pesquisa`, which may run in parallel).
+- **Fog or ticket?** If the question can already be phrased precisely (even if blocked) → ticket; otherwise → `Ainda não especificado`.
+- **Out of scope** never graduates into a ticket; a ticket that turns out beyond the destination is closed and recorded in `Fora de escopo`.
+- Refer to maps and tickets **by title**, never by a bare number.
+- Map frontier: `aberto` tickets whose `Bloqueado por` is all `resolvido`.
+
+### Invocations
+
+**Chart** (first session):
+
+1. define the **destination** with question rounds + domain model
+2. a **breadth-first** round over the whole space, surfacing open decisions and the first possible steps
+3. if there is no fog (the way is already clear and fits in one session) → do not create a map; go back to the normal brainstorm
+4. with confirmation, create `map.md` and the tickets that can already be specified; wire `Bloqueado por` in a second pass
+5. do not resolve tickets in this session (except `pesquisa` with subagents)
+
+**Advance** (following sessions, given the map):
+
+1. load `map.md` (low-resolution view)
+2. pick the ticket named by the user or the first on the frontier; mark `em andamento` before working
+3. resolve it according to its type; fill `## Resposta`; mark `resolvido`
+4. add one line to `Decisões até agora`
+5. graduate fog that became specifiable into new tickets; update or close invalidated tickets
+
+### Handoff
+
+- When there is no fog and no open tickets → `Pronto para /spec` (`/spec` in synthesis mode consolidates the map's decisions).
+- If the effort turns out small → `Pronto para /plan`.
+
 ---
 
 ## Work on existing codebase
@@ -425,6 +517,20 @@ Only use status `Pronto para /prd`, `Pronto para /spec` or `Pronto para /plan` i
 
 ---
 
+## Subagent orchestration
+
+Apply `_shared/base-subagents.md`. Only when the `/workflow` decision is `Orquestração: Com subagents`:
+
+- **Fact-finding:** send read-only exploration subagents for facts the rounds need (code structure, existing patterns, similar implementations, external docs)
+- while they run, ask the user only the frontier decisions that do not depend on those facts
+- verify findings in the code before using them in approaches or design
+- **Map mode:** `pesquisa` tickets can be resolved by subagents in parallel (one per ticket), without deciding anything for the user
+- decisions, recommendations and gates stay in the main context
+
+Without subagents → run everything in the main context.
+
+---
+
 ## Mandatory output format
 
 **Always** respond with these four titles `##`, **in this order** and **with these exact names**:
@@ -439,6 +545,7 @@ Only use status `Pronto para /prd`, `Pronto para /spec` or `Pronto para /plan` i
    - `Pronto para /prd`
    - `Pronto para /spec`
    - `Pronto para /plan`
+   - `Mapa atualizado` (map mode: session closed with the map saved)
 2. **Analysis** — main content; just use `###` to subdivide (see list above).
 3. **Issues** — `.agents` violations, context gaps, unacceptable risks, HARD-GATE violation; if there is none: **None**.
 4. **Next steps** — e.g.: questions to the user (structured dialogue), run `/prd`, `/spec` or `/plan`, save artifact; wait for explicit confirmation before handoff (**always** the last `##` section of the response).

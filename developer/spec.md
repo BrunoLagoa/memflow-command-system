@@ -4,7 +4,7 @@ description: Transforma PRD (ou brainstorm aprovado, em modo síntese sem nova e
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.3.0"
+  version: "2.4.0"
 ---
 
 ## Referência normativa comum
@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -64,7 +65,7 @@ Este comando:
 Exigir **uma** das fontes de entrada:
 
 - **PRD completo** (fluxo padrão), ou
-- **`/brainstorm` aprovado** — na sessão atual ou salvo em `.agents/docs/brainstorm/` — com handoff `Pronto para /spec` (**modo síntese**)
+- **`/brainstorm` aprovado** — na sessão atual, salvo em `.agents/docs/brainstorm/` ou como mapa concluído em `.agents/docs/maps/` — com handoff `Pronto para /spec` (**modo síntese**)
 
 Se nenhuma fonte válida existir → BLOQUEAR
 
@@ -297,6 +298,17 @@ Antes de finalizar, responder:
 - NÃO gerar código
 - NÃO assumir comportamento não derivável da fonte de entrada (PRD ou brainstorm aprovado) + decisões explícitas nesta spec
 - Este comando define base técnica para o plano
+
+---
+
+## Orquestração com subagents
+
+Aplicar `_shared/base-subagents.md`. Somente quando a decisão do `/workflow` for `Orquestração: Com subagents`:
+
+- **Levantamento de fatos:** subagents somente leitura para confirmar estado atual do código, seams existentes e testes semelhantes (prior art) em paralelo
+- a síntese da spec, a confirmação de seams e as escolhas de trade-off continuam no contexto principal
+
+Sem subagents → executar tudo no contexto principal.
 
 ---
 

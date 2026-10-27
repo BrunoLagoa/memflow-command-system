@@ -81,6 +81,24 @@ try {
     $FailCount += 1
   }
 
+  $cursorWorkflowFile = Join-Path $cursorInstallDir "workflow.md"
+  $cursorWorkflow = if (Test-Path $cursorWorkflowFile) { Get-Content -Raw -Path $cursorWorkflowFile } else { "" }
+  if (($cursorWorkflow -like "*injetado: _shared/target-adapter.cursor.md*") -and ($cursorWorkflow -like "*injetado: _shared/base-subagents.md*")) {
+    Write-Host "[PASS] install cursor injeta adaptador do Cursor e base-subagents"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install cursor não injeta adaptador do Cursor ou base-subagents"
+    $FailCount += 1
+  }
+
+  if (Test-Path (Join-Path $cursorInstallDir "retro.md")) {
+    Write-Host "[PASS] install cursor instala o comando retro"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install cursor não instalou o comando retro"
+    $FailCount += 1
+  }
+
   Invoke-ExpectSuccess "update cursor com instalação existente deve funcionar" @("update", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive", "-Version", "local")
 
   Invoke-ExpectSuccess "check cursor com instalação existente deve funcionar" @("check", "-Target", "cursor", "-ProjectDir", $ProjectLocal, "-NonInteractive")

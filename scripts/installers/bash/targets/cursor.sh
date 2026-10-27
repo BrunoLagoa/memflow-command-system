@@ -72,8 +72,8 @@ render_cursor_command_with_shared() {
     "$src_file" \
     "$dest_file" \
     "$source_dir" \
-    "target-adapter.md" \
-    "### Conteúdo injetado: _shared/target-adapter.md"
+    "target-adapter.cursor.md" \
+    "### Conteúdo injetado: _shared/target-adapter.cursor.md"
 
   strip_cursor_frontmatter "$dest_file"
 }

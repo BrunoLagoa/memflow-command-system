@@ -4,7 +4,7 @@ description: Cria plano de implementação detalhado quando /workflow decide PLA
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 ## Referência normativa comum
@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolver essas referências conforme `_shared/target-adapter.md` (sem fallback fora do target ativo).
@@ -238,6 +239,19 @@ Se `.agents` NÃO estiver disponível:
 - NÃO avançar sem clareza total
 - NÃO seguir para `/execute` sem validação
 - Este comando define a qualidade da execução
+
+---
+
+## Orquestração com subagents
+
+Aplicar `_shared/base-subagents.md`. Somente quando a decisão do `/workflow` for `Orquestração: Com subagents`:
+
+- **Levantamento de fatos:** subagents somente leitura para mapear arquivos afetados, dependências e pontos de integração em paralelo
+- marcar no plano quais tarefas `[P]` são elegíveis para implementação por subagent no `/execute` (fronteira com arquivos/áreas disjuntos)
+- incluir em cada tarefa `[P]` os **arquivos/áreas tocados**, para que o `/execute` confirme o isolamento
+- a quebra em fatias, as arestas de bloqueio e a revisão com o usuário continuam no contexto principal
+
+Sem subagents → executar tudo no contexto principal; `[P]` continua indicando apenas independência.
 
 ---
 

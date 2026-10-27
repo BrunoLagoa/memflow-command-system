@@ -4,7 +4,7 @@ description: Orquestrador central — decide exploração, execução, validaç�
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.9.0"
+  version: "10.0.0"
 ---
 
 ## Referência normativa comum
@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -390,6 +391,31 @@ Obrigatório quando:
 
 ---
 
+# Etapa 5.1 — Modo de orquestração: com ou sem subagents (OBRIGATÓRIO)
+
+Aplicar `_shared/base-subagents.md`.
+
+A cada **nova tarefa**, depois de decidir a estratégia, perguntar em diálogo estruturado de opções selecionáveis:
+
+- **Sem subagents (Recomendado)** — tudo no contexto principal, em sequência; mais barato e previsível
+- **Com subagents** — levantamento de fatos, revisão em eixos e tarefas `[P]` da fronteira em paralelo, com consolidação no contexto principal
+
+Regras:
+
+- padrão: **Sem subagents**; NÃO assumir "Com subagents" sem escolha explícita do usuário
+- marcar "Com subagents" como recomendado somente quando houver ganho concreto, por exemplo:
+  - plano com 2 ou mais tarefas `[P]` simultâneas na fronteira
+  - `/review-code` com spec disponível (eixos Padrões e Spec em paralelo)
+  - levantamento de fatos amplo (muitas áreas do código ou fontes externas)
+- se a ferramenta de subagent do target estiver indisponível na sessão:
+  - NÃO perguntar
+  - registrar `Orquestração: Sem subagents (fallback — ferramenta indisponível)`
+- tarefa trivial (EXECUÇÃO DIRETA de baixa complexidade): pode pular a pergunta e registrar `Sem subagents`, informando que o usuário pode pedir o modo com subagents
+- a escolha vale para os comandos seguintes **desta tarefa**; nova tarefa → nova pergunta
+- se o usuário pedir troca de modo no meio da tarefa → aceitar e registrar a troca
+
+---
+
 # Etapa 6 — Controle de consistência
 
 - NÃO ignorar decisões  
@@ -404,6 +430,9 @@ Obrigatório quando:
 # Integração
 
 - /brainstorm
+- /spec
+- /debug
+- /retro
 - /execute  
 - /review  
 - /review-code  
@@ -496,6 +525,7 @@ Obrigatório quando:
 
 - Exploração: Necessária (/brainstorm) / Não necessária
 - Diagnóstico: Necessário (/debug) / Não necessário
+- Orquestração: Com subagents / Sem subagents / Sem subagents (fallback)
 - Execução: Direta / Planejada  
 - Validação:
 
@@ -521,3 +551,5 @@ Se não houver:
 5. Se houver skill aplicável: usar a skill antes de continuar
 6. Se invariantes anti-compaction falharem: reexecutar `/context`
 7. Se houver decisão pendente para continuidade: abrir diálogo de opções selecionáveis antes de avançar
+8. Se o modo de orquestração ainda não foi escolhido para esta tarefa: perguntar com/sem subagents (Etapa 5.1)
+9. Ao encerrar a tarefa (opcional): /retro para melhorar o ambiente do agente

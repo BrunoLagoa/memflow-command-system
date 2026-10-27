@@ -4,6 +4,29 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.4.0] - 2026-10-27
+
+Conclusão das fases 2 e 3 da adoção de práticas de [mattpocock/skills](https://github.com/mattpocock/skills) (MIT), adaptadas aos gates do Memflow.
+
+### Adicionado
+- `_shared/base-subagents.md` (`developer/` e `src/`): orquestração **opcional** com ou sem subagents — padrão sem subagents, modo decidido no `/workflow` a cada tarefa, lista fechada de usos (levantamento de fatos, revisão paralela, implementação da fronteira, design em paralelo), regras de brief por ponteiros de contexto, subagents sem decidir/perguntar/escrever memória, domínio ou plano, e fallback sequencial com aviso quando a ferramenta do target não estiver disponível.
+- `_shared/target-adapter.cursor.md`: adaptador próprio para o Cursor (layout local, frontmatter removido e ferramenta Task de subagents).
+- `/retro` (v1.0.0): novo comando de retrospectiva focado no ambiente do agente — navegação, checagens automáticas, padrões de código, arquivos de instrução, economia de ferramentas, no-ops e acesso a informação, ordenados por severidade; erro mecânico vira checagem determinística, julgamento vira padrão para o revisor; não aplica mudanças.
+- `/brainstorm` (v1.5.0): **modo mapa** para esforços multi-sessão em `.agents/docs/maps/<esforco>/` — destino, decisões até agora, névoa ("ainda não especificado"), fora de escopo e tickets de decisão (`pesquisa`, `protótipo`, `entrevista`, `tarefa`) com `Bloqueado por`; um ticket por sessão; nunca ativado automaticamente; novo status `Mapa atualizado`.
+- `scripts/tests/test-command-contracts.sh`: contratos para orquestração com subagents, seções de subagents nos adaptadores, modo mapa, `/refactor` e `/retro` (278 contratos no total).
+- `scripts/tests/test-install-regression.sh` e `.ps1`: cenários para injeção de `base-subagents`, instalação do `/retro` e adaptador próprio do Cursor.
+
+### Alterado
+- `/workflow` (v10.0.0): nova **Etapa 5.1 — Modo de orquestração**, perguntando com/sem subagents a cada nova tarefa (padrão `Sem subagents (Recomendado)`), registrada em `### Estratégia`; integra `/retro` como passo opcional ao encerrar a tarefa.
+- `/execute` (v3.6.0): implementação da fronteira com subagents — tarefas `[P]` com arquivos disjuntos, isolamento por git worktree, agente principal como integrador e único escritor do plano, sem push/PR sem confirmação.
+- `/review-code` (v1.5.0): eixos Padrões e Spec em dois subagents paralelos quando o modo com subagents estiver ativo.
+- `/spec` (v2.4.0), `/plan` (v1.4.0) e `/debug` (v1.2.0): levantamento de fatos opcional por subagents; `/spec` aceita mapa concluído como fonte do modo síntese; no `/debug` as sondas continuam sequenciais.
+- `/refactor` (v1.1.0): vocabulário de módulos profundos (módulo, interface, profundidade, seam, adaptador, alavancagem, localidade), teste de deleção, oportunidades de aprofundamento priorizadas por pontos quentes do histórico e design em paralelo com subagents.
+- `_shared/target-adapter.md` (v1.4.0), `target-adapter.claude.md` (v1.1.0) e `target-adapter.vscode.md` (v1.3.0): seção de subagents por target (Task no OpenCode, Agent no Claude Code, `runSubagent` no VSCode).
+- Instaladores Bash e PowerShell: target `cursor` passa a injetar `target-adapter.cursor.md` em vez do adaptador do OpenCode.
+- `model-policy.md` (v1.2.0): regras de modelo para subagents e para `/retro`.
+- `README.md`, `README.pt-BR.md`, `docs/SDLC*.md`, `docs/QUICKSTART*.md` e `AGENTS.md`: documentação de subagents, modo mapa, `/retro` e `/refactor`.
+
 ## [1.3.0] - 2026-10-27
 
 Práticas inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills) (MIT), adaptadas aos gates do Memflow (confirmação explícita, HARD-GATE e pt-BR).
@@ -485,6 +508,7 @@ Práticas inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.4.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.48...v1.2.0

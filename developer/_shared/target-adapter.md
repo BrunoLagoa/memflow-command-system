@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 # Adaptador de target (OpenCode)
@@ -39,6 +39,14 @@ Aplicar este adaptador quando o target ativo for `opencode`.
 - Se o arquivo não for encontrado em nenhum caminho oficial:
   - reportar ausência
   - NÃO usar fallback
+
+## Subagents
+
+- Ferramenta de subagent neste target: **Task**, com os subagents nativos `explore` (somente leitura) e `general` (uso geral, não cria novos subagents).
+- Levantamento de fatos → preferir `explore`; implementação da fronteira e revisão → `general`.
+- Subagents customizados podem existir em `.opencode/agents/` ou na config do OpenCode; respeitar `permission.task` do agente ativo.
+- Disponibilidade, usos permitidos e fallback seguem `_shared/base-subagents.md`.
+- Se a ferramenta não estiver disponível na sessão → operar sem subagents (fallback sequencial) e avisar.
 
 ## Precedência
 

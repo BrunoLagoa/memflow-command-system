@@ -154,6 +154,10 @@ Entender  → Decidir   → Planejar → Implementar → Validar  → Lembrar
 | Feature complexa (incerta) | `/context` → `/workflow` → `/brainstorm` → `/spec` → `/plan` → `/execute` → `/review` |
 | Correção de bug | `/context` → `/workflow` → `/debug` → `/execute` → `/review-code` |
 | Refatoração | `/context` → `/workflow` → `/plan` → `/refactor` → `/review` |
+| Esforço multi-sessão | `/context` → `/workflow` → `/brainstorm` (modo mapa) → … → `/spec` |
+| Melhorar o ambiente após a sessão | `/retro` → `/workflow` |
+
+A cada tarefa, o `/workflow` pergunta se o fluxo segue **com ou sem subagents** (padrão: sem).
 
 ---
 

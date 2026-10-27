@@ -4,7 +4,7 @@ description: Structured bug diagnosis with feedback loop first — builds a comm
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 ## Common normative reference
@@ -15,6 +15,7 @@ Mandatory application:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -179,6 +180,18 @@ Classify the error as:
 - DO NOT list multiple causes without ranking
 - Always indicate the most likely cause
 - Remove `[DEBUG-...]` instrumentation before finishing, or record in **Next steps** that it must be removed in `/execute`
+
+---
+
+## Subagent orchestration
+
+Apply `_shared/base-subagents.md`. Only when the `/workflow` decision is `Orquestração: Com subagents`:
+
+- **Fact-finding:** read-only subagents may locate the symptom's code path, the area's commit history (`git log`) and similar reproductions, in parallel
+- building the feedback loop, the hypotheses and the probes stay in the main context
+- probes do **not** run in parallel: changing one variable at a time remains mandatory
+
+Without subagents → run everything in the main context.
 
 ---
 

@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Adaptador de target (VSCode)
@@ -23,6 +23,14 @@ Aplicar este adaptador quando o target ativo for `vscode`.
 - Se uma base normativa necessária não estiver presente no prompt gerado:
   - reportar ausência
   - bloquear execução crítica
+
+## Subagents
+
+- Ferramenta de subagent neste target: **`runSubagent`** (alias `agent`), disponível no modo **Agent** do Copilot Chat.
+- No modo Ask ou sem a ferramenta habilitada no seletor de ferramentas → fallback sequencial.
+- Agentes customizados (`.agent.md`) podem ser usados como subagents quando não estiverem com `disable-model-invocation: true`.
+- Disponibilidade, usos permitidos e fallback seguem `_shared/base-subagents.md`.
+- Se a ferramenta não estiver disponível na sessão → operar sem subagents (fallback sequencial) e avisar.
 
 ## Precedência
 

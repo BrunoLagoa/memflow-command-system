@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 # Target adapter (VSCode)
 
@@ -22,6 +22,14 @@ Apply this adapter when the active target is `vscode`.
 - If a required normative basis is not present in the generated prompt:
   - report absence
   - block critical execution
+
+## Subagents
+
+- Subagent tool on this target: **`runSubagent`** (alias `agent`), available in Copilot Chat **Agent** mode.
+- In Ask mode or without the tool enabled in the tools picker → sequential fallback.
+- Custom agents (`.agent.md`) can be used as subagents when not marked `disable-model-invocation: true`.
+- Availability, allowed uses and fallback follow `_shared/base-subagents.md`.
+- If the tool is not available in the session → operate without subagents (sequential fallback) and warn.
 
 ## Precedence
 

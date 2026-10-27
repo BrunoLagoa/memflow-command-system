@@ -4,7 +4,7 @@ description: Central orchestrator — decides exploration, execution, validation
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.9.0"
+  version: "10.0.0"
 ---
 
 ## Common normative reference
@@ -15,6 +15,7 @@ Mandatory application:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -390,6 +391,31 @@ Mandatory when:
 
 ---
 
+# Step 5.1 — Orchestration mode: with or without subagents (MANDATORY)
+
+Apply `_shared/base-subagents.md`.
+
+For each **new task**, after deciding the strategy, ask in a structured dialog with selectable options:
+
+- **Sem subagents (Recomendado)** — everything in the main context, sequentially; cheaper and predictable
+- **Com subagents** — fact-finding, axis-based review and `[P]` frontier tasks in parallel, consolidated in the main context
+
+Rules:
+
+- default: **Without subagents**; DO NOT assume "Com subagents" without the user's explicit choice
+- mark "Com subagents" as recommended only when there is a concrete gain, for example:
+  - plan with 2 or more simultaneous `[P]` tasks on the frontier
+  - `/review-code` with an available spec (Standards and Spec axes in parallel)
+  - broad fact-finding (many areas of the code or external sources)
+- if the target subagent tool is unavailable in the session:
+  - DO NOT ask
+  - record `Orquestração: Sem subagents (fallback — ferramenta indisponível)`
+- trivial task (low-complexity DIRECT EXECUTION): may skip the question and record `Sem subagents`, informing that the user can ask for the subagent mode
+- the choice holds for the following commands **of this task**; new task → new question
+- if the user asks to switch mode mid-task → accept and record the switch
+
+---
+
 # Step 6 — Consistency Control
 
 - DO NOT ignore decisions
@@ -404,6 +430,9 @@ Mandatory when:
 # Integration
 
 - /brainstorm
+- /spec
+- /debug
+- /retro
 - /execute  
 - /review  
 - /review-code  
@@ -496,6 +525,7 @@ Mandatory when:
 
 - Exploration: Required (/brainstorm) / Not required
 - Diagnosis: Required (/debug) / Not required
+- Orquestração: Com subagents / Sem subagents / Sem subagents (fallback)
 - Execution: Direct / Planned
 - Validation:
 
@@ -521,3 +551,5 @@ If there is none:
 5. If there is an applicable skill: use the skill before continuing
 6. If anti-compaction invariants fail: rerun `/context`
 7. If there is a pending decision to continue: open the selectable options dialog before proceeding
+8. If the orchestration mode was not chosen for this task yet: ask with/without subagents (Step 5.1)
+9. When closing the task (optional): /retro to improve the agent environment

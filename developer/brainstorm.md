@@ -1,10 +1,10 @@
 ---
 name: brainstorm
-description: Brainstorming estruturado antes de qualquer implementação — explora o problema em fases conversacionais, gera 2 a 5 abordagens com prós/contras, design proposto, riscos e recomendação. Inclui HARD-GATE anti-bypass, perguntas em rodadas por fronteira de decisões com opções selecionáveis e resposta recomendada, refinamento do modelo de domínio (glossário e ADRs), auto-revisão, gate de salvamento e critérios de prontidão (DoD). Saída: Status, Análise, Problemas e Próximos passos. Pré-requisito: /context. Próximo passo: /prd, /spec ou /plan (conforme gate). Não implementa nada.
+description: Brainstorming estruturado antes de qualquer implementação — explora o problema em fases conversacionais, gera 2 a 5 abordagens com prós/contras, design proposto, riscos e recomendação. Inclui HARD-GATE anti-bypass, perguntas em rodadas por fronteira de decisões com opções selecionáveis e resposta recomendada, refinamento do modelo de domínio (glossário e ADRs), modo mapa para esforços multi-sessão, subagents opcionais para levantamento de fatos, auto-revisão, gate de salvamento e critérios de prontidão (DoD). Saída: Status, Análise, Problemas e Próximos passos. Pré-requisito: /context. Próximo passo: /prd, /spec ou /plan (conforme gate). Não implementa nada.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 ## Referência normativa comum
@@ -15,6 +15,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
 - `_shared/base-domain-model.md`
+- `_shared/base-subagents.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolver essas referências conforme `_shared/target-adapter.md` (sem fallback fora do target ativo).
@@ -222,6 +223,97 @@ Quando o escopo envolver múltiplos subsistemas independentes (ex.: chat + billi
 2. brainstorm **apenas o primeiro** sub-projeto nesta sessão
 3. registrar os demais em **Próximos passos** como ciclos futuros (`brainstorm → spec/plan → execute` cada um)
 4. NÃO tentar fechar recomendação para o sistema inteiro de uma vez
+
+## Modo mapa (esforço multi-sessão)
+
+Para esforços grandes e nebulosos que **não cabem em uma sessão** (greenfield, feature muito grande), em que o caminho até o destino ainda não é visível. NÃO usar para feature bem delimitada — nesse caso, usar o brainstorm normal ou a decomposição em sub-projetos.
+
+### Ativação
+
+- Propor em diálogo estruturado: `Ativar modo mapa` / `Seguir com brainstorm normal (Recomendado quando cabe em uma sessão)`.
+- NUNCA ativar automaticamente.
+- O mapa é um artefato salvo: criar arquivos somente após confirmação explícita.
+
+### Artefatos
+
+- Mapa: `.agents/docs/maps/<esforco>/map.md`
+- Tickets de decisão: `.agents/docs/maps/<esforco>/tickets/NN-slug.md` (numerados a partir de `01`)
+
+Corpo do mapa (índice, não depósito — a decisão vive no ticket):
+
+```md
+## Destino
+<como é chegar ao fim deste mapa: spec, decisão ou mudança; 1–2 linhas>
+
+## Notas
+<domínio, comandos que toda sessão deve consultar, preferências do esforço>
+
+## Decisões até agora
+- [<título do ticket resolvido>](tickets/NN-slug.md): <resumo de uma linha da resposta>
+
+## Ainda não especificado
+<névoa: perguntas que se percebem mas ainda não dá para formular com precisão>
+
+## Fora de escopo
+<trabalho conscientemente excluído deste esforço, com o motivo>
+```
+
+Corpo do ticket:
+
+```md
+# NN — <título>
+
+Tipo: pesquisa | protótipo | entrevista | tarefa
+Bloqueado por: NN, NN | Nenhum
+Status: aberto | em andamento | resolvido
+
+## Pergunta
+<a decisão ou investigação que este ticket resolve>
+
+## Resposta
+<preenchida ao resolver>
+```
+
+### Tipos de ticket
+
+- **pesquisa** (agente sozinho): ler docs, APIs ou fontes locais para obter um fato do qual uma decisão depende; com subagents, um subagent por ticket.
+- **protótipo** (com o usuário): artefato barato e descartável para reagir ("como deve parecer/se comportar?").
+- **entrevista** (com o usuário, padrão): rodadas de perguntas + modelo de domínio.
+- **tarefa** (agente ou usuário): trabalho manual que precisa acontecer antes de uma decisão (ex.: obter acesso, criar conta para avaliar uma API); a resposta registra o que foi feito e fatos resultantes.
+
+O agente NUNCA responde pelo usuário em tickets de entrevista ou protótipo.
+
+### Regras
+
+- **Planejar, não fazer:** cada ticket produz uma decisão, não uma entrega.
+- **Um ticket por sessão** (exceto `pesquisa`, que pode rodar em paralelo).
+- **Névoa ou ticket?** Se a pergunta já pode ser formulada com precisão (mesmo bloqueada) → ticket; se não → `Ainda não especificado`.
+- **Fora de escopo** nunca gradua para ticket; ticket que se revelar fora do destino é fechado e registrado em `Fora de escopo`.
+- Referir mapas e tickets **pelo título**, nunca por número solto.
+- Fronteira do mapa: tickets `aberto` cujo `Bloqueado por` está todo `resolvido`.
+
+### Invocações
+
+**Mapear** (primeira sessão):
+
+1. definir o **destino** com rodadas de perguntas + modelo de domínio
+2. rodada **em largura** sobre todo o espaço, levantando decisões abertas e primeiros passos possíveis
+3. se não houver névoa (o caminho já está claro e cabe em uma sessão) → não criar mapa; voltar ao brainstorm normal
+4. com confirmação, criar `map.md` e os tickets que já podem ser especificados; ligar `Bloqueado por` em uma segunda passada
+5. não resolver tickets nesta sessão (exceto `pesquisa` com subagents)
+
+**Avançar** (sessões seguintes, informando o mapa):
+
+1. carregar `map.md` (visão de baixa resolução)
+2. escolher o ticket nomeado pelo usuário ou o primeiro da fronteira; marcar `em andamento` antes de trabalhar
+3. resolver conforme o tipo; preencher `## Resposta`; marcar `resolvido`
+4. adicionar uma linha em `Decisões até agora`
+5. graduar a névoa que ficou especificável em novos tickets; atualizar ou fechar tickets invalidados
+
+### Handoff
+
+- Quando não houver névoa nem tickets abertos → `Pronto para /spec` (a `/spec` em modo síntese consolida as decisões do mapa).
+- Se o esforço se revelar pequeno → `Pronto para /plan`.
 
 ---
 
@@ -432,6 +524,20 @@ Só use status `Pronto para /prd`, `Pronto para /spec` ou `Pronto para /plan` se
 
 ---
 
+## Orquestração com subagents
+
+Aplicar `_shared/base-subagents.md`. Somente quando a decisão do `/workflow` for `Orquestração: Com subagents`:
+
+- **Levantamento de fatos:** enviar subagents de exploração somente leitura para fatos que as rodadas precisam (estrutura do código, padrões existentes, implementações similares, docs externas)
+- enquanto rodam, perguntar ao usuário apenas as decisões da fronteira que não dependem desses fatos
+- verificar os achados no código antes de usá-los em abordagens ou design
+- **Modo mapa:** tickets do tipo `pesquisa` podem ser resolvidos por subagents em paralelo (um por ticket), sem decidir nada pelo usuário
+- decisões, recomendações e gates continuam no contexto principal
+
+Sem subagents → executar tudo no contexto principal.
+
+---
+
 ## Formato obrigatório de saída
 
 Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com estes nomes exatos**:
@@ -446,6 +552,7 @@ Responda **sempre** com estes quatro títulos `##`, **nesta ordem** e **com este
    - `Pronto para /prd`
    - `Pronto para /spec`
    - `Pronto para /plan`
+   - `Mapa atualizado` (modo mapa: sessão encerrada com o mapa salvo)
 2. **Análise** — conteúdo principal; use apenas `###` para subdividir (ver lista acima).
 3. **Problemas** — violações a `.agents`, lacunas de contexto, riscos inaceitáveis, violação de HARD-GATE; se não houver: **Nenhum**.
 4. **Próximos passos** — ex.: perguntas ao usuário (diálogo estruturado), rodar `/prd`, `/spec` ou `/plan`, salvar artefato; aguardar confirmação explícita antes de handoff (**sempre** a última seção `##` da resposta).

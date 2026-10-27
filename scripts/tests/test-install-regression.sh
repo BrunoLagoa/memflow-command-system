@@ -86,6 +86,22 @@ assert_opencode_install_is_bundled() {
     fail_count=$((fail_count + 1))
   fi
 
+  if grep -q "Conteúdo injetado: _shared/base-subagents.md" "${install_dir}/workflow.md" 2>/dev/null; then
+    printf "[PASS] %s injeta base-subagents em workflow.md\n" "$label"
+    pass_count=$((pass_count + 1))
+  else
+    printf "[FAIL] %s não injeta base-subagents em workflow.md\n" "$label"
+    fail_count=$((fail_count + 1))
+  fi
+
+  if [[ -f "${install_dir}/retro.md" ]]; then
+    printf "[PASS] %s instala o comando retro\n" "$label"
+    pass_count=$((pass_count + 1))
+  else
+    printf "[FAIL] %s não instalou o comando retro\n" "$label"
+    fail_count=$((fail_count + 1))
+  fi
+
   if [[ "$command_content" == *"Conteúdo injetado: _shared/base-domain-model.md"* ]]; then
     printf "[PASS] %s injeta base-domain-model em context.md\n" "$label"
     pass_count=$((pass_count + 1))
@@ -352,6 +368,15 @@ run_expect_success \
   env HOME="$home_cursor" bash "$INSTALL_SCRIPT" install --project-dir "$project_cursor" --target cursor --non-interactive --version local
 
 assert_opencode_install_is_bundled "${project_cursor}/.cursor/commands/memflow" "install cursor"
+
+cursor_workflow="${project_cursor}/.cursor/commands/memflow/workflow.md"
+if grep -q "Conteúdo injetado: _shared/target-adapter.cursor.md" "$cursor_workflow" && ! grep -q "Conteúdo injetado: _shared/target-adapter.md" "$cursor_workflow"; then
+  printf "[PASS] install cursor injeta adaptador próprio do Cursor\n"
+  pass_count=$((pass_count + 1))
+else
+  printf "[FAIL] install cursor não injeta adaptador próprio do Cursor\n"
+  fail_count=$((fail_count + 1))
+fi
 
 run_expect_success \
   "update cursor deve funcionar com instalação existente" \
