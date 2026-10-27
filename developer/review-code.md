@@ -1,10 +1,10 @@
 ---
 name: review-code
-description: Avalia qualidade técnica da implementação comparando código com PRD/SPEC/PLAN. Foco em bugs, arquitetura, testes e readiness para produção. Não implementa. Não corrige. Apenas analisa.
+description: Avalia qualidade técnica da implementação em dois eixos independentes sobre o diff desde um ponto fixo — Padrões (padrões documentados do repo + baseline de code smells) e Spec (aderência a PRD/SPEC/PLAN, escopo extra e implementação incorreta). Foco em bugs, arquitetura, testes e readiness para produção. Não implementa. Não corrige. Apenas analisa.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 ## Referência normativa comum
@@ -14,6 +14,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -36,12 +37,28 @@ Este comando atua como **validação técnica final antes de produção**.
 ## Entrada esperada
 
 - descrição do que foi implementado
+- **ponto fixo** do diff (commit, branch, tag, `main`, `HEAD~N`)
 - referência ao `/plan`
-- referência ao `/spec`
-- diff de código (quando aplicável)
+- referência ao `/spec` (ou PRD/brainstorm aprovado)
 
-Se incompleto:
-→ BLOQUEAR
+Se a descrição ou o ponto fixo estiverem ausentes:
+→ BLOQUEAR e solicitar
+
+Se não houver spec/plan:
+→ executar apenas o eixo **Padrões** e registrar "sem spec disponível" no eixo **Spec**
+
+---
+
+## Ponto fixo (OBRIGATÓRIO)
+
+Antes de avaliar:
+
+- validar que o ponto fixo resolve (`git rev-parse <ponto-fixo>`)
+- capturar o diff uma vez: `git diff <ponto-fixo>...HEAD` (três pontos, compara contra o merge-base)
+- listar commits: `git log <ponto-fixo>..HEAD --oneline`
+- ref inválida ou diff vazio → BLOQUEAR aqui, antes de qualquer análise
+
+Quando não houver git, usar o diff/descrição fornecidos e registrar a limitação.
 
 ---
 
@@ -53,23 +70,46 @@ Se incompleto:
 4. Apenas analisar
 5. BLOQUEAR se invariantes anti-compaction (pt-BR + Memflow) estiverem ausentes no contexto
 6. Aplicar checklist de continuidade segura definido em `_shared/base-preconditions.md`
+7. Avaliar os dois eixos **separadamente**; NÃO mesclar nem re-ranquear achados entre eixos
 
 ---
 
-# Critérios de avaliação
+# Eixo 1 — Padrões
 
----
+Pergunta: o código segue os padrões deste repositório?
 
-## 1. Aderência ao SPEC
+## Fontes de padrões
 
-- segue contratos de input/output?
-- comportamento está correto?
-- regras foram respeitadas?
-- há divergência?
+- buscar todo arquivo que documente como escrever código (ex.: `CODING_STANDARDS.md`, `CONTRIBUTING.md`, `.agents/rules/**`, configs de lint)
+- `CODING_STANDARDS.md` e `CONTRIBUTING.md`, quando existirem, são obrigatórios na lista
+- vocabulário de `.agents/domain/GLOSSARY.md` e ADRs da área (nomes e decisões vigentes)
+- ignorar o que o tooling já garante (formatter, linter, typecheck)
 
----
+## Baseline de code smells (sempre aplicado)
 
-## 2. Qualidade de código
+Regras:
+
+- **o repo prevalece:** padrão documentado no repo sempre vence; se ele endossar algo que o baseline sinalizaria, suprimir o smell
+- **sempre julgamento:** cada smell é heurística rotulada ("possível Feature Envy"), nunca violação dura
+
+Smells (o que é → como corrigir):
+
+- **Nome misterioso:** nome não revela o que faz/contém → renomear
+- **Código duplicado:** mesma lógica em mais de um trecho do diff → extrair forma comum
+- **Feature Envy:** método acessa mais dados de outro objeto que os próprios → mover para perto dos dados
+- **Data Clumps:** os mesmos campos/params viajam juntos → agrupar em um tipo
+- **Obsessão por primitivos:** primitivo representando conceito de domínio → tipo próprio
+- **Switches repetidos:** mesmo `switch`/`if` sobre o mesmo tipo em vários pontos → polimorfismo ou mapa compartilhado
+- **Shotgun Surgery:** uma mudança lógica exige edições espalhadas → reunir o que muda junto
+- **Divergent Change:** um módulo editado por razões não relacionadas → separar por razão de mudança
+- **Generalidade especulativa:** abstração/params/hooks sem necessidade na spec → remover
+- **Message Chains:** navegação longa `a.b().c().d()` → esconder atrás de um método
+- **Middle Man:** classe/função que só delega → chamar o alvo direto
+- **Refused Bequest:** subclasse ignora a maior parte do que herda → composição
+
+## Critérios do eixo Padrões
+
+### Qualidade de código
 
 - código claro e legível?
 - separação de responsabilidades?
@@ -77,44 +117,34 @@ Se incompleto:
 - tipagem correta (se aplicável)?
 - tratamento de erros adequado?
 
----
-
-## 3. Arquitetura
+### Arquitetura
 
 - estrutura consistente com o projeto?
 - componentes bem definidos?
 - escalável?
 - performance considerada?
 
----
-
-## 4. Testes
+### Testes
 
 - existem testes?
-- cobrem lógica real?
+- cobrem lógica real nos seams acordados?
 - cobrem edge cases?
-- são confiáveis (não apenas mocks)?
+- são confiáveis (não apenas mocks, não tautológicos, não acoplados à implementação)?
 
----
-
-## 5. Segurança
+### Segurança
 
 - exposição de secrets?
 - validação de input adequada?
 - falhas de segurança evidentes?
 
----
-
-## 6. Produção (Readiness)
+### Produção (Readiness)
 
 - backward compatibility considerada?
 - erros tratados corretamente?
-- logs adequados?
+- logs adequados (sem instrumentação `[DEBUG-...]` remanescente)?
 - comportamento previsível?
 
----
-
-## 7. Simplicidade e overengineering
+### Simplicidade e overengineering
 
 - a solução usa o mínimo de complexidade necessário?
 - existe abstração de uso único sem necessidade real?
@@ -123,7 +153,34 @@ Se incompleto:
 
 ---
 
-## Classificação de problemas
+# Eixo 2 — Spec
+
+Pergunta: o código implementa fielmente o que a spec/plan pediu?
+
+Reportar, **citando a linha da spec** em cada achado:
+
+- (a) requisitos pedidos que estão **ausentes ou parciais**
+- (b) comportamento no diff que **não foi pedido** (escopo extra)
+- (c) requisitos que parecem implementados, mas com **implementação incorreta**
+
+Também verificar:
+
+- segue contratos de input/output?
+- regras e estados foram respeitados?
+- seams e decisões de teste da spec foram seguidos?
+
+---
+
+## Por que dois eixos
+
+- código que segue todos os padrões mas implementa a coisa errada → **Padrões aprovado, Spec reprovado**
+- código que faz exatamente o pedido mas quebra convenções → **Spec aprovado, Padrões reprovado**
+
+Reportar separadamente impede que um eixo mascare o outro.
+
+---
+
+## Classificação de problemas (dentro de cada eixo)
 
 ### Critical (MUST FIX)
 
@@ -140,6 +197,7 @@ Se incompleto:
 - ausência de testes relevantes
 - tratamento de erro insuficiente
 - overengineering (abstrações/configurações sem necessidade)
+- escopo extra não solicitado
 
 ---
 
@@ -148,6 +206,7 @@ Se incompleto:
 - melhorias de código
 - legibilidade
 - otimizações
+- smells do baseline (julgamento)
 
 ---
 
@@ -156,6 +215,7 @@ Se incompleto:
 - Este comando NÃO valida fluxo do memflow (isso é papel do `/review`)
 - Este comando NÃO substitui `/review`
 - Este comando valida a implementação real
+- Refatorações sugeridas aqui são a etapa de refactor do ciclo TDD (não fazem parte do red → green do `/execute`)
 - NÃO autoexecutar qualquer próximo passo sem confirmação explícita do usuário
 
 ---
@@ -165,29 +225,55 @@ Se incompleto:
 ## Status
 
 - Aprovado / Aprovado com ressalvas / Reprovado
+- Regra: qualquer Critical em qualquer eixo → Reprovado; qualquer Important → no máximo Aprovado com ressalvas
 
 ---
 
 ## Análise
 
-- Avaliação técnica geral da implementação
-- Pontos positivos relevantes
-- Aderência ao `/spec` e `/plan`
-- Qualidade de código e arquitetura
-- Cobertura e qualidade de testes
-- Readiness para produção (riscos e previsibilidade)
+### Ponto fixo
+
+- ref, commits avaliados e comando de diff usado
+
+### Eixo Padrões
+
+- fontes de padrões encontradas
+- avaliação de qualidade, arquitetura, testes, segurança, readiness e simplicidade
+- smells identificados (rotulados como julgamento)
+
+### Eixo Spec
+
+- fonte de spec usada (ou "sem spec disponível")
+- requisitos ausentes/parciais, escopo extra e implementação incorreta (com citação)
+
+### Resumo
+
+- total de achados por eixo e o pior problema **dentro de cada eixo** (sem eleger um vencedor entre eixos)
 
 ---
 
 ## Problemas
 
-### Critical
+### Padrões
+
+#### Critical
 - ...
 
-### Important
+#### Important
 - ...
 
-### Minor
+#### Minor
+- ...
+
+### Spec
+
+#### Critical
+- ...
+
+#### Important
+- ...
+
+#### Minor
 - ...
 
 Se não houver:

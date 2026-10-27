@@ -1,10 +1,10 @@
 ---
 name: plan
-description: Cria plano de implementação detalhado quando /workflow decide PLANEJAR PRIMEIRO, alinhado a `model-policy.md` do target ativo (via `_shared/target-adapter.md`) — sequência de passos, arquivos afetados, impacto, riscos e critérios de sucesso. Não escreve código. Saída: Status (Plano criado/Bloqueado), Análise com 9 subseções, Problemas e Próximos passos. Bloqueia se houver ambiguidade. Próximo passo: /execute.
+description: Cria plano de implementação detalhado quando /workflow decide PLANEJAR PRIMEIRO, alinhado a `model-policy.md` do target ativo (via `_shared/target-adapter.md`) — tarefas em fatias verticais com arestas de bloqueio explícitas (`Bloqueado por`), arquivos afetados, impacto, riscos e critérios de sucesso. Não escreve código. Saída: Status (Plano criado/Bloqueado), Análise com 9 subseções, Problemas e Próximos passos. Bloqueia se houver ambiguidade. Próximo passo: /execute.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 ## Referência normativa comum
@@ -14,6 +14,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolver essas referências conforme `_shared/target-adapter.md` (sem fallback fora do target ativo).
@@ -163,6 +164,50 @@ Regras:
 
 ---
 
+## Fatias verticais e dependências (OBRIGATÓRIO)
+
+Quebrar o trabalho em **fatias verticais** (tracer bullets):
+
+- cada fatia atravessa um caminho estreito, porém **completo**, por todas as camadas necessárias (ex.: esquema, API, UI, testes) — vertical, NÃO uma camada horizontal isolada
+- cada fatia concluída é demonstrável ou verificável sozinha
+- cada fatia cabe em uma única janela de contexto de execução
+- prefactoring vem primeiro: "tornar a mudança fácil, depois fazer a mudança fácil"
+
+Cada tarefa declara suas **arestas de bloqueio**:
+
+- `Bloqueado por: T<n>, T<m>` ou `Bloqueado por: Nenhuma`
+- bloquear apenas pelo que realmente impede o início (não por ordem estética)
+- a **fronteira** é o conjunto de tarefas pendentes cujos bloqueios estão todos concluídos `[x]`
+
+Derivação de `[P]` / `[S]`:
+
+- tarefa com `Bloqueado por` pendente → `[S]`
+- tarefas da fronteira podem ser `[P]` somente se também atenderem aos critérios obrigatórios de `[P]` (ver Rastreamento de execução); caso contrário → `[S]`
+
+### Refactor amplo (exceção à fatia vertical)
+
+Quando uma mudança mecânica tiver raio de impacto amplo (renomear coluna, retipar símbolo compartilhado) e nenhuma fatia puder ficar verde sozinha, sequenciar como **expand → migrate → contract**:
+
+1. **Expand:** adicionar a forma nova ao lado da antiga, sem quebrar nada
+2. **Migrate:** migrar chamadas em lotes (por pacote/diretório), cada lote uma tarefa `Bloqueado por` o expand, mantendo testes verdes
+3. **Contract:** remover a forma antiga quando não houver mais chamadas, `Bloqueado por` todos os lotes
+
+### Linguagem
+
+- títulos de tarefa usam os termos de `.agents/domain/GLOSSARY.md`; respeitar ADRs da área tocada
+
+### Revisão da quebra com o usuário
+
+Antes de marcar `Plano criado`, apresentar a quebra (título, `Bloqueado por`, o que entrega) e perguntar em diálogo estruturado:
+
+- a granularidade está adequada (grossa / fina demais)?
+- as arestas de bloqueio estão corretas?
+- alguma tarefa deve ser unida ou dividida?
+
+Iterar até aprovação explícita.
+
+---
+
 ## Limitações
 
 Se Serena NÃO estiver disponível:
@@ -242,7 +287,8 @@ Se `.agents` NÃO estiver disponível:
 - checklist final obrigatório de granularidade: cada item pode ser executado sem ambiguidades?
 - cada passo deve incluir verificação objetiva no formato:
   - `Passo -> verificar: teste/comando/evidência esperada`
-- classificar cada tarefa como:
+- cada tarefa é uma fatia vertical e declara `Bloqueado por: T<n> | Nenhuma`
+- classificar cada tarefa como (derivado das arestas de bloqueio):
   - `[P]` paralelizável (pode executar em paralelo)
   - `[S]` sequencial (depende de ordem)
 
@@ -312,10 +358,10 @@ Template base recomendado:
 ```md
 ### Progresso de execução
 
-- [P][ ] Tarefa 1
+- [P][ ] T1 — Tarefa 1 · Bloqueado por: Nenhuma
   - [S][-] Subtarefa 1.1
   - [P][x] Subtarefa 1.2
-- [S][!] Tarefa 2 (motivo do bloqueio)
+- [S][!] T2 — Tarefa 2 · Bloqueado por: T1 (motivo do bloqueio)
   - Ação de desbloqueio: <ação objetiva>
   - Responsável: <usuário | agente | sistema externo>
   - Critério de saída: <condição para voltar a [ ] ou [-]>

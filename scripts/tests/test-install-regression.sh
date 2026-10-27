@@ -85,6 +85,14 @@ assert_opencode_install_is_bundled() {
     printf "[FAIL] %s não injeta model-policy em context.md\n" "$label"
     fail_count=$((fail_count + 1))
   fi
+
+  if [[ "$command_content" == *"Conteúdo injetado: _shared/base-domain-model.md"* ]]; then
+    printf "[PASS] %s injeta base-domain-model em context.md\n" "$label"
+    pass_count=$((pass_count + 1))
+  else
+    printf "[FAIL] %s não injeta base-domain-model em context.md\n" "$label"
+    fail_count=$((fail_count + 1))
+  fi
 }
 
 tmp_root="$(mktemp -d "${SCRIPT_DIR}/.tmp-install-regression.XXXXXX")"
@@ -452,6 +460,46 @@ else
   printf "[PASS] install a partir de scripts/ não instala dentro de scripts/\n"
   pass_count=$((pass_count + 1))
 fi
+
+# Injeção genérica de blocos _shared/*.md
+injection_src="${tmp_root}/injection-src"
+mkdir -p "${injection_src}/_shared"
+for shared_name in base-output base-preconditions base-degraded-mode target-adapter; do
+  printf "conteudo %s\n" "$shared_name" > "${injection_src}/_shared/${shared_name}.md"
+done
+printf "conteudo model-policy\n" > "${injection_src}/model-policy.md"
+printf "BLOCO_CUSTOMIZADO_OK\n" > "${injection_src}/_shared/custom-block.md"
+printf -- "- \`_shared/custom-block.md\`\n" > "${injection_src}/with-custom.md"
+printf -- "- \`_shared/missing-block.md\`\n" > "${injection_src}/with-missing.md"
+
+run_injection() {
+  local src_file="$1"
+  local dest_file="$2"
+  (
+    # shellcheck source=../lib/common.sh
+    source "${SCRIPT_DIR}/../lib/common.sh"
+    # shellcheck source=../installers/bash/targets/shared.sh
+    source "${SCRIPT_DIR}/../installers/bash/targets/shared.sh"
+    render_command_with_shared_injection "$src_file" "$dest_file" "$injection_src" "target-adapter.md" "### Conteúdo injetado: _shared/target-adapter.md"
+  )
+}
+
+run_expect_success \
+  "injeção genérica de bloco _shared customizado" \
+  run_injection "${injection_src}/with-custom.md" "${tmp_root}/with-custom.out.md"
+
+if grep -q "Conteúdo injetado: _shared/custom-block.md" "${tmp_root}/with-custom.out.md" && grep -q "BLOCO_CUSTOMIZADO_OK" "${tmp_root}/with-custom.out.md"; then
+  printf "[PASS] bloco _shared customizado é injetado com título e conteúdo\n"
+  pass_count=$((pass_count + 1))
+else
+  printf "[FAIL] bloco _shared customizado não foi injetado\n"
+  fail_count=$((fail_count + 1))
+fi
+
+run_expect_exit \
+  "referência a bloco _shared inexistente falha a instalação" \
+  1 \
+  run_injection "${injection_src}/with-missing.md" "${tmp_root}/with-missing.out.md"
 
 printf "\nResultado: %d passou, %d falhou\n" "$pass_count" "$fail_count"
 if [[ "$fail_count" -gt 0 ]]; then

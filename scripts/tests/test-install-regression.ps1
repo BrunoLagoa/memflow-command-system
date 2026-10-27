@@ -132,6 +132,16 @@ try {
     $FailCount += 1
   }
 
+  $claudeContextFile = Join-Path $claudeInstallDir "context.md"
+  $claudeContext = if (Test-Path $claudeContextFile) { Get-Content -Raw -Path $claudeContextFile } else { "" }
+  if ($claudeContext -like "*injetado: _shared/base-domain-model.md*") {
+    Write-Host "[PASS] install claude injeta base-domain-model em context.md"
+    $PassCount += 1
+  } else {
+    Write-Host "[FAIL] install claude não injeta base-domain-model em context.md"
+    $FailCount += 1
+  }
+
   Invoke-ExpectSuccess "update claude com instalação existente deve funcionar" @("update", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive", "-Version", "local")
 
   Invoke-ExpectSuccess "check claude com instalação existente deve funcionar" @("check", "-Target", "claude", "-ProjectDir", $ProjectClaude, "-NonInteractive")

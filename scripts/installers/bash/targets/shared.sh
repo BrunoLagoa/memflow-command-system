@@ -21,6 +21,7 @@ render_command_with_shared_injection() {
   [[ -f "$model_policy_file" ]] || die "Arquivo não encontrado: ${model_policy_file}"
 
   awk \
+    -v shared_dir="$shared_dir" \
     -v shared_output_file="$shared_output" \
     -v shared_preconditions_file="$shared_preconditions" \
     -v shared_degraded_file="$shared_degraded" \
@@ -55,7 +56,21 @@ render_command_with_shared_injection() {
           inject_file(model_policy_file, "### Conteúdo injetado: model-policy.md")
           next
         }
+        # Demais blocos _shared/*.md (ex.: base-domain-model.md) são injetados genericamente.
+        if ($0 ~ /^[[:space:]]*-[[:space:]]+`?_shared\/[A-Za-z0-9._-]+\.md`?[[:space:]]*$/) {
+          shared_name = $0
+          sub(/^[[:space:]]*-[[:space:]]+`?_shared\//, "", shared_name)
+          sub(/`?[[:space:]]*$/, "", shared_name)
+          shared_path = shared_dir "/" shared_name
+          if ((getline probe < shared_path) < 0) {
+            printf "Arquivo compartilhado não encontrado: %s\n", shared_path > "/dev/stderr"
+            exit 1
+          }
+          close(shared_path)
+          inject_file(shared_path, "### Conteúdo injetado: _shared/" shared_name)
+          next
+        }
         print
       }
-    ' "$src_file" > "$dest_file"
+    ' "$src_file" > "$dest_file" || die "Falha ao injetar blocos compartilhados em ${src_file}"
 }

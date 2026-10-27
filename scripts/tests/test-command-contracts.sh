@@ -85,7 +85,7 @@ done
 
 printf "\n=== Bases normativas compartilhadas (_shared) ===\n\n"
 
-SHARED_BASES=(base-output base-preconditions base-degraded-mode)
+SHARED_BASES=(base-output base-preconditions base-degraded-mode base-domain-model)
 for base in "${SHARED_BASES[@]}"; do
   file="${SRC_DIR}/_shared/${base}.md"
   assert_contains "$file" "hidden: true" "_shared/${base}: marcado como hidden (non-executable)"
@@ -94,6 +94,29 @@ done
 # ──────────────────────────────────────────────────────────────────
 # /workflow — orquestrador central
 # ──────────────────────────────────────────────────────────────────
+
+# ──────────────────────────────────────────────────────────────────
+# Modelo de domínio (glossário e ADRs)
+# ──────────────────────────────────────────────────────────────────
+
+printf "\n=== Modelo de domínio ===\n\n"
+
+DOMAIN_MODEL="${SRC_DIR}/_shared/base-domain-model.md"
+assert_contains "$DOMAIN_MODEL" "\.agents/domain/GLOSSARY\.md" "base-domain-model: glossário em .agents/domain/GLOSSARY.md"
+assert_contains "$DOMAIN_MODEL" "\.agents/domain/adr/" "base-domain-model: ADRs em .agents/domain/adr/"
+assert_contains "$DOMAIN_MODEL" "NEVER write to .*\.agents/domain/.* silently|NUNCA escrever em .*\.agents/domain/.* silenciosamente" "base-domain-model: escrita exige confirmação"
+assert_contains "$DOMAIN_MODEL" "Hard to reverse|Difícil de reverter" "base-domain-model: critério ADR difícil de reverter"
+assert_contains "$DOMAIN_MODEL" "Surprising without context|Surpreendente sem contexto" "base-domain-model: critério ADR surpreendente"
+assert_contains "$DOMAIN_MODEL" "real trade-off|trade-off real" "base-domain-model: critério ADR trade-off real"
+assert_contains "$DOMAIN_MODEL" "decisions\.md" "base-domain-model: relação explícita com decisions.md"
+
+for cmd in context brainstorm spec plan execute test-plan debug review-code workflow; do
+  assert_contains "${SRC_DIR}/${cmd}.md" "^- \`_shared/base-domain-model\.md\`$" "/${cmd}: referencia base-domain-model"
+done
+
+CONTEXT_DOMAIN="${SRC_DIR}/context.md"
+assert_contains "$CONTEXT_DOMAIN" "only the titles|somente os títulos" "context: carrega apenas títulos dos ADRs"
+assert_contains "$CONTEXT_DOMAIN" "DO NOT create domain files|NÃO criar arquivos de domínio" "context: não cria arquivos de domínio"
 
 printf "\n=== /workflow ===\n\n"
 
@@ -122,6 +145,12 @@ assert_contains "$BRAINSTORM" "prontidão|DoD" "brainstorm: critério de prontid
 assert_contains "$BRAINSTORM" "Confirmação obrigatória de salvamento|Mandatory save confirmation" "brainstorm: gate de salvamento presente"
 assert_contains "$BRAINSTORM" "Pronto para /prd|Pronto para /spec|Pronto para /plan|Ready for /prd|Ready for /spec|Ready for /plan" "brainstorm: status de handoff definidos"
 assert_contains "$BRAINSTORM" "fase 1/4|fase 2/4|fase 3/4|fase 4/4" "brainstorm: processo em 4 fases definido"
+assert_contains "$BRAINSTORM" "Question rounds|Rodadas de perguntas" "brainstorm: perguntas em rodadas por fronteira"
+assert_contains "$BRAINSTORM" "Frontier|Fronteira" "brainstorm: define fronteira de decisões"
+assert_contains "$BRAINSTORM" "Facts are the agent's job|Fatos são trabalho do agente" "brainstorm: fatos são levantados pelo agente"
+assert_contains "$BRAINSTORM" "\(Recomendado\)" "brainstorm: opção recomendada marcada"
+assert_not_contains "$BRAINSTORM" "one question per message|uma pergunta por mensagem" "brainstorm: não força uma pergunta por mensagem"
+assert_contains "$BRAINSTORM" "Domain language|Linguagem do domínio" "brainstorm: análise registra linguagem do domínio"
 
 # ──────────────────────────────────────────────────────────────────
 # /execute — implementação controlada
@@ -137,6 +166,11 @@ assert_contains "$EXECUTE" "Premissas explícitas|Explicit assumptions|Explicit 
 assert_contains "$EXECUTE" "Simplicidade primeiro|Simplicity first" "execute: prioriza simplicidade"
 assert_contains "$EXECUTE" "mudanças cirúrgicas|vínculo direto com a solicitação|surgical changes|directly linked to the request" "execute: exige alterações cirúrgicas"
 assert_contains "$EXECUTE" "Execução orientada a metas|objetivo verificável|Goal-driven execution|verifiable objective" "execute: exige execução orientada a metas"
+assert_contains "$EXECUTE" "\*\*frontier\*\*|\*\*fronteira\*\*" "execute: escolhe próxima tarefa pela fronteira"
+assert_contains "$EXECUTE" "NEVER start a task with a pending blocker|NUNCA iniciar tarefa com bloqueio pendente" "execute: não inicia tarefa bloqueada"
+assert_contains "$EXECUTE" "TDD mode|Modo TDD" "execute: modo TDD em seams acordados"
+assert_contains "$EXECUTE" "red → green" "execute: ciclo red → green"
+assert_contains "$EXECUTE" "\[DEBUG-" "execute: checklist de limpeza remove instrumentação [DEBUG-]"
 
 # ──────────────────────────────────────────────────────────────────
 # /plan — planejamento antes da execução
@@ -151,6 +185,10 @@ assert_contains "$PLAN" "Confirmação obrigatória de salvamento|Mandatory save
 assert_contains "$PLAN" "Não escreve código|NÃO escreve|não escreve código|Do not write code|DOES NOT write code" "plan: não implementa código"
 assert_contains "$PLAN" "Premissas explícitas|Explicit assumptions|Explicit premises" "plan: exige premissas explícitas antes do plano"
 assert_contains "$PLAN" "Passo -> verificar|<passo>.*verificar|Step -> verify|<step>.*verify" "plan: passos incluem verificação objetiva"
+assert_contains "$PLAN" "Vertical slices|Fatias verticais" "plan: tarefas em fatias verticais"
+assert_contains "$PLAN" "Bloqueado por:" "plan: tarefas declaram arestas de bloqueio"
+assert_contains "$PLAN" "expand → migrate → contract" "plan: refactor amplo em expand-migrate-contract"
+assert_contains "$PLAN" "Breakdown review with the user|Revisão da quebra com o usuário" "plan: quebra revisada com o usuário"
 
 # ──────────────────────────────────────────────────────────────────
 # /review e /review-code — validação de qualidade
@@ -166,6 +204,36 @@ assert_contains "$REVIEW" "Escopo das mudanças|surgical check" "review: valida 
 REVIEW_CODE="${SRC_DIR}/review-code.md"
 assert_contains "$REVIEW_CODE" "NÃO implementa|NÃO corrige|não implementa|não corrige|DO NOT implement|DO NOT auto-fix" "review-code: não implementa nem corrige"
 assert_contains "$REVIEW_CODE" "Simplicidade e overengineering|Simplicity and overengineering" "review-code: valida simplicidade técnica"
+assert_contains "$REVIEW_CODE" "Axis 1 — Standards|Eixo 1 — Padrões" "review-code: eixo Padrões presente"
+assert_contains "$REVIEW_CODE" "Axis 2 — Spec|Eixo 2 — Spec" "review-code: eixo Spec presente"
+assert_contains "$REVIEW_CODE" "DO NOT merge or re-rank findings across axes|NÃO mesclar nem re-ranquear achados entre eixos" "review-code: eixos não são mesclados"
+assert_contains "$REVIEW_CODE" "git diff <fixed-point>\.\.\.HEAD|git diff <ponto-fixo>\.\.\.HEAD" "review-code: diff contra ponto fixo"
+assert_contains "$REVIEW_CODE" "Feature Envy" "review-code: baseline de code smells presente"
+assert_contains "$REVIEW_CODE" "the repo overrides|o repo prevalece" "review-code: padrão do repo prevalece sobre baseline"
+
+# ──────────────────────────────────────────────────────────────────
+# /spec — síntese, seams e fora de escopo
+# ──────────────────────────────────────────────────────────────────
+
+printf "\n=== /spec ===\n\n"
+
+SPEC="${SRC_DIR}/spec.md"
+assert_contains "$SPEC" "Synthesis mode|Modo síntese" "spec: modo síntese a partir de /brainstorm"
+assert_contains "$SPEC" "DO NOT interview the user again|NÃO\*\* entrevistar o usuário novamente" "spec: modo síntese não entrevista novamente"
+assert_contains "$SPEC" "Test seams|Pontos de teste \(seams\)" "spec: define seams de teste"
+assert_contains "$SPEC" "confirm the seams with the user|confirmar os seams com o usuário" "spec: seams confirmados com o usuário"
+assert_contains "$SPEC" "## 12\. Out of scope|## 12\. Fora de escopo" "spec: seção fora de escopo"
+
+# ──────────────────────────────────────────────────────────────────
+# /test-plan — seams e anti-padrões
+# ──────────────────────────────────────────────────────────────────
+
+printf "\n=== /test-plan ===\n\n"
+
+TEST_PLAN="${SRC_DIR}/test-plan.md"
+assert_contains "$TEST_PLAN" "Test seams \(MANDATORY\)|Seams de teste \(OBRIGATÓRIO\)" "test-plan: parte dos seams de teste"
+assert_contains "$TEST_PLAN" "Tautological|Tautológico" "test-plan: anti-padrão tautológico"
+assert_contains "$TEST_PLAN" "Implementation-coupled|Acoplado à implementação" "test-plan: anti-padrão acoplado à implementação"
 
 # ──────────────────────────────────────────────────────────────────
 # /review-enforce-rules — gate binário final
@@ -189,6 +257,13 @@ DEBUG="${SRC_DIR}/debug.md"
 assert_contains "$DEBUG" "NÃO executa correções|DOES NOT execute fixes|DO NOT implement fixes" "debug: não executa correções"
 assert_contains "$DEBUG" "NÃO implementar correções|NÃO implementa|DO NOT implement fixes|DO NOT implement" "debug: não implementa"
 assert_contains "$DEBUG" "/execute|/refactor|/plan" "debug: handoff para /execute, /refactor ou /plan"
+assert_contains "$DEBUG" "Phase 1 — Feedback loop|Fase 1 — Feedback loop" "debug: feedback loop obrigatório"
+assert_contains "$DEBUG" "red-capable|capaz de ficar vermelho" "debug: loop precisa ficar vermelho no bug"
+assert_contains "$DEBUG" "3 to 5 ranked hypotheses|3 a 5 hipóteses ranqueadas" "debug: 3 a 5 hipóteses ranqueadas"
+assert_contains "$DEBUG" "falsifiable|falsificável" "debug: hipóteses falsificáveis"
+assert_contains "$DEBUG" "\[DEBUG-" "debug: instrumentação marcada com prefixo"
+assert_contains "$DEBUG" "<REDACTED>" "debug: mascara segredos"
+assert_order "$DEBUG" "Phase 1 — Feedback loop|Fase 1 — Feedback loop" "Phase 3 — Hypotheses|Fase 3 — Hipóteses" "debug: loop vem antes das hipóteses"
 
 # ──────────────────────────────────────────────────────────────────
 # /test-plan — plano de testes executável e verificável

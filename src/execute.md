@@ -4,7 +4,7 @@ description: Implements code based on the /workflow decision respecting `model-p
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.4.0"
+  version: "3.5.0"
 ---
 
 ## Common normative reference
@@ -14,6 +14,7 @@ Mandatory application:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -120,17 +121,19 @@ Before changing code:
 
 ---
 
-## Template usage- follow model-policy  
+## Model usage
+
+- follow model-policy  
 - execution → economic model  
 - climb only if necessary  
 
 ---
 
-## Climbing
+## Escalation
 
 1st failure → fix  
 2nd failure → review approach  
-3rd failure → scale model  
+3rd failure → escalate model  
 
 ---
 
@@ -142,12 +145,14 @@ Before changing code:
 
 ---
 
-## Integration with saved plan (Vivo Plan)
+## Integration with saved plan (Living plan)
 
 When there is a plan saved in `.md`:
 
 - read the saved plan before starting implementation
 - map planned tasks/subtasks to current execution
+- pick the next task from the **frontier**: pending task whose `Bloqueado por` is all `[x]` (or `Nenhuma`)
+- NEVER start a task with a pending blocker; if the frontier is empty and tasks remain, mark `[!]` and record the reason
 - respect the execution method defined in the plan:
   - `[P]` parallelizable: can run in parallel with other `[P]` when there is no conflict
   - `[S]` sequential: execute in the planned order
@@ -190,15 +195,46 @@ If `.agents` missing:
 
 ## Tests
 
+## Tests
+
 - detect runtime  
 - run relevant tests  
 - avoid regression  
+
+### TDD mode (when the spec or `/test-plan` define seams)
+
+- test **only** at the agreed seams; no test at an unconfirmed seam
+- **red → green** cycle per vertical slice: one failing test → minimal implementation to pass → next test
+- DO NOT write all tests first (horizontal slicing); each test responds to what the previous cycle taught
+- DO NOT anticipate future tests or add speculative features
+- expected values come from an independent source (known literal, worked example, spec) — never recomputed the way the code computes them
+- refactoring is NOT part of the cycle: it belongs to the review stage (`/review-code`)
+- run typecheck and the slice's test file often; the full suite at the end
+
+### Bug fix (from `/debug`)
+
+- start from the reproduction command (feedback loop) produced by `/debug`
+- if a **correct seam** exists (exercises the real bug pattern at the call site):
+  1. turn the minimised reproduction into a failing test at that seam
+  2. watch the test fail
+  3. apply the fix
+  4. watch the test pass
+  5. re-run the original (non-minimised) feedback loop
+- if NO correct seam exists: record it as a finding (architecture limitation) instead of writing a shallow test that gives false confidence
+- mandatory cleanup checklist before finishing:
+  - original reproduction no longer reproduces
+  - regression test passes (or absence of seam documented)
+  - all `[DEBUG-...]` instrumentation removed (search by prefix)
+  - throwaway prototypes/scripts removed or moved to a clearly marked location
+  - confirmed hypothesis recorded in the suggested commit/PR message
 
 ---
 
 ## Stack detection
 
-Identify:- language/runtime  
+Identify:
+
+- language/runtime  
 - manager  
 - lint/test commands  
 
@@ -209,7 +245,7 @@ Identify:- language/runtime
 After implementing:
 
 1. setup (if necessary)  
-2.format  
+2. format  
 3. lint/typecheck  
 4. testing  
 

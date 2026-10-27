@@ -4,7 +4,7 @@ description: First command of the flow — loads memory (decisions, state and me
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.3.3"
+  version: "8.4.0"
 ---
 
 ## Command activation rule (CRITICAL)
@@ -25,6 +25,7 @@ Mandatory application:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -221,6 +222,28 @@ If they do not exist:
 
 ---
 
+# Domain model (glossary and ADRs)
+
+Apply `_shared/base-domain-model.md` in **read** mode.
+
+Check existence of:
+
+- `.agents/domain/GLOSSARY.md`
+- `.agents/domain/adr/*.md`
+
+If they exist:
+
+- load the glossary (canonical terms and terms to avoid)
+- load **only the titles** of ADRs (content on demand, by touched area)
+- signal to `/workflow` the current vocabulary and architectural decisions
+
+If they do not exist:
+
+- record absence explicitly (without blocking)
+- DO NOT create domain files in `/context`
+
+---
+
 # Context on demand
 
 - docs
@@ -281,6 +304,7 @@ If no MCP is available:
 - Quality: high/medium/low
 - Signals: none / detected
 - Skills in the project: YES / NO
+- Domain: N terms, M ADRs / absent
 - Anti-compaction invariants: OK / Rehydrated
 
 ---
@@ -291,6 +315,7 @@ If no MCP is available:
 - Memory: YES / NO
 - Metrics: YES / NO
 - Skills: YES / NO
+- Domain: YES / NO
 - Anti-compaction invariants: OK / Rehydrated / Failed
 - Mode: Normal / Degraded / Optimized
 
@@ -302,6 +327,7 @@ If no MCP is available:
 - use of metrics
 - detected signals
 - available skills (if any)
+- domain model: available terms and ADRs (if any)
 - status of anti-compaction invariants (pt-BR + Memflow)
 
 ---

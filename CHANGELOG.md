@@ -4,6 +4,30 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.3.0] - 2026-10-27
+
+Práticas inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills) (MIT), adaptadas aos gates do Memflow (confirmação explícita, HARD-GATE e pt-BR).
+
+### Adicionado
+- `_shared/base-domain-model.md` (`developer/` e `src/`): base normativa de modelo de domínio — glossário em `.agents/domain/GLOSSARY.md` e ADRs em `.agents/domain/adr/NNNN-slug.md`, criados sob demanda; refinamento ativo de termos; ADR somente quando difícil de reverter, surpreendente sem contexto e resultado de trade-off real; escrita sempre com confirmação explícita; ADR referenciado a partir de `decisions.md` sem duplicar conteúdo.
+- `scripts/tests/test-install-regression.sh` e `scripts/tests/test-install-regression.ps1`: cenários para injeção do bloco de domínio nos comandos instalados, injeção genérica de blocos `_shared` customizados e falha quando um bloco referenciado não existe.
+- `scripts/tests/test-command-contracts.sh`: contratos para modelo de domínio, rodadas de perguntas no `/brainstorm`, modo síntese e seams no `/spec`, fatias verticais e `Bloqueado por` no `/plan`, fronteira e TDD no `/execute`, anti-padrões no `/test-plan`, feedback loop no `/debug` e dois eixos no `/review-code` (218 contratos no total).
+
+### Alterado
+- Instaladores Bash e PowerShell (`targets/shared.sh` e `targets/shared.ps1`): qualquer linha `- _shared/<nome>.md` passa a ser injetada genericamente no comando instalado; referência a bloco inexistente interrompe a instalação.
+- `/context` (v8.4.0): carrega glossário e apenas os títulos dos ADRs, sem criar arquivos de domínio; saída inclui status de domínio.
+- `/memory-init` (v4.4.0): `memory.md` passa a apontar para o layout de domínio (sem criar `.agents/domain/` no bootstrap).
+- `/brainstorm` (v1.4.0): perguntas em **rodadas por fronteira de decisões** (todas as decisões desbloqueadas na mesma rodada, cada uma com opções selecionáveis e opção `(Recomendado)`); fatos são levantados pelo agente, decisões ficam com o usuário; refinamento de domínio integrado; auto-revisão com check de linguagem (5 checks).
+- `/spec` (v2.3.0): **modo síntese** a partir de `/brainstorm` aprovado (sem nova entrevista); novas seções de pontos de teste (seams) confirmados com o usuário, decisões de teste e fora de escopo; linguagem do glossário e sem caminhos de arquivo.
+- `/plan` (v1.3.0): tarefas em **fatias verticais** com arestas `Bloqueado por`, `[P]`/`[S]` derivados das dependências, refactor amplo em expand → migrate → contract e revisão da quebra com o usuário.
+- `/execute` (v3.5.0): próxima tarefa escolhida pela fronteira do plano; modo TDD (red → green) nos seams acordados; correção de bug com teste de regressão antes do fix e checklist de limpeza.
+- `/test-plan` (v1.2.0): parte dos seams acordados e explicita anti-padrões (acoplado à implementação, tautológico, fatiamento horizontal).
+- `/debug` (v1.1.0): **feedback loop primeiro** (comando que fica vermelho no bug), minimização, 3 a 5 hipóteses falsificáveis ranqueadas, instrumentação com prefixo `[DEBUG-...]` e mascaramento de segredos; continua sem corrigir.
+- `/review-code` (v1.4.0): revisão em **dois eixos independentes** (Padrões e Spec) sobre o diff desde um ponto fixo, com baseline de code smells e sem re-ranquear achados entre eixos.
+- `/workflow` (v9.9.0): handoff do `/brainstorm` para `/spec` em modo síntese e roteamento de bugs para `/debug`.
+- `src/*.md`: correções de headings quebrados e traduções em `/brainstorm`, `/execute`, `/spec`, `/plan` e `/test-plan`.
+- `README.md`, `README.pt-BR.md`, `docs/SDLC.md`, `docs/SDLC.pt-BR.md` e `AGENTS.md`: documentação das novas capacidades e da organização `developer/` → `src/`.
+
 ## [1.2.1] - 2026-06-09
 
 ### Corrigido
@@ -461,6 +485,7 @@ O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.3.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.48...v1.2.0
 [1.1.48]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.1.47...v1.1.48

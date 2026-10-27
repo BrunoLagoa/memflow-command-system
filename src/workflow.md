@@ -4,7 +4,7 @@ description: Central orchestrator — decides exploration, execution, validation
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.8.0"
+  version: "9.9.0"
 ---
 
 ## Common normative reference
@@ -14,6 +14,7 @@ Mandatory application:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -304,9 +305,21 @@ Rules:
 - DO NOT jump to `/execute` when `/brainstorm` is necessary
 - after `/brainstorm` approved, handoff according to gate decision:
   - `/prd` — lack of product definition or business scope
-  - `/spec` — PRD exists, deterministic technical decision is missing
+  - `/spec` — PRD exists **or** the approved brainstorm itself suffices as source (synthesis mode, no new interview), and a deterministic technical decision is missing
   - `/plan` — scope and approach clear enough to plan
+- prefer `/spec` in synthesis mode when the brainstorm left contracts, states or test seams to define
 - return to `/workflow` after brainstorm handoff before continuing
+
+---
+
+## DIAGNOSIS WITH /debug
+
+Use when the task is a bug, regression, intermittent failure or performance degradation with a non-obvious cause:
+
+- route to `/debug` before `/execute`
+- `/debug` must deliver a feedback loop (command that reproduces the bug) and ranked hypotheses
+- the fix goes to `/execute` with a regression test before the fix (when a correct seam exists)
+- trivial bug with an evident cause and reproduction already demonstrated → DIRECT EXECUTION
 
 ---
 
@@ -482,6 +495,7 @@ Mandatory when:
 ### Strategy
 
 - Exploration: Required (/brainstorm) / Not required
+- Diagnosis: Required (/debug) / Not required
 - Execution: Direct / Planned
 - Validation:
 
@@ -500,7 +514,7 @@ If there is none:
 
 ## Next steps
 
-1. /brainstorm (when exploration required) or /execute or /plan
+1. /brainstorm (when exploration required), /debug (when diagnosis required), /execute or /plan
 2. /review  
 3. /review-code  
 4. /memory-save  

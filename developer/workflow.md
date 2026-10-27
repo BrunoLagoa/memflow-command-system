@@ -4,7 +4,7 @@ description: Orquestrador central — decide exploração, execução, validaç�
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "9.8.0"
+  version: "9.9.0"
 ---
 
 ## Referência normativa comum
@@ -14,6 +14,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -304,9 +305,21 @@ Regras:
 - NÃO pular para `/execute` quando `/brainstorm` for necessário
 - após `/brainstorm` aprovado, handoff conforme decisão do gate:
   - `/prd` — falta definição de produto ou escopo de negócio
-  - `/spec` — PRD existe, falta decisão técnica determinística
+  - `/spec` — PRD existe **ou** o próprio brainstorm aprovado basta como fonte (modo síntese, sem nova entrevista), e falta decisão técnica determinística
   - `/plan` — escopo e abordagem claros o suficiente para planejar
+- preferir `/spec` em modo síntese quando o brainstorm deixou contratos, estados ou seams de teste a definir
 - retornar ao `/workflow` após handoff do brainstorm antes de continuar
+
+---
+
+## DIAGNÓSTICO COM /debug
+
+Usar quando a tarefa for bug, regressão, falha intermitente ou degradação de performance com causa não evidente:
+
+- rotear para `/debug` antes de `/execute`
+- `/debug` deve entregar feedback loop (comando que reproduz o bug) e hipóteses ranqueadas
+- correção segue para `/execute` com teste de regressão antes do fix (quando houver seam correto)
+- bug trivial com causa evidente e reprodução já demonstrada → EXECUÇÃO DIRETA
 
 ---
 
@@ -482,6 +495,7 @@ Obrigatório quando:
 ### Estratégia
 
 - Exploração: Necessária (/brainstorm) / Não necessária
+- Diagnóstico: Necessário (/debug) / Não necessário
 - Execução: Direta / Planejada  
 - Validação:
 
@@ -500,7 +514,7 @@ Se não houver:
 
 ## Próximos passos
 
-1. /brainstorm (quando exploração necessária) ou /execute ou /plan
+1. /brainstorm (quando exploração necessária), /debug (quando diagnóstico necessário), /execute ou /plan
 2. /review  
 3. /review-code  
 4. /memory-save  

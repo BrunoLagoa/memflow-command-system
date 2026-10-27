@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Model Policy — Orquestração de Modelos
@@ -127,10 +127,14 @@ Características:
    ↓
 /brainstorm (opcional — exploração e trade-offs)
    ↓
+/spec (opcional — modo síntese a partir do brainstorm, modelo intermediário)
+   ↓
 /plan (modelo inteligente)
    ↓
 /execute (modelo econômico)
 ```
+
+Bugs: `/workflow` → `/debug` (modelo intermediário ou avançado; feedback loop primeiro) → `/execute` (teste de regressão antes do fix).
 
 ---
 

@@ -1,10 +1,10 @@
 ---
 name: test-plan
-description: Gera plano de testes completo com cenários principais, casos de borda, segurança e regressão — detecta automaticamente o executor da stack (Vitest, Jest, Playwright, Pytest, RSpec) e inclui comandos concretos de execução. Saída: Status, Análise com executor detectado e comandos reais, Problemas e Próximos passos. Incompleto sem lista de execução concreta.
+description: Gera plano de testes completo a partir dos seams de teste acordados, com cenários principais, casos de borda, segurança e regressão — detecta automaticamente o executor da stack (Vitest, Jest, Playwright, Pytest, RSpec) e inclui comandos concretos de execução. Saída: Status, Análise com executor detectado e comandos reais, Problemas e Próximos passos. Incompleto sem lista de execução concreta.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 ## Referência normativa comum
@@ -14,6 +14,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolver essas referências conforme `_shared/target-adapter.md` (sem fallback fora do target ativo).
@@ -30,6 +31,22 @@ Criar um plano de testes completo e alinhado ao projeto.
 
 - `.agents` → regras técnicas
 - `docs` → regras de negócio
+- seções **Pontos de teste (seams)** e **Decisões de teste** da `/spec` (quando existirem)
+- termos de `.agents/domain/GLOSSARY.md` nos nomes dos testes
+
+---
+
+## Seams de teste (OBRIGATÓRIO)
+
+- Partir dos seams confirmados na `/spec`; se não houver spec, propor seams e **confirmar com o usuário** antes do plano.
+- Para cada seam proposto: uma linha sobre o que ele captura e o que ele não captura.
+- Testar comportamento pela interface pública; nenhum teste em seam não confirmado.
+
+## Anti-padrões (evitar)
+
+- **Acoplado à implementação:** mocka colaboradores internos, testa métodos privados ou verifica por canal lateral (ex.: consultar o banco em vez de usar a interface). Sinal: quebra no refactor sem mudança de comportamento.
+- **Tautológico:** a asserção recalcula o valor esperado do mesmo jeito que o código (`expect(soma(a, b)).toBe(a + b)`); valores esperados devem vir de fonte independente.
+- **Fatiamento horizontal:** escrever todos os testes antes de qualquer implementação; preferir fatias verticais (um teste → uma implementação → repetir).
 
 ---
 
@@ -110,6 +127,7 @@ Responda SEMPRE com:
 
 ## Análise
 
+- Seams de teste (confirmados)
 - Cenários cobertos
 - Estratégia de teste
 - Executor(es) detectados

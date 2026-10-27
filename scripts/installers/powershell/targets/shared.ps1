@@ -59,6 +59,17 @@ function Render-CommandWithSharedInjection {
       foreach ($sharedLine in $modelPolicyLines) { $result.Add($sharedLine) }
       continue
     }
+    # Demais blocos _shared/*.md (ex.: base-domain-model.md) são injetados genericamente.
+    if ($line -match '^\s*-\s+`?_shared/([A-Za-z0-9._-]+\.md)`?\s*$') {
+      $sharedName = $Matches[1]
+      $sharedPath = Join-Path $sharedDir $sharedName
+      if (-not (Test-Path $sharedPath)) {
+        Stop-WithError "Arquivo compartilhado não encontrado: $sharedPath"
+      }
+      $result.Add("### Conteúdo injetado: _shared/$sharedName")
+      foreach ($sharedLine in (Get-Content -Path $sharedPath)) { $result.Add($sharedLine) }
+      continue
+    }
     $result.Add($line)
   }
 

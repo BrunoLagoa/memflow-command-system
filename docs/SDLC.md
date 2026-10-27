@@ -35,6 +35,8 @@ idea -> definition -> planning -> development -> testing -> validation -> delive
 * Compare approaches before locking direction
 * Technical and product trade-offs
 * Validate assumptions against existing code
+* Questions in rounds over the decision frontier, each with a recommended answer
+* Domain language: glossary and ADRs in `.agents/domain/` (with confirmation)
 
 In this system:
 
@@ -65,6 +67,8 @@ In this system:
 
 * Expected behavior definition
 * Rules and flows
+* Test seams, testing decisions, and out of scope
+* Synthesis mode: from an approved `/brainstorm`, without a new interview
 
 In this system:
 
@@ -77,7 +81,7 @@ In this system:
 ## 3. Planning
 
 * Implementation strategy
-* Technical step definition
+* Vertical-slice tasks with explicit dependencies (`Bloqueado por`)
 
 In this system:
 
@@ -90,6 +94,8 @@ In this system:
 ## 4. Development
 
 * Code implementation
+* Next task picked from the plan frontier; optional TDD (red -> green) at agreed seams
+* Bugs: `/debug` builds a feedback loop first; the fix starts with a regression test
 
 In this system:
 
@@ -116,6 +122,7 @@ In this system:
 
 * Adherence verification
 * Technical and architectural quality
+* Two-axis technical review (Standards and Spec) with `/review-code`
 
 In this system:
 

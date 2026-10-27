@@ -4,7 +4,7 @@ description: Implementa código com base na decisão do /workflow respeitando `m
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "3.4.0"
+  version: "3.5.0"
 ---
 
 ## Referência normativa comum
@@ -14,6 +14,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -150,6 +151,8 @@ Quando houver plano salvo em `.md`:
 
 - ler o plano salvo antes de iniciar a implementação
 - mapear tarefas/subtarefas planejadas para a execução atual
+- escolher a próxima tarefa pela **fronteira**: tarefa pendente cujo `Bloqueado por` está todo `[x]` (ou `Nenhuma`)
+- NUNCA iniciar tarefa com bloqueio pendente; se a fronteira estiver vazia e restarem tarefas, marcar `[!]` e registrar o motivo
 - respeitar o modo de execução definido no plano:
   - `[P]` paralelizável: pode executar em paralelo com outras `[P]` quando não houver conflito
   - `[S]` sequencial: executar na ordem planejada
@@ -192,9 +195,38 @@ Se `.agents` ausente:
 
 ## Testes
 
+## Testes
+
 - detectar runtime  
 - rodar testes relevantes  
 - evitar regressão  
+
+### Modo TDD (quando a spec ou o `/test-plan` definirem seams)
+
+- testar **somente** nos seams acordados; nenhum teste em seam não confirmado
+- ciclo **red → green** por fatia vertical: um teste que falha → implementação mínima para passar → próximo teste
+- NÃO escrever todos os testes antes (fatiamento horizontal); cada teste responde ao que o ciclo anterior ensinou
+- NÃO antecipar testes futuros nem adicionar funcionalidade especulativa
+- valores esperados vêm de fonte independente (literal conhecido, exemplo resolvido, spec) — nunca recalculados como o código calcula
+- refatoração NÃO faz parte do ciclo: fica para a etapa de revisão (`/review-code`)
+- rodar typecheck e o arquivo de teste da fatia com frequência; a suíte completa ao final
+
+### Correção de bug (a partir de `/debug`)
+
+- partir do comando de reprodução (feedback loop) produzido pelo `/debug`
+- se existir **seam correto** (exercita o padrão real do bug no ponto de chamada):
+  1. transformar a reprodução minimizada em teste que falha nesse seam
+  2. ver o teste falhar
+  3. aplicar a correção
+  4. ver o teste passar
+  5. reexecutar o feedback loop original (não minimizado)
+- se NÃO existir seam correto: registrar isso como achado (limitação de arquitetura) em vez de criar teste raso que dê falsa confiança
+- checklist de limpeza obrigatório antes de concluir:
+  - reprodução original não reproduz mais
+  - teste de regressão passa (ou ausência de seam documentada)
+  - toda instrumentação `[DEBUG-...]` removida (buscar pelo prefixo)
+  - protótipos/scripts descartáveis removidos ou movidos para local claramente marcado
+  - hipótese confirmada registrada na mensagem de commit/PR sugerida
 
 ---
 

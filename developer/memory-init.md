@@ -4,7 +4,7 @@ description: Cria ou atualiza o memory.md com o contexto base do projeto — inc
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "4.3.0"
+  version: "4.4.0"
 ---
 
 ## Referência normativa comum
@@ -100,6 +100,21 @@ Regras:
 - NÃO recarregar automaticamente
 - NÃO reprocessar a cada execução
 - Recarregar apenas se houver mudança explícita
+
+---
+
+### Adicionar obrigatoriamente:
+
+## Modelo de domínio
+
+- Glossário: `.agents/domain/GLOSSARY.md` (criado sob demanda)
+- ADRs: `.agents/domain/adr/` (criados sob demanda)
+- Regras: `_shared/base-domain-model.md`
+
+Regras:
+
+- NÃO criar `.agents/domain/` no bootstrap
+- glossário e ADRs nascem em `/brainstorm`, `/spec`, `/plan` ou `/debug`, sempre com confirmação
 
 ---
 

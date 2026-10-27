@@ -1,10 +1,10 @@
 ---
 name: plan
-description: Creates a detailed implementation plan when /workflow decides PLAN FIRST, aligned with `model-policy.md` of the active target (via `_shared/target-adapter.md`) — sequence of steps, affected files, impact, risks, and success criteria. Do not write code. Output: Status (Plan created/Locked), Analysis with 9 subsections, Problems, and Next steps. Block on ambiguity. Next command: /execute.
+description: Creates a detailed implementation plan when /workflow decides PLAN FIRST, aligned with `model-policy.md` of the active target (via `_shared/target-adapter.md`) — vertical-slice tasks with explicit blocking edges (`Bloqueado por`), affected files, impact, risks, and success criteria. Do not write code. Output: Status (Plan created/Blocked), Analysis with 9 subsections, Problems, and Next steps. Block on ambiguity. Next command: /execute.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 ## Common normative reference
@@ -14,6 +14,7 @@ Mandatory application:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolve these references according to `_shared/target-adapter.md` (no fallback outside the active target).
@@ -163,6 +164,50 @@ Rules:
 
 ---
 
+## Vertical slices and dependencies (MANDATORY)
+
+Break the work into **vertical slices** (tracer bullets):
+
+- each slice cuts a narrow but **complete** path through every needed layer (e.g. schema, API, UI, tests) — vertical, NOT an isolated horizontal layer
+- each completed slice is demoable or verifiable on its own
+- each slice fits in a single execution context window
+- prefactoring comes first: "make the change easy, then make the easy change"
+
+Each task declares its **blocking edges**:
+
+- `Bloqueado por: T<n>, T<m>` or `Bloqueado por: Nenhuma`
+- block only on what genuinely prevents starting (not on aesthetic ordering)
+- the **frontier** is the set of pending tasks whose blockers are all completed `[x]`
+
+Deriving `[P]` / `[S]`:
+
+- task with a pending `Bloqueado por` → `[S]`
+- frontier tasks may be `[P]` only if they also meet the mandatory `[P]` criteria (see Execution tracking); otherwise → `[S]`
+
+### Wide refactor (exception to vertical slicing)
+
+When a mechanical change has a wide blast radius (rename a column, retype a shared symbol) and no slice can stay green on its own, sequence it as **expand → migrate → contract**:
+
+1. **Expand:** add the new form beside the old one, breaking nothing
+2. **Migrate:** migrate call sites in batches (per package/directory), each batch a task `Bloqueado por` the expand, keeping tests green
+3. **Contract:** delete the old form once no caller remains, `Bloqueado por` every batch
+
+### Language
+
+- task titles use the terms from `.agents/domain/GLOSSARY.md`; respect ADRs of the touched area
+
+### Breakdown review with the user
+
+Before marking `Plano criado`, present the breakdown (title, `Bloqueado por`, what it delivers) and ask in a structured dialog:
+
+- is the granularity right (too coarse / too fine)?
+- are the blocking edges correct?
+- should any task be merged or split?
+
+Iterate until explicit approval.
+
+---
+
 ## Limitations
 
 If Serena is NOT available:
@@ -242,7 +287,8 @@ If `.agents` is NOT available:
 - mandatory final granularity checklist: can each item be executed without ambiguity?
 - each step must include objective verification in the format:
   - `Step -> verify: test/command/expected evidence`
-- Classify each task as:
+- each task is a vertical slice and declares `Bloqueado por: T<n> | Nenhuma`
+- Classify each task as (derived from the blocking edges):
   - `[P]` parallelizable (can run in parallel)
   - `[S]` sequential (depends on order)
 
@@ -312,10 +358,10 @@ Recommended base template:
 ```md
 ### Execution progress
 
-- [P][ ] Task 1
+- [P][ ] T1 — Task 1 · Bloqueado por: Nenhuma
   - [S][-] Subtask 1.1
   - [P][x] Subtask 1.2
-- [S][!] Task 2 (blocking reason)
+- [S][!] T2 — Task 2 · Bloqueado por: T1 (blocking reason)
   - Unblocking action: <objective action>
   - Responsible party: <user | agent | external system>
   - Exit criteria: <condition to return to [ ] or [-]>

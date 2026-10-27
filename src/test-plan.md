@@ -1,10 +1,10 @@
 ---
 name: test-plan
-description: Generates complete test plan with main scenarios, edge cases, security and regression — automatically detects the stack executor (Vitest, Jest, Playwright, Pytest, RSpec) and includes concrete execution commands. Output: Status, Analysis with detected executor and real commands, Problems and Next steps. Incomplete without concrete execution list.
+description: Generates complete test plan from the agreed test seams, with main scenarios, edge cases, security and regression — automatically detects the stack executor (Vitest, Jest, Playwright, Pytest, RSpec) and includes concrete execution commands. Output: Status, Analysis with detected executor and real commands, Problems and Next steps. Incomplete without concrete execution list.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 ## Common normative reference
 
@@ -13,6 +13,7 @@ Mandatory application:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolve these references according to `_shared/target-adapter.md` (no fallback outside the active target).
@@ -29,6 +30,22 @@ Create a complete test plan aligned with the project.
 
 - `.agents` → technical rules
 - `docs` → business rules
+- **Test seams** and **Testing decisions** sections of `/spec` (when they exist)
+- terms from `.agents/domain/GLOSSARY.md` in test names
+
+---
+
+## Test seams (MANDATORY)
+
+- Start from the seams confirmed in `/spec`; if there is no spec, propose seams and **confirm with the user** before the plan.
+- For each proposed seam: one line on what it catches and what it misses.
+- Test behavior through the public interface; no test at an unconfirmed seam.
+
+## Anti-patterns (avoid)
+
+- **Implementation-coupled:** mocks internal collaborators, tests private methods or verifies through a side channel (e.g. querying the database instead of using the interface). Tell: it breaks on refactor without behavior change.
+- **Tautological:** the assertion recomputes the expected value the same way the code does (`expect(add(a, b)).toBe(a + b)`); expected values must come from an independent source.
+- **Horizontal slicing:** writing all tests before any implementation; prefer vertical slices (one test → one implementation → repeat).
 
 ---
 
@@ -103,12 +120,13 @@ ALWAYS respond with:
 
 ## Status
 
-- Test plan created / Locked
+- Test plan created / Blocked
 
 ---
 
 ## Analysis
 
+- Test seams (confirmed)
 - Scenarios covered
 - Testing strategy
 - Executor(s) detected

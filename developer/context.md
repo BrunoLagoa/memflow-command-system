@@ -4,7 +4,7 @@ description: Primeiro comando do fluxo — carrega memória (decisões, estado e
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "8.3.3"
+  version: "8.4.0"
 ---
 
 ## Regra de ativação do comando (CRÍTICO)
@@ -25,6 +25,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -221,6 +222,28 @@ Se não existirem:
 
 ---
 
+# Modelo de domínio (glossário e ADRs)
+
+Aplicar `_shared/base-domain-model.md` em modo **leitura**.
+
+Verificar existência de:
+
+- `.agents/domain/GLOSSARY.md`
+- `.agents/domain/adr/*.md`
+
+Se existirem:
+
+- carregar o glossário (termos canônicos e termos a evitar)
+- carregar **somente os títulos** dos ADRs (conteúdo sob demanda, pela área tocada)
+- sinalizar ao `/workflow` o vocabulário e as decisões arquiteturais vigentes
+
+Se não existirem:
+
+- registrar ausência explicitamente (sem bloquear)
+- NÃO criar arquivos de domínio no `/context`
+
+---
+
 # Contexto sob demanda
 
 - docs
@@ -281,6 +304,7 @@ Se não houver MCP disponível:
 - Qualidade: alta/media/baixa
 - Sinais: nenhum / detectados
 - Skills no projeto: SIM / NÃO
+- Domínio: N termos, M ADRs / ausente
 - Invariantes anti-compaction: OK / Reidratados
 
 ---
@@ -291,6 +315,7 @@ Se não houver MCP disponível:
 - Memória: SIM / NÃO
 - Métricas: SIM / NÃO
 - Skills: SIM / NÃO
+- Domínio: SIM / NÃO
 - Invariantes anti-compaction: OK / Reidratados / Falhou
 - Modo: Normal / Degradado / Otimizado
 
@@ -302,6 +327,7 @@ Se não houver MCP disponível:
 - uso de métricas
 - sinais detectados
 - skills disponíveis (quando houver)
+- modelo de domínio: termos e ADRs disponíveis (quando houver)
 - status de invariantes anti-compaction (pt-BR + Memflow)
 
 ---

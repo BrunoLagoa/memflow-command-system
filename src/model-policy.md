@@ -4,7 +4,7 @@ license: MIT
 hidden: true
 metadata:
   author: BrunoCastro
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Model Policy — Model Orchestration
@@ -128,10 +128,14 @@ Features:
    ↓
 /brainstorm (optional — exploration and trade-offs)
    ↓
-/plan (modelo inteligente)
+/spec (optional — synthesis mode from the brainstorm, intermediate model)
+   ↓
+/plan (smart model)
    ↓
 /execute (economic model)
 ```
+
+Bugs: `/workflow` → `/debug` (intermediate or advanced model; feedback loop first) → `/execute` (regression test before the fix).
 
 
 ---

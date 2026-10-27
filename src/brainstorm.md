@@ -1,10 +1,10 @@
 ---
 name: brainstorm
-description: Structured brainstorming before any implementation — explores the problem in conversational phases, generates 2 to 5 approaches with pros/cons, proposed design, risks and recommendation. Includes HARD-GATE anti-bypass, dialog with selectable options, self-review, save gate and readiness criteria (DoD). Output: Status, Analysis, Problems and Next steps. Prerequisite: /context. Next step: /prd, /spec or /plan (depending on gate). It doesn't implement anything.
+description: Structured brainstorming before any implementation — explores the problem in conversational phases, generates 2 to 5 approaches with pros/cons, proposed design, risks and recommendation. Includes HARD-GATE anti-bypass, questions in rounds over the decision frontier with selectable options and a recommended answer, domain model refinement (glossary and ADRs), self-review, save gate and readiness criteria (DoD). Output: Status, Analysis, Problems and Next steps. Prerequisite: /context. Next step: /prd, /spec or /plan (depending on gate). It doesn't implement anything.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 ## Common normative reference
 
@@ -13,6 +13,7 @@ Mandatory application:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolve these references according to `_shared/target-adapter.md` (no fallback outside the active target).
@@ -123,7 +124,9 @@ Execute in order. Don't skip phases. Proceed only after validating the current p
 - Explore `.agents`, `docs` and real code (Serena, when available)
 - If the scope describes multiple independent subsystems → **decompose first** (see section below)
 - Identify validated assumptions vs. not validated
-- Ask **one question at a time** for remaining gaps
+- Look up on your own every **fact** available in code, docs or MCP (see Question rounds)
+- Ask the remaining **decisions** in **frontier rounds** (see Question rounds)
+- Apply domain refinement: challenge terms against the glossary and sharpen fuzzy language
 - Validate understanding before moving forward
 
 ### Phase 2 — Approaches
@@ -133,14 +136,17 @@ Execute in order. Don't skip phases. Proceed only after validating the current p
 - Base on real code standards when possible
 - **DO NOT** close a single solution yet
 
-### Phase 3 — Design and recommendation- Present proposed design (scale by complexity)
+### Phase 3 — Design and recommendation
+
+- Present proposed design (scale by complexity)
 - Define success criteria, risks and adherence to the project
 - Register recommendation, rejected options and confidence
 - Request validation of the recommendation from the user
 
-### Phase 4 — Self-review, rescue and handoff
+### Phase 4 — Self-review, save and handoff
 
 - Perform self-review (see section below)
+- Confirm recording of resolved domain terms and candidate ADRs (see Domain model)
 - Ask save gate (if not already answered)
 - Set next command: `/prd`, `/spec` or `/plan`
 - Mark readiness status only after explicit approval
@@ -153,11 +159,55 @@ When you need user input:
 
 - present options in a structured and selectable dialog
 - **prefer multiple choice** (A/B/C/D) instead of open-ended question
-- **one question per message**
+- **one round per message** (see Question rounds); each question in the round has its own options
+- mark the recommended option with `(Recomendado)` and list it first
 - include option `Other` when it makes sense
 - if user chooses `Other` → request details afterwards (free text only at this stage)
 - if answer ambiguous → repeat the same dialogue until explicit selection
 - record in the analysis which option was chosen
+
+---
+
+## Question rounds (decision frontier)
+
+Map open questions as a **decision tree**: each decision opens the decisions that depend on it.
+
+- **Frontier** = decisions whose prerequisites are already settled (can be asked now without guessing answers not yet heard).
+- Ask **the whole frontier in one round**, numbering the questions and including a recommended answer for each.
+- A question whose answer depends on another still open in the same round belongs to a **later** round.
+- After each round, recompute the frontier with the answers received and move to the next one.
+- Practical limit: up to 4 questions per round; if the frontier is larger, prioritize those that unblock the most decisions.
+
+**Facts are the agent's job; decisions are the user's.**
+
+- NEVER ask the user something that can be found in the code, `.agents`, `docs` or MCP.
+- While a fact is being looked up, ask only the decisions that do not depend on it.
+
+Round format (text, when the target has no native question tool):
+
+```
+❓ **P1 — <title>**: <short context of the decision>
+  A) <option> (Recomendado)
+  B) <option>
+  C) Outra
+
+❓ **P2 — <title>**: ...
+```
+
+- When the target offers a native question tool with selectable options, use it with the questions of the round.
+- Phase 1 ends when the frontier is empty: every branch visited, nothing silently assumed.
+
+---
+
+## Domain model
+
+Apply `_shared/base-domain-model.md` in **active refinement** mode:
+
+- use the vocabulary of `.agents/domain/GLOSSARY.md` in questions, approaches and design
+- challenge conflicting terms and propose canonical terms during the rounds
+- cross-reference user statements with the real code
+- respect existing ADRs; explicitly flag any approach that contradicts an ADR
+- at the end of each phase (and mandatorily in phase 4), list resolved terms and candidate ADRs and ask for confirmation before writing
 
 ---
 
@@ -193,7 +243,9 @@ Prefer smaller units with clear interfaces and single responsibility.
 
 ---
 
-## Rules1. Build on:
+## Rules
+
+1. Build on:
    - `.agents` (technical restrictions)
    - `docs` (product objectives)
    - Serena MCP (when available, to validate the real code)
@@ -253,6 +305,7 @@ Run inline before marking `Pronto para /prd`, `Pronto para /spec` or `Pronto par
 | Consistency | Contradictions between approaches, design and recommendation |
 | Scope | Does it fit into a single `/plan` or does it need to be broken down into sub-projects? |
 | Ambiguity | Any requirements interpretable in two different ways? |
+| Language | Do the terms used match the glossary? Is there a vague or overloaded term left unresolved? |
 
 Fix issues inline. Do not mark readiness while there is an issue that compromises the handoff.
 
@@ -337,6 +390,11 @@ Under **Analysis**, include the `###` subsections applicable to the current phas
 
 - Low / Medium / High
 
+### Domain language
+
+- Resolved terms (canonical and `_Avoid_`)
+- Proposed and recorded ADRs (or reason for not proposing)
+
 ### Current phase
 
 - Indicate process phase (e.g.: `2/4 — Abordagens`)
@@ -360,7 +418,8 @@ Only use status `Pronto para /prd`, `Pronto para /spec` or `Pronto para /plan` i
 - defined success criteria
 - justified recommendation with explicit handoff
 - rejected options recorded with reason
-- self-review completed (4 checks)
+- self-review completed (5 checks)
+- resolved domain terms recorded or explicitly postponed
 - registered save preference
 - explicit user approval to proceed to the next command
 

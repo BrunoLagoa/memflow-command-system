@@ -1,10 +1,10 @@
 ---
 name: spec
-description: Transforms PRD into detailed, deterministic and executable technical specification. Defines system behavior, input/saoutput contracts, flows, states and rules. Basis for /plan — no assumptions. In case of ambiguity or technical trade-off, it can present options and even block the user's decision. Does not implement. Blocks if there is unresolved ambiguity.
+description: Transforms PRD (or approved brainstorm, in synthesis mode without a new interview) into detailed, deterministic and executable technical specification. Defines system behavior, input/output contracts, flows, states and rules, plus test seams, testing decisions and out of scope using the domain language. Basis for /plan — no assumptions. In case of ambiguity or technical trade-off, it can present options and even block the user's decision. Does not implement. Blocks if there is unresolved ambiguity.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 ## Common normative reference
@@ -14,6 +14,7 @@ Mandatory application:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -60,8 +61,24 @@ This command:
 
 ## Mandatory precondition
 
-- PRD must be complete
-- If PRD is incomplete → BLOCK
+Require **one** of the input sources:
+
+- **Complete PRD** (default flow), or
+- **Approved `/brainstorm`** — in the current session or saved under `.agents/docs/brainstorm/` — with handoff `Pronto para /spec` (**synthesis mode**)
+
+If no valid source exists → BLOCK
+
+---
+
+## Synthesis mode (from `/brainstorm`)
+
+When the source is an approved `/brainstorm`:
+
+- DO NOT interview the user again: synthesize what was already decided (chosen approach, proposed design, risks, success criteria, resolved terms)
+- explore the code only to confirm current state and test seams
+- reference the brainstorm (path, when saved) instead of repeating its content
+- ask **only** when there is a technical trade-off left undecided in the brainstorm (see *Technical ambiguity, trade-offs and user choice*)
+- the save confirmation gate remains mandatory
 
 ## Mandatory save confirmation (BEFORE any spec generation)
 
@@ -214,6 +231,39 @@ For each entity or aggregate:
 
 ---
 
+## 10. Test seams
+
+**Scope:** where behavior will be verified — the public interface at which behavior is observed without reaching inside.
+
+- prefer **existing** seams over new ones
+- use the **highest possible** seam (the fewer seams, the better; the ideal is one)
+- for each seam: what it catches and what it misses
+- **confirm the seams with the user** before finalizing the spec
+
+---
+
+## 11. Testing decisions
+
+- what makes a good test for this feature (test external behavior, not implementation details)
+- modules that will be tested
+- references to similar existing tests in the codebase (prior art)
+
+---
+
+## 12. Out of scope
+
+- what will consciously **not** be delivered in this spec (and why, when not obvious)
+
+---
+
+## Language and durability
+
+- use the terms from `.agents/domain/GLOSSARY.md` throughout the spec; respect ADRs of the touched area
+- avoid specific file paths and implementation snippets (they go stale fast); contracts (JSON, schemas, types) and module names are allowed
+- new terms resolved during the spec follow the confirmed writing rule of `_shared/base-domain-model.md`
+
+---
+
 ## Integration with `/plan` (CRITICAL)
 
 - This specification should allow plan creation **without assumptions**
@@ -234,7 +284,8 @@ Before finishing, answer:
 
 ## Blocking rules
 
-- If PRD is incomplete → STOP
+- If there is neither a complete PRD nor an approved `/brainstorm` → STOP
+- If test seams are not confirmed with the user → STOP
 - If there is ambiguity → STOP
 - If technical information necessary to implement is missing → STOP
 - If there is a conflict with `.agents` → STOP
@@ -246,7 +297,7 @@ Before finishing, answer:
 
 - DO NOT implement
 - DO NOT generate code
-- DO NOT assume behavior not derivable from PRD + explicit decisions in this spec
+- DO NOT assume behavior not derivable from the input source (PRD or approved brainstorm) + explicit decisions in this spec
 - This command defines technical basis for the plan
 
 ---
@@ -255,7 +306,7 @@ Before finishing, answer:
 
 ## Status
 
-- Specification created / Locked
+- Specification created / Blocked
 
 ---
 
@@ -265,6 +316,18 @@ Before finishing, answer:
 
 - User decision: Save / Don't save
 - When to save: Defined documentation destination
+
+---
+
+### Input source
+
+- PRD / approved `/brainstorm` (synthesis mode) — with reference
+
+---
+
+### Confirmed test seams
+
+- seams agreed with the user
 
 ---
 

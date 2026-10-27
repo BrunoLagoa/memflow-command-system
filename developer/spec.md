@@ -1,10 +1,10 @@
 ---
 name: spec
-description: Transforma PRD em especificação técnica detalhada, determinística e executável. Define comportamento do sistema, contratos de entrada/saída, fluxos, estados e regras. Base para /plan — sem suposições. Em ambiguidade ou trade-off técnico, pode apresentar opções e bloqueia até decisão do usuário. Não implementa. Bloqueia se houver ambiguidade não resolvida.
+description: Transforma PRD (ou brainstorm aprovado, em modo síntese sem nova entrevista) em especificação técnica detalhada, determinística e executável. Define comportamento do sistema, contratos de entrada/saída, fluxos, estados e regras. Define pontos de teste (seams), decisões de teste e fora de escopo usando a linguagem do domínio. Base para /plan — sem suposições. Em ambiguidade ou trade-off técnico, pode apresentar opções e bloqueia até decisão do usuário. Não implementa. Bloqueia se houver ambiguidade não resolvida.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 ## Referência normativa comum
@@ -14,6 +14,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 
@@ -60,8 +61,24 @@ Este comando:
 
 ## Pré-condição obrigatória
 
-- PRD deve estar completo
-- Se PRD estiver incompleto → BLOQUEAR
+Exigir **uma** das fontes de entrada:
+
+- **PRD completo** (fluxo padrão), ou
+- **`/brainstorm` aprovado** — na sessão atual ou salvo em `.agents/docs/brainstorm/` — com handoff `Pronto para /spec` (**modo síntese**)
+
+Se nenhuma fonte válida existir → BLOQUEAR
+
+---
+
+## Modo síntese (a partir de `/brainstorm`)
+
+Quando a fonte for um `/brainstorm` aprovado:
+
+- **NÃO** entrevistar o usuário novamente: sintetizar o que já foi decidido (abordagem escolhida, design proposto, riscos, critérios de sucesso, termos resolvidos)
+- explorar o código apenas para confirmar estado atual e pontos de teste
+- referenciar o brainstorm (path, quando salvo) em vez de repetir o conteúdo
+- perguntar **somente** quando houver trade-off técnico não decidido no brainstorm (ver *Ambiguidade técnica, trade-offs e escolha do usuário*)
+- o gate de confirmação de salvamento continua obrigatório
 
 ## Confirmação obrigatória de salvamento (ANTES de qualquer geração de spec)
 
@@ -212,6 +229,39 @@ Para cada entidade ou agregado:
 
 ---
 
+## 10. Pontos de teste (seams)
+
+**Escopo:** onde o comportamento será verificado — a interface pública na qual se observa o comportamento sem olhar para dentro.
+
+- preferir seams **existentes** a novos
+- usar o seam **mais alto possível** (quanto menos seams, melhor; o ideal é um)
+- para cada seam: o que ele captura e o que ele não captura
+- **confirmar os seams com o usuário** antes de finalizar a spec
+
+---
+
+## 11. Decisões de teste
+
+- o que é um bom teste nesta feature (testar comportamento externo, não detalhes de implementação)
+- módulos que serão testados
+- referências de testes semelhantes já existentes no código (prior art)
+
+---
+
+## 12. Fora de escopo
+
+- o que conscientemente **não** será entregue nesta spec (e por quê, quando não for óbvio)
+
+---
+
+## Linguagem e durabilidade
+
+- usar os termos de `.agents/domain/GLOSSARY.md` em toda a spec; respeitar ADRs da área tocada
+- evitar caminhos de arquivo específicos e trechos de implementação (envelhecem rápido); contratos (JSON, esquemas, tipos) e nomes de módulos são permitidos
+- termos novos resolvidos durante a spec seguem a escrita com confirmação de `_shared/base-domain-model.md`
+
+---
+
 ## Integração com `/plan` (CRÍTICO)
 
 - Esta especificação deve permitir criação de plano **sem suposições**
@@ -232,7 +282,8 @@ Antes de finalizar, responder:
 
 ## Regras de bloqueio
 
-- Se PRD estiver incompleto → PARAR
+- Se não houver PRD completo nem `/brainstorm` aprovado → PARAR
+- Se seams de teste não estiverem confirmados com o usuário → PARAR
 - Se houver ambiguidade → PARAR
 - Se faltar informação técnica necessária para implementar → PARAR
 - Se houver conflito com `.agents` → PARAR
@@ -244,7 +295,7 @@ Antes de finalizar, responder:
 
 - NÃO implementar
 - NÃO gerar código
-- NÃO assumir comportamento não derivável do PRD + decisões explícitas nesta spec
+- NÃO assumir comportamento não derivável da fonte de entrada (PRD ou brainstorm aprovado) + decisões explícitas nesta spec
 - Este comando define base técnica para o plano
 
 ---
@@ -263,6 +314,18 @@ Antes de finalizar, responder:
 
 - Decisão do usuário: Salvar / Não salvar
 - Quando salvar: destino de documentação definido
+
+---
+
+### Fonte de entrada
+
+- PRD / `/brainstorm` aprovado (modo síntese) — com referência
+
+---
+
+### Pontos de teste confirmados
+
+- seams acordados com o usuário
 
 ---
 

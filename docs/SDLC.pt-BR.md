@@ -35,6 +35,8 @@ ideia → definição → planejamento → desenvolvimento → testes → valida
 * Comparar abordagens antes de fechar direção
 * Trade-offs técnicos e de produto
 * Validação de premissas no código existente
+* Perguntas em rodadas por fronteira de decisões, cada uma com resposta recomendada
+* Linguagem do domínio: glossário e ADRs em `.agents/domain/` (com confirmação)
 
 👉 No sistema:
 
@@ -65,6 +67,8 @@ Handoff típico: `/brainstorm` → `/prd`, `/spec` ou `/plan` (conforme gate).
 
 * Definição do comportamento esperado
 * Regras e fluxos
+* Seams de teste, decisões de teste e fora de escopo
+* Modo síntese: a partir de `/brainstorm` aprovado, sem nova entrevista
 
 👉 No sistema:
 
@@ -77,7 +81,7 @@ Handoff típico: `/brainstorm` → `/prd`, `/spec` ou `/plan` (conforme gate).
 ## 3. 🧠 Planejamento
 
 * Estratégia de implementação
-* Definição de passos técnicos
+* Tarefas em fatias verticais com dependências explícitas (`Bloqueado por`)
 
 👉 No sistema:
 
@@ -90,6 +94,8 @@ Handoff típico: `/brainstorm` → `/prd`, `/spec` ou `/plan` (conforme gate).
 ## 4. ⚙️ Desenvolvimento
 
 * Implementação do código
+* Próxima tarefa escolhida pela fronteira do plano; TDD opcional (red → green) nos seams acordados
+* Bugs: `/debug` constrói feedback loop primeiro; a correção começa pelo teste de regressão
 
 👉 No sistema:
 
@@ -116,6 +122,7 @@ Handoff típico: `/brainstorm` → `/prd`, `/spec` ou `/plan` (conforme gate).
 
 * Verificação de aderência
 * Qualidade técnica e arquitetural
+* Review técnico em dois eixos (Padrões e Spec) com `/review-code`
 
 👉 No sistema:
 

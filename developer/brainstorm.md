@@ -1,10 +1,10 @@
 ---
 name: brainstorm
-description: Brainstorming estruturado antes de qualquer implementação — explora o problema em fases conversacionais, gera 2 a 5 abordagens com prós/contras, design proposto, riscos e recomendação. Inclui HARD-GATE anti-bypass, diálogo com opções selecionáveis, auto-revisão, gate de salvamento e critérios de prontidão (DoD). Saída: Status, Análise, Problemas e Próximos passos. Pré-requisito: /context. Próximo passo: /prd, /spec ou /plan (conforme gate). Não implementa nada.
+description: Brainstorming estruturado antes de qualquer implementação — explora o problema em fases conversacionais, gera 2 a 5 abordagens com prós/contras, design proposto, riscos e recomendação. Inclui HARD-GATE anti-bypass, perguntas em rodadas por fronteira de decisões com opções selecionáveis e resposta recomendada, refinamento do modelo de domínio (glossário e ADRs), auto-revisão, gate de salvamento e critérios de prontidão (DoD). Saída: Status, Análise, Problemas e Próximos passos. Pré-requisito: /context. Próximo passo: /prd, /spec ou /plan (conforme gate). Não implementa nada.
 license: MIT
 metadata:
   author: BrunoCastro
-  version: "1.3.0"
+  version: "1.4.0"
 ---
 
 ## Referência normativa comum
@@ -14,6 +14,7 @@ Aplicar obrigatoriamente:
 - `_shared/base-output.md`
 - `_shared/base-preconditions.md`
 - `_shared/base-degraded-mode.md`
+- `_shared/base-domain-model.md`
 - `_shared/target-adapter.md`
 - `model-policy.md`
 - Resolver essas referências conforme `_shared/target-adapter.md` (sem fallback fora do target ativo).
@@ -126,7 +127,9 @@ Executar em ordem. Não pular fases. Avançar só após validação da fase atua
 - Explorar `.agents`, `docs` e código real (Serena, quando disponível)
 - Se o escopo descrever múltiplos subsistemas independentes → **decompor primeiro** (ver seção abaixo)
 - Identificar premissas validadas vs. não validadas
-- Fazer **uma pergunta por vez** para lacunas restantes
+- Levantar por conta própria todo **fato** disponível no código, docs ou MCP (ver Rodadas de perguntas)
+- Perguntar as **decisões** restantes em **rodadas por fronteira** (ver Rodadas de perguntas)
+- Aplicar refinamento de domínio: desafiar termos contra o glossário e afiar linguagem vaga
 - Validar entendimento antes de avançar
 
 ### Fase 2 — Abordagens
@@ -146,6 +149,7 @@ Executar em ordem. Não pular fases. Avançar só após validação da fase atua
 ### Fase 4 — Auto-revisão, salvamento e handoff
 
 - Executar auto-revisão (ver seção abaixo)
+- Confirmar registro de termos de domínio resolvidos e ADRs candidatos (ver Modelo de domínio)
 - Perguntar gate de salvamento (se ainda não respondido)
 - Definir próximo comando: `/prd`, `/spec` ou `/plan`
 - Marcar status de prontidão somente após aprovação explícita
@@ -158,11 +162,55 @@ Quando precisar de input do usuário:
 
 - apresentar opções em diálogo estruturado e selecionável
 - **preferir múltipla escolha** (A/B/C/D) em vez de pergunta aberta
-- **uma pergunta por mensagem**
+- **uma rodada por mensagem** (ver Rodadas de perguntas); cada pergunta da rodada tem suas próprias opções
+- marcar a opção recomendada com `(Recomendado)` e listá-la primeiro
 - incluir opção `Outra` quando fizer sentido
 - se escolher `Outra` → solicitar detalhe em seguida (texto livre apenas nessa etapa)
 - se resposta ambígua → repetir o mesmo diálogo até seleção explícita
 - registrar na análise qual opção foi escolhida
+
+---
+
+## Rodadas de perguntas (fronteira de decisões)
+
+Mapear as dúvidas como uma **árvore de decisões**: cada decisão abre as decisões que dependem dela.
+
+- **Fronteira** = decisões cujos pré-requisitos já estão resolvidos (dá para perguntar agora sem adivinhar respostas ainda não ouvidas).
+- Perguntar **toda a fronteira em uma rodada**, numerando as perguntas e incluindo resposta recomendada em cada uma.
+- Pergunta cuja resposta depende de outra ainda aberta na mesma rodada vai para uma rodada **posterior**.
+- Após cada rodada, recalcular a fronteira com as respostas recebidas e seguir para a próxima.
+- Limite prático: até 4 perguntas por rodada; se a fronteira for maior, priorizar as que desbloqueiam mais decisões.
+
+**Fatos são trabalho do agente; decisões são do usuário.**
+
+- NUNCA perguntar ao usuário algo que pode ser descoberto no código, `.agents`, `docs` ou MCP.
+- Enquanto um fato estiver sendo levantado, perguntar apenas as decisões que não dependem dele.
+
+Formato da rodada (texto, quando não houver ferramenta nativa de perguntas no target):
+
+```
+❓ **P1 — <título>**: <contexto curto da decisão>
+  A) <opção> (Recomendado)
+  B) <opção>
+  C) Outra
+
+❓ **P2 — <título>**: ...
+```
+
+- Quando o target oferecer ferramenta nativa de perguntas com opções selecionáveis, usá-la com as perguntas da rodada.
+- A fase 1 termina quando a fronteira estiver vazia: todos os ramos visitados, nada assumido silenciosamente.
+
+---
+
+## Modelo de domínio
+
+Aplicar `_shared/base-domain-model.md` em modo **refinamento ativo**:
+
+- usar o vocabulário de `.agents/domain/GLOSSARY.md` em perguntas, abordagens e design
+- desafiar termos conflitantes e propor termos canônicos durante as rodadas
+- cruzar afirmações do usuário com o código real
+- respeitar ADRs existentes; sinalizar explicitamente qualquer abordagem que contradiga um ADR
+- ao final de cada fase (e obrigatoriamente na fase 4), listar termos resolvidos e ADRs candidatos e pedir confirmação antes de gravar
 
 ---
 
@@ -262,6 +310,7 @@ Executar inline antes de marcar `Pronto para /prd`, `Pronto para /spec` ou `Pron
 | Consistência | Contradições entre abordagens, design e recomendação |
 | Escopo | Cabe em um único `/plan` ou precisa decomposição em sub-projetos? |
 | Ambiguidade | Algum requisito interpretável de duas formas diferentes? |
+| Linguagem | Termos usados batem com o glossário? Há termo vago ou sobrecarregado sem resolução? |
 
 Corrigir problemas inline. Não marcar prontidão enquanto houver issue que comprometa o handoff.
 
@@ -348,6 +397,11 @@ Em **Análise**, inclua as subseções `###` aplicáveis à fase atual. Na fase 
 
 - Baixa / Média / Alta
 
+### Linguagem do domínio
+
+- Termos resolvidos (canônico e `_Evitar_`)
+- ADRs propostos e gravados (ou motivo para não propor)
+
 ### Fase atual
 
 - Indicar fase do processo (ex.: `2/4 — Abordagens`)
@@ -371,7 +425,8 @@ Só use status `Pronto para /prd`, `Pronto para /spec` ou `Pronto para /plan` se
 - critérios de sucesso definidos
 - recomendação justificada com handoff explícito
 - opções rejeitadas registradas com motivo
-- auto-revisão concluída (4 checks)
+- auto-revisão concluída (5 checks)
+- termos de domínio resolvidos registrados ou explicitamente adiados
 - preferência de salvamento registrada
 - aprovação explícita do usuário para seguir ao próximo comando
 

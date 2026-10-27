@@ -141,14 +141,18 @@ Resolução especializada para o dia a dia, chamada pelo workflow conforme a nec
 
 ### Principais diferenciais
 
-- **Exploração estruturada** — `/brainstorm` compara 2–5 abordagens em diálogo por fases, com HARD-GATE, auto-revisão, salvamento opcional de artefato e handoff para `/prd`, `/spec` ou `/plan`.
+- **Exploração estruturada** — `/brainstorm` compara 2–5 abordagens em diálogo por fases, com perguntas em rodadas por fronteira de decisões (cada uma com resposta recomendada), HARD-GATE, auto-revisão, salvamento opcional de artefato e handoff para `/prd`, `/spec` ou `/plan`.
+- **Linguagem do domínio** — glossário (`.agents/domain/GLOSSARY.md`) e ADRs (`.agents/domain/adr/`) construídos durante `/brainstorm`, `/spec`, `/plan` e `/debug`, sempre com confirmação, e lidos pelo `/context`.
+- **Spec por síntese** — `/spec` transforma um `/brainstorm` aprovado em especificação sem nova entrevista, com seams de teste, decisões de teste e fora de escopo.
+- **Debug com feedback loop** — `/debug` só levanta hipóteses depois de ter um comando que reproduz o bug; a correção no `/execute` começa pelo teste de regressão.
+- **Review em dois eixos** — `/review-code` avalia Padrões e Spec separadamente sobre o diff desde um ponto fixo.
 - **Reaproveitamento de decisões por score** — decisões com score alto são reaproveitadas automaticamente entre sessões.
 - **Política de modelo custo/qualidade** — modelo principal + fallbacks no mesmo nível; escala só quando justificado.
 - **Modo degradado funcional** — continua operando mesmo sem `.agents`.
 - **Persistência inteligente de memória** — versionamento de decisões com semântica `(update)`.
 - **Re-hidratação anti-compaction** — invariantes pt-BR + identidade Memflow restauradas via `/context` e `/workflow`.
 - **Integração MCP** — código, memória contextual e documentação externa.
-- **Planos vivos** — quando `/plan` é salvo, as tarefas são dimensionadas por complexidade com marcadores de status (`[ ]`, `[-]`, `[x]`, `[!]`) e modos de execução (`[P]` paralelo, `[S]` sequencial).
+- **Planos vivos** — quando `/plan` é salvo, as tarefas são fatias verticais com dependências explícitas (`Bloqueado por`), marcadores de status (`[ ]`, `[-]`, `[x]`, `[!]`) e modos de execução (`[P]` paralelo, `[S]` sequencial) derivados das dependências.
 
 ---
 
@@ -166,6 +170,9 @@ Termos que aparecem no projeto, em uma linha cada:
 | Re-hidratação anti-compaction| Restauração de invariantes (idioma pt-BR e identidade Memflow) quando o histórico é compactado.  |
 | MCP                          | Model Context Protocol — integração com código, memória contextual e docs externas.             |
 | Planos vivos                 | Planos do `/plan` com tarefas marcadas por status e modo de execução, atualizados ao longo do trabalho. |
+| Glossário / ADR              | Linguagem ubíqua do projeto e registro curto de decisões difíceis de reverter, em `.agents/domain/`. |
+| Seam                         | Interface pública onde o comportamento é testado, acordada na `/spec` e usada no `/test-plan` e `/execute`. |
+| Feedback loop                | Comando rápido e determinístico que fica vermelho no bug; pré-requisito das hipóteses no `/debug`.  |
 
 ---
 
@@ -262,6 +269,12 @@ Se você vai mexer no código dos comandos, atenção a como o projeto é organi
 - Os targets do instalador (`opencode`, `cursor`, `vscode`, `claude`) continuam consumindo `src/`.
 
 Quando houver mudança de comportamento dos comandos, mantenha `developer/` e `src/` sincronizados com a mesma estrutura de arquivos.
+
+Blocos normativos em `_shared/` referenciados como item de lista (`- \`_shared/<nome>.md\``) são injetados automaticamente pelos instaladores no comando gerado.
+
+### Créditos
+
+As práticas de glossário/ADR, rodadas de perguntas, spec por síntese, fatias verticais, feedback loop de debug e review em dois eixos foram inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) e adaptadas aos gates do Memflow.
 
 ## Pessoas
 
