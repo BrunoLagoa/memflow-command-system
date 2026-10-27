@@ -67,13 +67,19 @@ render_cursor_command_with_shared() {
   local src_file="$1"
   local dest_file="$2"
   local source_dir="$3"
+  local adapter_name="target-adapter.cursor.md"
+
+  # Releases anteriores à 1.4.0 não têm adaptador próprio do Cursor.
+  if [[ ! -f "${source_dir}/_shared/${adapter_name}" ]]; then
+    adapter_name="target-adapter.md"
+  fi
 
   render_command_with_shared_injection \
     "$src_file" \
     "$dest_file" \
     "$source_dir" \
-    "target-adapter.cursor.md" \
-    "### Conteúdo injetado: _shared/target-adapter.cursor.md"
+    "$adapter_name" \
+    "### Conteúdo injetado: _shared/${adapter_name}"
 
   strip_cursor_frontmatter "$dest_file"
 }

@@ -4,6 +4,12 @@ Todas as mudanças relevantes deste projeto serão documentadas neste arquivo.
 
 O formato segue o padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.4.1] - 2026-10-27
+
+### Corrigido
+- Instaladores Bash e PowerShell (target `cursor`): quando a release instalada não contém `_shared/target-adapter.cursor.md` (versões anteriores à 1.4.0, ex.: `--version v1.3.0`), o instalador volta a usar `target-adapter.md` em vez de falhar com "Arquivo compartilhado não encontrado".
+- `scripts/tests/test-install-regression.sh`: cenário de instalação Cursor a partir de release sem adaptador próprio.
+
 ## [1.4.0] - 2026-10-27
 
 Conclusão das fases 2 e 3 da adoção de práticas de [mattpocock/skills](https://github.com/mattpocock/skills) (MIT), adaptadas aos gates do Memflow.
@@ -512,6 +518,7 @@ Práticas inspiradas em [mattpocock/skills](https://github.com/mattpocock/skills
 - Wizard do instalador com prompts e onboarding refinados.
 - Seção de roadmap da documentação ampliada.
 
+[1.4.1]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/BrunoLagoa/memflow-command-system/compare/v1.2.0...v1.2.1

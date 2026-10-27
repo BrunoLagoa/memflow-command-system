@@ -526,6 +526,35 @@ run_expect_exit \
   1 \
   run_injection "${injection_src}/with-missing.md" "${tmp_root}/with-missing.out.md"
 
+# Cursor com release antiga (sem target-adapter.cursor.md) usa o adaptador legado
+legacy_src="${tmp_root}/legacy-src"
+cp -R "${SCRIPT_DIR}/../../src" "$legacy_src"
+rm -f "${legacy_src}/_shared/target-adapter.cursor.md"
+
+run_cursor_legacy_render() {
+  (
+    # shellcheck source=../lib/common.sh
+    source "${SCRIPT_DIR}/../lib/common.sh"
+    # shellcheck source=../installers/bash/targets/shared.sh
+    source "${SCRIPT_DIR}/../installers/bash/targets/shared.sh"
+    # shellcheck source=../installers/bash/targets/cursor.sh
+    source "${SCRIPT_DIR}/../installers/bash/targets/cursor.sh"
+    render_cursor_command_with_shared "${legacy_src}/workflow.md" "${tmp_root}/legacy-workflow.out.md" "$legacy_src"
+  )
+}
+
+run_expect_success \
+  "install cursor de release sem adaptador próprio usa adaptador legado" \
+  run_cursor_legacy_render
+
+if grep -q "Conteúdo injetado: _shared/target-adapter.md" "${tmp_root}/legacy-workflow.out.md"; then
+  printf "[PASS] cursor legado injeta target-adapter.md\n"
+  pass_count=$((pass_count + 1))
+else
+  printf "[FAIL] cursor legado não injetou target-adapter.md\n"
+  fail_count=$((fail_count + 1))
+fi
+
 printf "\nResultado: %d passou, %d falhou\n" "$pass_count" "$fail_count"
 if [[ "$fail_count" -gt 0 ]]; then
   exit 1

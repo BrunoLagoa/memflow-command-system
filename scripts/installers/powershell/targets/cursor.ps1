@@ -53,12 +53,17 @@ function Render-CursorCommandWithShared {
     [string]$DestinationFile,
     [string]$SourceDir
   )
+  $adapterName = "target-adapter.cursor.md"
+  # Releases anteriores à 1.4.0 não têm adaptador próprio do Cursor.
+  if (-not (Test-Path (Join-Path (Join-Path $SourceDir "_shared") $adapterName))) {
+    $adapterName = "target-adapter.md"
+  }
   Render-CommandWithSharedInjection `
     -SourceFile $SourceFile `
     -DestinationFile $DestinationFile `
     -SourceDir $SourceDir `
-    -TargetAdapterRelativePath "target-adapter.cursor.md" `
-    -TargetAdapterInjectedTitle "### Conteúdo injetado: _shared/target-adapter.cursor.md"
+    -TargetAdapterRelativePath $adapterName `
+    -TargetAdapterInjectedTitle "### Conteúdo injetado: _shared/$adapterName"
 
   Remove-CursorFrontmatter -TargetFile $DestinationFile
 }
